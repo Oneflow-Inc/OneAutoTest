@@ -1,4 +1,4 @@
-name: ResNet DLPerf Report
+name: Compare Self DLPerf Report
 
 on:
   schedule:
