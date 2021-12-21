@@ -1,0 +1,70 @@
+name: ResNet DLPerf Report
+
+on:
+  schedule:
+    - cron: '30 22 * * *'
+  workflow_dispatch:
+    inputs:
+      model_type:
+        description: "model_type"
+        default: "ResNet50"
+        required: false
+      upload_day_ago:
+        description: "upload_day_ago"
+        default: "0"
+        required: false
+      branch_name:
+        description: "branch_name"
+        default: "master"
+        required: false
+      memory_interval:
+        description: "memory_interval"
+        default: "1000"
+        required: false
+      throughput_interval:
+        description: "throughput_interval"
+        default: "20"
+        required: false
+
+jobs:
+  test_result:
+    name: Get Test Result
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout OneFlow Test
+        uses: actions/checkout@v2
+      - name: Get Test result
+        id: get-test-result
+        env:
+          upload_day_ago: ${{ github.event.inputs.upload_day_ago }}
+          branch_name: ${{ github.event.inputs.branch_name }}
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+        run: |
+          set -x
+          upload_day_ago=${upload_day_ago:-0}
+          model_type=${model_type:-"ResNet50"}
+          branch_name=${branch_name:-"master"}
+          memory_interval=${memory_interval:-"1000"}
+          throughput_interval=${throughput_interval:-"20"}
+          upload_issue_date=$(date -d "${upload_day_ago} day ago" +%Y%m%d)
+          curl http://gosspublic.alicdn.com/ossutil/1.6.19/ossutil64 -o $HOME/ossutil64
+          chmod 755 $HOME/ossutil64
+          $HOME/ossutil64 config -e oss-cn-beijing.aliyuncs.com -i ${OSS_ACCESS_KEY_ID} -k ${OSS_ACCESS_KEY_SECRET}  -L EN -c $HOME/.ossutilconfig
+          $HOME/ossutil64 cp -r oss://oneflow-test/OneBrain/commit/${branch_name}/${upload_issue_date} ./  --include "*dlperf*.json"
+
+          if [ ! -d "/${upload_issue_date}" ]; then
+            echo "get_result=1" >> $GITHUB_ENV
+            python3 ./ResNet50/report.py --test-log ./${upload_issue_date} --memory-interval ${memory_interval} --throughput-interval ${throughput_interval}
+            all_test_result_md=./${upload_issue_date}/ResNet50_dlperf_result.md
+            issue_title=$(date "+%Y%m")
+            echo "issue_title=${issue_title}_OneFlow_ResNet50_DLPerf_Report_On_${branch_name}" >> $GITHUB_ENV
+            echo "issue_comment_body=""${all_test_result_md}" >> $GITHUB_ENV
+          fi
+      - name: Create Issue Comment
+        if: env.get_result == '1'
+        uses: ./.github/actions/issue
+        with:
+          issue_title: ${{ env.issue_title }}
+          #issue_comment_body: ${{ steps.get-test-result.outputs.issue_comment_body }}         
+          issue_comment_body: ${{ env.issue_comment_body }}         
