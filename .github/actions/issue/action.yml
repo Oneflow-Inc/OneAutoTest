@@ -1,0 +1,50 @@
+name: "create issue comment"
+description: "create issue comment"
+inputs:
+  issue_title:
+    required: true
+    description: ""
+  issue_comment_body:
+    required: true
+    description: ""
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-node@v2
+      with:
+        node-version: 14
+        run: |
+          npm install fs
+    - uses: actions/github-script@v4
+      with:
+        script: |
+          const fs = require('fs');
+          let comment_body_context = fs.readFileSync("${{ inputs.issue_comment_body }}","utf-8")
+          const issue_title = "${{ inputs.issue_title }}"
+          // Get or create issue
+          const {data: issues_list} = await github.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: "open",
+            creator: "github-actions[bot]",
+            per_page: 100,
+          })
+          var current_issue = issues_list.find(issue => issue.title === issue_title)
+          var ccomment_issue_number = 0
+          if (!current_issue) {
+            let {data: create_issue} = await github.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: "${{ inputs.issue_title }}",
+              body: "${{ inputs.issue_title }}",
+            });
+            ccomment_issue_number = create_issue.number
+          } else {
+            ccomment_issue_number = current_issue.number
+          }
+          github.issues.createComment({
+            issue_number: ccomment_issue_number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment_body_context,
+          })
