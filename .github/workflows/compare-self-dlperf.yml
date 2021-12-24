@@ -19,7 +19,7 @@ on:
         required: false
       memory_interval:
         description: "memory_interval"
-        default: "1000"
+        default: "100"
         required: false
       throughput_interval:
         description: "throughput_interval"
