@@ -1,0 +1,36 @@
+name: Compare Self DLPerf Report
+
+on:
+  schedule:
+    - cron: '30 1 * * *'
+  workflow_dispatch:
+    inputs:
+      model_type:
+        description: "task_name"
+        default: ""
+        required: false
+
+jobs:
+  onebrain_corntab:
+    name: Run OneBrain Corntab
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout OneFlow Test
+        uses: actions/checkout@v2
+      - name: Get Test result
+        id: run-onebrain-corntab
+        env:
+          ONEBRAIN_CLIENT_ID: ${{ secrets.ONEBRAIN_CLIENT_ID }}
+          ONEBRAIN_CLIENT_SECRET: ${{ secrets.ONEBRAIN_CLIENT_SECRET }}
+          ONEBRAIN_GRANT_TYPE: ${{ secrets.ONEBRAIN_GRANT_TYPE }}
+          ONEBRAIN_PASSWORD: ${{ secrets.ONEBRAIN_PASSWORD }}
+          ONEBRAIN_PROJECT_ID: ${{ secrets.ONEBRAIN_PROJECT_ID }}
+          ONEBRAIN_PUBLIC_KEY: ${{ secrets.ONEBRAIN_PUBLIC_KEY }}
+          ONEBRAIN_SERVER: ${{ secrets.ONEBRAIN_SERVER }}
+          ONEBRAIN_USERNAME: ${{ secrets.ONEBRAIN_USERNAME }}
+        run: |
+          set -x
+          python3 -m pip install requests pycryptodome pybase64 datetime
+          python3 task/corntab.py --onebrain-server ${ONEBRAIN_SERVER} --grant-type ${ONEBRAIN_GRANT_TYPE} --client-id ${ONEBRAIN_CLIENT_ID} --client-secret ${ONEBRAIN_CLIENT_SECRET} --public-key ${ONEBRAIN_PUBLIC_KEY} --onebrain-username ${ONEBRAIN_USERNAME} --onebrain-password ${ONEBRAIN_PASSWORD} --onebrain-project-id ${ONEBRAIN_PROJECT_ID}
+
+          
