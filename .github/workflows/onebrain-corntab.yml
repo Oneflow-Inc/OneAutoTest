@@ -1,4 +1,4 @@
-name: Compare Self DLPerf Report
+name: OneBrain Corntab
 
 on:
   schedule:
@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Checkout OneFlow Test
         uses: actions/checkout@v2
-      - name: Get Test result
+      - name: Run OneBrain Corntab
         id: run-onebrain-corntab
         env:
           ONEBRAIN_CLIENT_ID: ${{ secrets.ONEBRAIN_CLIENT_ID }}
