@@ -32,5 +32,3 @@ jobs:
           set -x
           python3 -m pip install requests pycryptodome pybase64 datetime
           python3 task/corntab.py --onebrain-server ${ONEBRAIN_SERVER} --grant-type ${ONEBRAIN_GRANT_TYPE} --client-id ${ONEBRAIN_CLIENT_ID} --client-secret ${ONEBRAIN_CLIENT_SECRET} --public-key ${ONEBRAIN_PUBLIC_KEY} --onebrain-username ${ONEBRAIN_USERNAME} --onebrain-password ${ONEBRAIN_PASSWORD} --onebrain-project-id ${ONEBRAIN_PROJECT_ID}
-
-          
