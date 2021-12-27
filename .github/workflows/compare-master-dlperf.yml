@@ -2,7 +2,7 @@ name: Compare Master DLPerf
 
 on:
   schedule:
-    - cron: '10 23 * * *'
+    - cron: '10 20 * * *'
   workflow_dispatch:
     inputs:
       branch_name:
