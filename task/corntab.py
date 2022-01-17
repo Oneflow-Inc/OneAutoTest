@@ -85,11 +85,7 @@ if __name__ == "__main__":
         ):
             print("train task", task["name"])
             train_1n8g_task_id = task["id"]
-        elif (
-            "train" in task["name"]
-            and task["gpuNum"] == 4
-            and len(task["taskSlaveList"]) == 1
-        ):
+        elif "train" in task["name"] and "2n4g" in task["name"]:
             print("train task", task["name"])
             train_2n4g_task_id = task["id"]
 
@@ -103,7 +99,7 @@ if __name__ == "__main__":
         time.sleep(3600)
         run_task(args.onebrain_server, train_1n8g_task_id, headers=headers)
     if day_of_week == 6 and train_2n4g_task_id != "":
-        time.sleep(7000)
+        time.sleep(3600)
         run_task(args.onebrain_server, train_2n4g_task_id, headers=headers)
 
     exit(0)
