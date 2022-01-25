@@ -33,6 +33,7 @@ def extract_result(args):
 | {throughput_Y_N} | Throughput | [{graph_throughput}]({graph_url_path}) / [{lazy_throughput}]({lazy_url_path}) {throughput_graph_lazy} |
 | {memory_Y_N}     | Memory     | [{graph_memory}]({graph_url_path}) MiB / [{lazy_memory}]({lazy_url_path}) MiB {memory_graph_lazy} |"""
 
+    check_header_n = """ """
     for json_result in logs_list:
         with open(json_result, "r") as jf:
             print(jf)
@@ -97,6 +98,12 @@ def extract_result(args):
             < args.throughput_interval
             else "N"
         )
+        if tmp_result["throughput_Y_N"] == "N":
+            check_header_n = """
+- ### ❌ check fail
+
+"""
+
         tmp_result["memory_Y_N"] = (
             "Y"
             if tmp_result["lazy_memory"] != "None"
@@ -132,7 +139,7 @@ def extract_result(args):
         result_markdown += markdown_table_body.format(**tmp_result)
 
     with open("{}/ResNet50_dlperf_result.md".format(args.test_log), "w",) as f:
-        f.writelines(result_markdown)
+        f.writelines(check_header_n + result_markdown)
 
 
 if __name__ == "__main__":
