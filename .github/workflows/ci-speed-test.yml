@@ -1,0 +1,75 @@
+name: CI Speed Test
+
+on:
+  schedule:
+    # beijing: 2 am.
+    # utc: 6 pm.
+    - cron: "0 18 * * *"
+  workflow_dispatch:
+    inputs:
+      git_log_since_weeks:
+        description: "git log since weeks"
+        default: "2"
+        required: false
+
+jobs:
+  speed_test:
+    name: Speed Test
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout OneFlow Test
+        uses: actions/checkout@v2
+      - name: Checkout Oneflow-Inc/oneflow
+        uses: actions/checkout@v2
+        with:
+          repository: Oneflow-Inc/oneflow
+          path: debug_workspace/oneflow
+          ref: master
+          fetch-depth: 500
+      - name: Get Test result
+        id: get-test-result
+        env:
+          git_log_since_weeks: ${{ github.event.inputs.git_log_since_weeks }}
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+        run: |
+          set -x
+
+          python3 -m pip install -U pip setuptools wheel --user
+          python3 -m pip install matplotlib
+
+          git_log_since_weeks=${git_log_since_weeks:-"2"}
+
+          curl http://gosspublic.alicdn.com/ossutil/1.6.19/ossutil64 -o $HOME/ossutil64
+          chmod 755 $HOME/ossutil64
+          $HOME/ossutil64 config -e oss-cn-beijing.aliyuncs.com -i ${OSS_ACCESS_KEY_ID} -k ${OSS_ACCESS_KEY_SECRET}  -L EN -c $HOME/.ossutilconfig
+          
+          
+          cd debug_workspace/oneflow
+          git log --pretty=format:"%H_%h_%s" --since=${git_log_since_weeks}.weeks  > $HOME/git_log_commit.txt
+          while read line
+          do
+            commit_hash=$(echo $line | awk -F "[_]" '{print $2}')
+            pr_name=$(echo $line | awk -F "[()]" '{print $2}' | awk -F "[#]" '{print $2}')
+            $HOME/ossutil64 cp -r oss://oneflow-log/Oneflow-Inc/oneflow/metrics/pr/${pr_name} $HOME/pr_speed_test_log/  --include "speed_stats.txt"
+          done < $HOME/git_log_commit.txt
+          
+          cd -
+          mkdir -p $HOME/pr_speed_test_log/$(date "+%Y%m%d")/
+          python3 tools/ci_speed_test.py --pr_speed_test_log=$HOME/pr_speed_test_log --git_log_file $HOME/git_log_commit.txt
+
+          echo "get_result=1" >> $GITHUB_ENV
+          all_test_result_md=$HOME/pr_speed_test_log/ci_speed_test_result.md
+          issue_title=$(date "+%Y%m")
+          echo "issue_title=${issue_title}_OneFlow_Ci_Speed_Test" >> $GITHUB_ENV
+          echo "issue_comment_body=""${all_test_result_md}" >> $GITHUB_ENV
+      - name: Checkout OneFlow Test
+        uses: actions/checkout@v2
+      - name: Create Issue Comment
+        if: env.get_result == '1'
+        uses: ./.github/actions/issue
+        with:
+          issue_title: ${{ env.issue_title }}
+          issue_comment_body: ${{ env.issue_comment_body }}     
+          
+
