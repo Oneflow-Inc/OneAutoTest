@@ -3,6 +3,19 @@ import json
 import re
 import matplotlib.pyplot as plt
 import time
+import requests
+
+
+def get_pre_merge_commit(pr_number):
+    try:
+        ob_result = requests.get(
+            "https://api.github.com/repos/Oneflow-Inc/oneflow/pulls/{}".format(
+                pr_number
+            )
+        )
+        return ob_result.json()["head"]["sha"]
+    except:
+        return ""
 
 
 def get_all_file(file_path):
@@ -20,9 +33,19 @@ def extract_result(args):
     if len(logs_list) < 1:
         exit(1)
     result_dict = {}
+    pr_to_commit = {}
     for txt_result in logs_list:
         test_pr_number = txt_result.split("/")[-4]
-        # test_commit = txt_result.split("/")[-3]
+        test_commit = txt_result.split("/")[-3]
+        if test_pr_number in pr_to_commit.keys():
+            pre_merge_commit = pr_to_commit[test_pr_number]
+        else:
+            pre_merge_commit = get_pre_merge_commit(test_pr_number)
+            if pre_merge_commit != "":
+                pr_to_commit[test_pr_number] = pre_merge_commit
+
+        if pre_merge_commit != "" and test_commit != pre_merge_commit:
+            continue
         if test_pr_number not in result_dict.keys():
             result_dict[test_pr_number] = {}
 
@@ -102,18 +125,18 @@ if __name__ == "__main__":
         result_markdown += speed_test_md.format(
             test,
             "https://oneflow-test.oss-cn-beijing.aliyuncs.com/oneflow-ci/resnet50/{}/{}.png".format(
-                time.strftime("%Y%m%d", time.localtime()), test
+                time.strftime("%Y%m%d%H", time.localtime()), test
             ),
         )
         plt.legend(loc="upper right")
         plt.xlabel("master commit")
         plt.ylabel("ms")
-        plt.xticks(rotation="90", fontsize=10)
+        plt.xticks(rotation="90", fontsize=7)
         plt.subplots_adjust(bottom=0.2)
         plt.title("ResNet50" + test)
         plt.savefig(
             "{}/{}/{}.png".format(
-                args.pr_speed_test_log, time.strftime("%Y%m%d", time.localtime()), test,
+                args.pr_speed_test_log, time.strftime("%Y%m%d%H", time.localtime()), test,
             )
         )
         plt.clf()

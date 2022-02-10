@@ -36,7 +36,7 @@ jobs:
           set -x
 
           python3 -m pip install -U pip setuptools wheel --user
-          python3 -m pip install matplotlib
+          python3 -m pip install matplotlib requests
 
           git_log_since_weeks=${git_log_since_weeks:-"2"}
 
@@ -56,10 +56,10 @@ jobs:
           done < $HOME/git_log_commit.txt
           
           cd -
-          mkdir -p $HOME/pr_speed_test_log/$(date "+%Y%m%d")/
+          mkdir -p $HOME/pr_speed_test_log/$(date "+%Y%m%d%H")/
           python3 tools/ci_speed_test.py --pr_speed_test_log=$HOME/pr_speed_test_log --git_log_file $HOME/git_log_commit.txt
 
-          $HOME/ossutil64 cp -r -f $HOME/pr_speed_test_log/$(date "+%Y%m%d") oss://oneflow-test/oneflow-ci/resnet50/$(date "+%Y%m%d")/
+          $HOME/ossutil64 cp -r -f $HOME/pr_speed_test_log/$(date "+%Y%m%d%H") oss://oneflow-test/oneflow-ci/resnet50/$(date "+%Y%m%d%H")/
 
           echo "get_result=1" >> $GITHUB_ENV
           all_test_result_md=$HOME/pr_speed_test_log/ci_speed_test_result.md
@@ -75,4 +75,3 @@ jobs:
           issue_title: ${{ env.issue_title }}
           issue_comment_body: ${{ env.issue_comment_body }}     
           
-
