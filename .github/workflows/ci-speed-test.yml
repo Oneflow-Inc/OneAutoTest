@@ -47,16 +47,19 @@ jobs:
           
           cd debug_workspace/oneflow
           git log --pretty=format:"%H_%h_%s" --since=${git_log_since_weeks}.weeks  > $HOME/git_log_commit.txt
+          $HOME/ossutil64 restore -r -f oss://oneflow-log/Oneflow-Inc/oneflow/metrics/
           while read line
           do
             commit_hash=$(echo $line | awk -F "[_]" '{print $2}')
             pr_name=$(echo $line | awk -F "[()]" '{print $2}' | awk -F "[#]" '{print $2}')
-            $HOME/ossutil64 cp -r oss://oneflow-log/Oneflow-Inc/oneflow/metrics/pr/${pr_name} $HOME/pr_speed_test_log/  --include "speed_stats.txt"
+            $HOME/ossutil64 cp -r -f oss://oneflow-log/Oneflow-Inc/oneflow/metrics/pr/${pr_name} $HOME/pr_speed_test_log/  --include "speed_stats.txt"
           done < $HOME/git_log_commit.txt
           
           cd -
           mkdir -p $HOME/pr_speed_test_log/$(date "+%Y%m%d")/
           python3 tools/ci_speed_test.py --pr_speed_test_log=$HOME/pr_speed_test_log --git_log_file $HOME/git_log_commit.txt
+
+          $HOME/ossutil64 cp -r -f $HOME/pr_speed_test_log/$(date "+%Y%m%d") oss://oneflow-test/oneflow-ci/resnet50/$(date "+%Y%m%d")/
 
           echo "get_result=1" >> $GITHUB_ENV
           all_test_result_md=$HOME/pr_speed_test_log/ci_speed_test_result.md
