@@ -83,6 +83,10 @@ def extract_result(args):
                                 node_num,
                                 log_name,
                             )
+                            result_dict[tmp_test_case[1]][
+                                "rank".format(tmp_run_type)
+                            ] = (node_nums * gpu_pre_node_num)
+
     for test in result_dict:
         if (
             "lazy_throughput" not in result_dict[test]
@@ -98,11 +102,6 @@ def extract_result(args):
             < args.throughput_interval
             else "N"
         )
-        if tmp_result["throughput_Y_N"] == "N":
-            check_header_n = """
-- ### ❌ check fail
-
-"""
 
         tmp_result["memory_Y_N"] = (
             "Y"
@@ -111,6 +110,9 @@ def extract_result(args):
             and int(tmp_result["graph_memory"]) - int(tmp_result["lazy_memory"])
             < args.memory_interval
             else "N"
+        )
+        ratio = round(
+            (tmp_result["graph_throughput"] / tmp_result["lazy_throughput"]) * 100, 3,
         )
         tmp_result["throughput_graph_lazy"] = (
             "≈ {} %".format(
@@ -124,6 +126,13 @@ def extract_result(args):
             and tmp_result["lazy_throughput"] != 0
             else ""
         )
+        if (tmp_result["rank"] > 4 and ratio < 85) or (
+            tmp_result["rank"] <= 4 and ratio < 96
+        ):
+            check_header_n = """
+- ### ❌ check fail
+
+"""
         tmp_result["memory_graph_lazy"] = (
             "≈ {} % ".format(
                 round(
