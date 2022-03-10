@@ -1,4 +1,6 @@
 from libai.config import LazyCall
+from libai.evaluation import PPLEvaluator
+from libai.config import LazyCall
 from .common.models.gpt import pretrain_model as model
 from .common.train import train
 from .common.optim import optim
@@ -34,3 +36,6 @@ for ds in dataloader.train.dataset:
 optim.lr = 1.5e-4
 
 train.test_micro_batch_size = 4
+train.evaluation.evaluator = LazyCall(PPLEvaluator)()
+
+train.evaluation.enabled = True

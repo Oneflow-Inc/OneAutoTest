@@ -1,3 +1,5 @@
+from libai.config import LazyCall
+from libai.evaluation import PPLEvaluator
 from libai.config import LazyCall, get_config
 
 from .common.models.t5 import pretrain_model as model
@@ -41,3 +43,6 @@ train.dist.pipeline_num_layers = 2 * model.cfg.hidden_layers
 # Set a constant lr scheduler after warmup
 optim.lr = 0.0001
 
+train.evaluation.evaluator = LazyCall(PPLEvaluator)()
+
+train.evaluation.enabled = True
