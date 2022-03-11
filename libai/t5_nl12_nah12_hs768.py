@@ -6,6 +6,7 @@ from .common.models.t5 import pretrain_model as model
 from .common.train import train
 from .common.optim import optim
 from .common.data.t5_dataset import dataloader, tokenization
+
 # from projects.idea_t5.configs.t5_dataset import dataloader, tokenization
 
 from .common.models.graph import graph
@@ -46,3 +47,4 @@ optim.lr = 0.0001
 train.evaluation.evaluator = LazyCall(PPLEvaluator)()
 
 train.evaluation.enabled = True
+train.evaluation.eval_iter = 30

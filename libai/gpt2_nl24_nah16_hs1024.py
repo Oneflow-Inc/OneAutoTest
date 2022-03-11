@@ -13,7 +13,7 @@ merges_file = "/home/ylkj/dataset/gpt2-merges.txt"
 data_prefix = "/home/ylkj/dataset/loss_compara_content_sentence"
 
 tokenization.tokenizer.vocab_file = vocab_file
-tokenization.tokenizer.merges_file=merges_file
+tokenization.tokenizer.merges_file = merges_file
 dataloader.train.dataset[0].data_prefix = data_prefix
 dataloader.train.dataset[0].indexed_dataset.data_prefix = data_prefix
 
@@ -27,8 +27,8 @@ model.cfg.ffn_hidden_size = 4096
 model.cfg.num_layers = 24
 model.cfg.max_seq_length = 1024
 
-model.cfg.bias_dropout_fusion=True
-model.cfg.bias_gelu_fusion=True
+model.cfg.bias_dropout_fusion = True
+model.cfg.bias_gelu_fusion = True
 
 for ds in dataloader.train.dataset:
     ds.max_seq_length = model.cfg.max_seq_length
@@ -39,3 +39,4 @@ train.test_micro_batch_size = 4
 train.evaluation.evaluator = LazyCall(PPLEvaluator)()
 
 train.evaluation.enabled = True
+train.evaluation.eval_iter = 30
