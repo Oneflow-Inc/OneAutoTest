@@ -1,10 +1,4 @@
-
-
-https://oneflow-staging.oss-cn-beijing.aliyuncs.com/canary/commit/01b1d3222c4fd1bb38a2241d9f8ae7cf38e8e532/cu112/oneflow-0.7.0%2Bcu112.git.01b1d32-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-
-
 # BERT
-
 
 # bash tools/args_libai_bert.sh model_config pre_gpu node rank master_ip mp pp fp16 activation mbsz gbsz commit
 

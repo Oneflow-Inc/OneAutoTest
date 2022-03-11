@@ -29,6 +29,8 @@ fi
 
 LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_nl12_nah12_hs76_${AMP_OR}_activation${ACTIVATION_CHECKPOINT}_mp${MP}_pp${PP}_mb${MICRO_BATCH_SIZE}_gb${GLOBAL_BATCH_SIZE}_${NNODES}n${GPUS_PER_NODE}g_${RUN_COMMIT}_${RUN_TIME}
 echo LOG_FILENAME=$LOG_FILENAME
+mkdir -p $LOG_FILENAME
+
 python3 -m oneflow.distributed.launch \
 --nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT \
 tools/train_net.py \
@@ -41,6 +43,6 @@ train.amp.enabled=$USE_FP16 \
 train.activation_checkpoint.enabled=$ACTIVATION_CHECKPOINT \
 train.train_iter=$TRAIN_ITERS \
 train.log_period=$LOG_PERIOD \
-train.output_dir=$LOG_FILENAME
+train.output_dir=$LOG_FILENAME 2>&1 | tee ${LOG_FILENAME}/output.log
 
 rm -rf $LOG_FILENAME/model_final

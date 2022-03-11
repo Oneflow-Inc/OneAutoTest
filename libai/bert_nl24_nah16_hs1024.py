@@ -24,3 +24,5 @@ train.test_micro_batch_size = 4
 train.evaluation.evaluator = LazyCall(PPLEvaluator)()
 
 train.evaluation.enabled = True
+train.evaluation.eval_iter = 30
+
