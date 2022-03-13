@@ -67,7 +67,8 @@ CMD="python -m torch.distributed.launch $DISTRIBUTED_ARGS \
        --log-interval $LOG_INTERVAL \
        --save-interval 10000 \
        --eval-interval 1000 \
-       --eval-iters 10 "
+       --eval-iters 10 \
+	   --vocab-extra-ids 100 "
 
 if $USE_FP16; then
     CMD+=" \
