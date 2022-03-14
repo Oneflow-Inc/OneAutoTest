@@ -35,6 +35,8 @@ for ds in dataloader.train.dataset:
 
 optim.lr = 1.5e-4
 
+train.dist.pipeline_num_layers = model.cfg.hidden_layers
+
 train.test_micro_batch_size = 4
 train.evaluation.evaluator = LazyCall(PPLEvaluator)()
 
