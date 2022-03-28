@@ -77,7 +77,7 @@ if __name__ == "__main__":
     )
     train_1n8g_task_id = ""
     train_2n4g_task_id = ""
-    for task in task_list:
+    for task in reversed(task_list):
         if (
             "train" in task["name"]
             and task["gpuNum"] == 8
