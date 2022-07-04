@@ -27,8 +27,10 @@ model.cfg.ffn_hidden_size = 4096
 model.cfg.num_layers = 24
 model.cfg.max_seq_length = 1024
 
-model.cfg.bias_dropout_fusion = True
-model.cfg.bias_gelu_fusion = True
+#model.cfg.bias_dropout_fusion = True
+#model.cfg.bias_gelu_fusion = True
+
+train.input_placement_device = "cpu"
 
 for ds in dataloader.train.dataset:
     ds.max_seq_length = model.cfg.max_seq_length
@@ -40,5 +42,5 @@ train.dist.pipeline_num_layers = model.cfg.num_layers
 train.test_micro_batch_size = 4
 train.evaluation.evaluator = LazyCall(PPLEvaluator)()
 
-train.evaluation.enabled = True
+train.evaluation.enabled = False
 train.evaluation.eval_iter = 30
