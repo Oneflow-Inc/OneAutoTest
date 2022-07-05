@@ -38,6 +38,11 @@ if $USE_FP16; then
     AMP_OR="FP16"
 fi
 
+# log
+#export CUDNN_LOGINFO_DBG=1
+#export CUDNN_LOGDEST_DBG=cudnn.log
+#export GLOG_v=3
+
 LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_nl${NUM_LAYER}_nah16_hs1024_${AMP_OR}_ac${ACTIVATION_CHECKPOINT}_mp${MP}_pp${PP}_mb${MICRO_BATCH_SIZE}_gb${GLOBAL_BATCH_SIZE}_${NNODES}n${GPUS_PER_NODE}g_${RUN_TIME}
 
 DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT"
