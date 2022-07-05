@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 仅在火山引擎平台的多机环境上加以下环境变量
+# volcengine.com
 # export NCCL_IB_PCI_RELAXED_ORDERING=1
 
 NNODES=${1:-1}
@@ -20,8 +20,8 @@ NUM_LAYER=${11:-24}
 TRAIN_ITERS=${12:-220}
 LOG_INTERVAL=${13:-100}
 RUN_COMMIT=${14:-"e156d2f"}
-DATA_PATH=${15:-"/home/ylkj/dataset/loss_compara_content_sentence"}
-VOCAB_FILE=${16:-"/home/ylkj/dataset/bert-base-chinese-vocab.txt"}
+DATA_PATH=${15:-"/path/to/loss_compara_content_sentence"}
+VOCAB_FILE=${16:-"/path/to/bert-base-chinese-vocab.txt"}
 
 SRC_DIR=$(realpath $(dirname $0)/..)
 TRAN_MODEL="Megatron_bert"
@@ -41,7 +41,8 @@ LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_nl${NUM_LAYER}_nah16_hs1024_${AMP_OR}_ac$
 
 DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT"
 
-
+# nsys
+#nsys profile --stats true --output ${LOG_FILENAME} \
 CMD="python -m torch.distributed.launch $DISTRIBUTED_ARGS \
        pretrain_bert.py \
        --tensor-model-parallel-size $MP \

@@ -1,6 +1,5 @@
 ## BERT
 #  1n1g         bert_nl24_nah16_hs1024_fp16_acfalse_mp1_pp1_mb24_gb24_1n1g
-
 bash tools/args_libai_bert.sh configs/bert_nl24_nah16_hs1024.py 1 1 0 127.0.0.1 1 1 true false 24 24
 
 #  1n1g         bert_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb128_gb1024_1n1g

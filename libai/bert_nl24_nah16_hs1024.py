@@ -6,11 +6,8 @@ from .common.train import train
 from .common.optim import optim
 from .common.data.bert_dataset import dataloader, tokenization
 
-#vocab_file = "/workspace/dataset/bert-base-chinese-vocab.txt"
-#data_prefix = "/workspace/dataset/loss_compara_content_sentence"
-
-vocab_file = "/dataset/source/dataset/bert-base-chinese-vocab.txt"
-data_prefix = "/dataset/source/dataset/loss_compara_content_sentence"
+vocab_file = "/path/to/bert-base-chinese-vocab.txt"
+data_prefix = "/path/to/loss_compara_content_sentence"
 
 tokenization.tokenizer.vocab_file = vocab_file
 dataloader.train.dataset[0].data_prefix = data_prefix

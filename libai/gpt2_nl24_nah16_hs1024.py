@@ -8,13 +8,9 @@ from .common.data.gpt_dataset import dataloader, tokenization
 
 from .common.models.graph import graph
 
-#vocab_file = "/workspace/dataset/gpt2-vocab.json"
-#merges_file = "/workspace/dataset/gpt2-merges.txt"
-#data_prefix = "/workspace/dataset/loss_compara_content_sentence"
-
-vocab_file = "/dataset/source/dataset/gpt2-vocab.json"
-merges_file = "/dataset/source/dataset/gpt2-merges.txt"
-data_prefix = "/dataset/source/dataset/loss_compara_content_sentence"
+vocab_file = "/path/to/gpt2-vocab.json"
+merges_file = "/path/to/gpt2-merges.txt"
+data_prefix = "/path/to/loss_compara_content_sentence"
 
 tokenization.tokenizer.vocab_file = vocab_file
 tokenization.tokenizer.merges_file = merges_file
