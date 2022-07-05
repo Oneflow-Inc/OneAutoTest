@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# 仅在火山引擎平台的多机环境上加以下环境变量
+# export NCCL_IB_PCI_RELAXED_ORDERING=1
+
 NNODES=${1:-1}
 GPUS_PER_NODE=${2:-8}
 # Change for multinode config
@@ -13,11 +16,12 @@ USE_FP16=${7:-false}
 ACTIVATION_CHECKPOINT=${8:-false}
 MICRO_BATCH_SIZE=${9:-2}
 GLOBAL_BATCH_SIZE=${10:-16}
-TRAIN_ITERS=${11:-320}
-LOG_INTERVAL=${12:-100}
-RUN_COMMIT=${13:-"e156d2f"}
-DATA_PATH=${14:-"/home/ylkj/dataset/loss_compara_content_sentence"}
-VOCAB_FILE=${15:-"/home/ylkj/dataset/bert-base-chinese-vocab.txt"}
+NUM_LAYER=${11:-24}
+TRAIN_ITERS=${12:-220}
+LOG_INTERVAL=${13:-100}
+RUN_COMMIT=${14:-"e156d2f"}
+DATA_PATH=${15:-"/home/ylkj/dataset/loss_compara_content_sentence"}
+VOCAB_FILE=${16:-"/home/ylkj/dataset/bert-base-chinese-vocab.txt"}
 
 SRC_DIR=$(realpath $(dirname $0)/..)
 TRAN_MODEL="Megatron_bert"
@@ -33,7 +37,7 @@ if $USE_FP16; then
     AMP_OR="FP16"
 fi
 
-LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_nl24_nah16_hs1024_${AMP_OR}_ac${ACTIVATION_CHECKPOINT}_mp${MP}_pp${PP}_mb${MICRO_BATCH_SIZE}_gb${GLOBAL_BATCH_SIZE}_${NNODES}n${GPUS_PER_NODE}g_${RUN_TIME}
+LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_nl${NUM_LAYER}_nah16_hs1024_${AMP_OR}_ac${ACTIVATION_CHECKPOINT}_mp${MP}_pp${PP}_mb${MICRO_BATCH_SIZE}_gb${GLOBAL_BATCH_SIZE}_${NNODES}n${GPUS_PER_NODE}g_${RUN_TIME}
 
 DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT"
 
@@ -42,7 +46,7 @@ CMD="python -m torch.distributed.launch $DISTRIBUTED_ARGS \
        pretrain_bert.py \
        --tensor-model-parallel-size $MP \
        --pipeline-model-parallel-size $PP \
-       --num-layers 24 \
+       --num-layers $NUM_LAYER \
        --hidden-size 1024 \
        --num-attention-heads 16 \
        --micro-batch-size $MICRO_BATCH_SIZE \
