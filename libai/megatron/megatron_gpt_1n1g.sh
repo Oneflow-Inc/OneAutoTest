@@ -21,8 +21,8 @@ bash examples/megatron_args_pretrain_gpt2.sh 1 4 0 127.0.0.1 1 4 true true 32 25
 #  1n4g	流水并行	gpt_nl24_nah16_hs1024_fp16_actrue_mp1_pp4_mb48_gb392_1n4g
 bash examples/megatron_args_pretrain_gpt2.sh 1 4 0 127.0.0.1 1 4 true true 48 384
 
-#  1n4g	流水并行	bert_nl48_nah16_hs1024_fp16_actrue_mp1_pp4_mb16_gb128_1n4g
-bash examples/megatron_args_pretrain_gpt2_nl48.sh 1 4 0 127.0.0.1 1 4 true true 16 128
+#  1n4g	流水并行	gpt_nl48_nah16_hs1024_fp16_actrue_mp1_pp4_mb16_gb128_1n4g
+bash examples/megatron_args_pretrain_gpt2_nl48.sh 1 4 0 127.0.0.1 1 4 true true 16 128 48
 
 #  1n4g 数据并行    gpt_nl24_nah16_hs1024_fp16_acfalse_mp1_pp1_mb4_gb16_1n4g
 bash examples/megatron_args_pretrain_gpt2.sh 1 4 0 127.0.0.1 1 1 true false 4 16

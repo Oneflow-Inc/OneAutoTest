@@ -21,7 +21,7 @@ bash tools/args_libai_gpt2.sh configs/gpt2_nl24_nah16_hs1024.py 1 4 0 127.0.0.1 
 #  1n4g 流水并行        gpt_nl24_nah16_hs1024_fp16_actrue_mp1_pp4_mb48_gb392_1n4g
 bash tools/args_libai_gpt2.sh configs/gpt2_nl24_nah16_hs1024.py 1 4 0 127.0.0.1 1 4 true true 48 384
 
-#  1n4g 流水并行        bert_nl48_nah16_hs1024_fp16_actrue_mp1_pp4_mb16_gb128_1n4g
+#  1n4g 流水并行        gpt_nl48_nah16_hs1024_fp16_actrue_mp1_pp4_mb16_gb128_1n4g
 bash tools/args_libai_gpt2.sh configs/gpt2_nl24_nah16_hs1024.py 1 4 0 127.0.0.1 1 4 true true 16 128 48
 
 #  1n4g 数据并行        gpt_nl24_nah16_hs1024_fp16_acfalse_mp1_pp1_mb4_gb16_1n4g
