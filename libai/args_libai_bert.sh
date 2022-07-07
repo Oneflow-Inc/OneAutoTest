@@ -53,6 +53,8 @@ tools/train_net.py \
 --config-file $CONFIG \
 model.cfg.hidden_layers=$NUM_LAYER \
 train.dist.pipeline_num_layers=$NUM_LAYER \
+#train.zero_optimization.enabled=True \
+#train.zero_optimization.stage=2 \
 train.train_micro_batch_size=$MICRO_BATCH_SIZE \
 train.global_batch_size=$GLOBAL_BATCH_SIZE \
 train.dist.tensor_parallel_size=$MP \
