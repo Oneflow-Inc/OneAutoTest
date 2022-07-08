@@ -23,7 +23,7 @@ bash examples/megatron_args_pretrain_t5.sh 2 8 $NODE_RANK $MASTER_ADDR 8 1 true 
 bash examples/megatron_args_pretrain_t5.sh 2 8 $NODE_RANK $MASTER_ADDR 1 4 true true 32 1024 2
 
 #  2n8g	3-D并行	t5_nl24_nah16_hs1024_fp16_actrue_mp2_pp4_mb32_gb512_2n8g
-bash examples/megatron_args_pretrain_t5.sh 2 8 $NODE_RANK $MASTER_ADDR 2 4 true true 32 512
+bash examples/megatron_args_pretrain_t5.sh 2 8 $NODE_RANK $MASTER_ADDR 2 4 true true 32 512 2
 
 #  2n8g	3-D并行	t5_nl24_nah16_hs1024_fp16_actrue_mp2_pp4_mb32_gb1024_2n8g
 bash examples/megatron_args_pretrain_t5.sh 2 8 $NODE_RANK $MASTER_ADDR 2 4 true true 32 1024 2
