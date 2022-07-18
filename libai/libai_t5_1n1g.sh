@@ -18,7 +18,7 @@ bash tools/args_libai_t5.sh configs/t5_nl24_nah16_hs2304.py 1 4 0 127.0.0.1 4 1 
 #  1n4g 流水并行        t5_nl24_nah16_hs1024_fp16_actrue_mp1_pp4_mb32_gb256_1n4g
 bash tools/args_libai_t5.sh configs/t5_nl24_nah16_hs2304.py 1 4 0 127.0.0.1 1 4 true true 32 256
 
-#  1n4g 流水并行        t5_nl24_nah16_hs1024_fp16_actrue_mp1_pp4_mb48_gb392_1n4g
+#  1n4g 流水并行        t5_nl24_nah16_hs1024_fp16_actrue_mp1_pp4_mb48_gb384_1n4g
 bash tools/args_libai_t5.sh configs/t5_nl24_nah16_hs2304.py 1 4 0 127.0.0.1 1 4 true true 48 384
 
 #  1n4g 流水并行        bert_nl48_nah16_hs1024_fp16_actrue_mp1_pp4_mb16_gb128_1n4g
