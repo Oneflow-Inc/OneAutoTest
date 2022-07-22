@@ -2,7 +2,6 @@ import numpy as np
 import copy
 import argparse
 import os
-import six.moves.collections_abc as abc
 
 
 if __name__ == "__main__":
@@ -35,7 +34,7 @@ if __name__ == "__main__":
                 if file not in dict.keys():
                     dict[file] = {}
 
-                with open(os.path.join(root, file), "r") as f:                    
+                with open(os.path.join(root, file), "r", encoding="utf8") as f:                    
                     is_target = False
                     exec_time = []
                     torch_exec_time = []
@@ -58,51 +57,53 @@ if __name__ == "__main__":
                                 if '1n1d' not in dict[file].keys():
                                     dict[file]['1n1d'] = {}
 
-                                # catch batch_size
+                                # catch batch_size, channel, width, length
                                 bs_start_pos = line.find('[') + 1
-                                bs_end_pos = line.find(' ', bs_start_pos)
-                                batch_size = int(line[bs_start_pos:bs_end_pos - 1])
+                                bs_end_pos = line.find(']', bs_start_pos)
+                                batch_size, channel, width, length = line[bs_start_pos:bs_end_pos].split(', ')
+                                dict_key = "%sx%sx%sx%s" % (batch_size, channel, width, length)
 
-                                if str(batch_size) not in dict[file]['1n1d'].keys():
-                                    dict[file]['1n1d'][str(batch_size)] = {}
-                                    dict[file]['1n1d'][str(batch_size)]['exec_time'] = []
-                                    dict[file]['1n1d'][str(batch_size)]['torch_exec_time'] = []
-                                    dict[file]['1n1d'][str(batch_size)]['relative_speed'] = []
+                                if str(dict_key) not in dict[file]['1n1d'].keys():
+                                    dict[file]['1n1d'][str(dict_key)] = {}
+                                    dict[file]['1n1d'][str(dict_key)]['exec_time'] = []
+                                    dict[file]['1n1d'][str(dict_key)]['torch_exec_time'] = []
+                                    dict[file]['1n1d'][str(dict_key)]['relative_speed'] = []
 
                                 start_pos = len("OneFlow resnet50 time: ")
                                 end_pos = line.find(" ", start_pos)
-                                dict[file]['1n1d'][str(batch_size)]['exec_time'].append(float(line[start_pos:end_pos - 2]))
+                                dict[file]['1n1d'][str(dict_key)]['exec_time'].append(float(line[start_pos:end_pos - 2]))
                                 start_pos = len("PyTorch resnet50 time: ")
                                 end_pos = pytorch_line.find(" ", start_pos)
-                                dict[file]['1n1d'][str(batch_size)]['torch_exec_time'].append(float(pytorch_line[start_pos:end_pos - 2]))
+                                dict[file]['1n1d'][str(dict_key)]['torch_exec_time'].append(float(pytorch_line[start_pos:end_pos - 2]))
                                 start_pos = len("Relative speed: ")
                                 end_pos = relative_speed_line.find(" ", start_pos)
-                                dict[file]['1n1d'][str(batch_size)]['relative_speed'].append(float(relative_speed_line[start_pos:end_pos]))
+                                dict[file]['1n1d'][str(dict_key)]['relative_speed'].append(float(relative_speed_line[start_pos:end_pos]))
                             
                             elif "ddp" in line:
                                 if '1n2d' not in dict[file].keys():
                                     dict[file]['1n2d'] = {}
 
-                                # catch batch_size
+                                # catch batch_size, channel, width, length
                                 bs_start_pos = line.find('[') + 1
-                                bs_end_pos = line.find(' ', bs_start_pos)
-                                batch_size = int(line[bs_start_pos:bs_end_pos - 1])
+                                bs_end_pos = line.find(']', bs_start_pos)
+                                batch_size, channel, width, length = line[bs_start_pos:bs_end_pos].split(', ')
+                                dict_key = "%sx%sx%sx%s" % (batch_size, channel, width, length)
 
-                                if str(batch_size) not in dict[file]['1n2d'].keys():
-                                    dict[file]['1n2d'][str(batch_size)] = {}
-                                    dict[file]['1n2d'][str(batch_size)]['exec_time'] = []
-                                    dict[file]['1n2d'][str(batch_size)]['torch_exec_time'] = []
-                                    dict[file]['1n2d'][str(batch_size)]['relative_speed'] = []
+                                if str(dict_key) not in dict[file]['1n2d'].keys():
+                                    dict[file]['1n2d'][str(dict_key)] = {}
+                                    dict[file]['1n2d'][str(dict_key)]['exec_time'] = []
+                                    dict[file]['1n2d'][str(dict_key)]['torch_exec_time'] = []
+                                    dict[file]['1n2d'][str(dict_key)]['relative_speed'] = []
 
                                 start_pos = len("OneFlow resnet50 time: ")
                                 end_pos = line.find(" ", start_pos)
-                                dict[file]['1n2d'][str(batch_size)]['exec_time'].append(float(line[start_pos:end_pos - 2]))
+                                dict[file]['1n2d'][str(dict_key)]['exec_time'].append(float(line[start_pos:end_pos - 2]))
                                 start_pos = len("PyTorch resnet50 time: ")
                                 end_pos = pytorch_line.find(" ", start_pos)
-                                dict[file]['1n2d'][str(batch_size)]['torch_exec_time'].append(float(pytorch_line[start_pos:end_pos - 2]))
+                                dict[file]['1n2d'][str(dict_key)]['torch_exec_time'].append(float(pytorch_line[start_pos:end_pos - 2]))
                                 start_pos = len("Relative speed: ")
                                 end_pos = relative_speed_line.find(" ", start_pos)
-                                dict[file]['1n2d'][str(batch_size)]['relative_speed'].append(float(relative_speed_line[start_pos:end_pos]))
+                                dict[file]['1n2d'][str(dict_key)]['relative_speed'].append(float(relative_speed_line[start_pos:end_pos]))
                     
                     for k in dict[file].keys():
                         for key, value in dict[file][k].items():
@@ -128,7 +129,7 @@ if __name__ == "__main__":
         
         for file_name in dict.keys():
             for key, value in dict[file_name]['1n1d'].items():
-                result_line = "| resnet50_%sx3x224x224_ws%s_%s |" % (key, '1', file_name[18:])
+                result_line = "| resnet50_%s_ws%s_%s |" % (key, '1', file_name[18:])
 
                 result_line += (" %s / %s [nsys](%s)| " % (value['mean_time'], value['mean_relative_speed'], value['nsys']))
                 result_line += (" %s | " % value['mean_torch_time'])
@@ -137,7 +138,7 @@ if __name__ == "__main__":
 
         for file_name in dict.keys():
             for key, value in dict[file_name]['1n2d'].items():
-                result_line = "| resnet50_%sx3x224x224_ws%s_%s |" % (key, '2', file_name[18:])
+                result_line = "| resnet50_%s_ws%s_%s |" % (key, '2', file_name[18:])
 
                 result_line += (" %s / %s [nsys](%s)| " % (value['mean_time'], value['mean_relative_speed'], value['nsys']))
                 result_line += (" %s | " % value['mean_torch_time'])
