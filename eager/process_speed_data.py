@@ -27,7 +27,7 @@ if __name__ == "__main__":
         mean_torch_times = []
         mean_relative_speed = []
 
-        root = "D:\oneflow\OneAutoTest_test\eager"
+        root = "/pata/to/data"
         dict = {}
         for file in os.listdir(root):
             if file.startswith("test_eager_commit"):
