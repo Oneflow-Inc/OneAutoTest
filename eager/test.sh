@@ -23,6 +23,14 @@ TMP_COMPUTES=(true false)
 STREAM_WAITS=(true false)
 INFER_CACHES=(true false)
 
+DATA_FOLDER=data
+if [[ ! -z "$DATA_FOLDER" ]]; then
+    mkdir -p $DATA_FOLDER
+fi
+
+# volcengine.com
+unset NCCL_DEBUG
+
 for WORKLOAD in ${WORKLOADS[@]}; do
 
         for TMP_COMPUTE in ${TMP_COMPUTES[@]}; do
