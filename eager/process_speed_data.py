@@ -41,10 +41,10 @@ if __name__ == "__main__":
                     relative_speed = []
                     lines = copy.deepcopy(list(f.readlines()))
                     lines_copy = copy.deepcopy(lines)
-                    for i, line in enumerate(lines):
-                        if "OneFlow resnet50 time: " in line: 
-                            pytorch_line = lines_copy[i + 1]
-                            relative_speed_line = lines_copy[i + 2]
+                    for i, pytorch_line in enumerate(lines):
+                        if "PyTorch resnet50 time: " in pytorch_line: 
+                            line = lines_copy[i - 1]
+                            relative_speed_line = lines_copy[i + 1]
                             if not line.startswith("OneFlow resnet50 time"):
                                 line = line[line.find("OneFlow resnet50 time"):]
                             if not pytorch_line.startswith("PyTorch resnet50 time: "):
@@ -122,8 +122,9 @@ if __name__ == "__main__":
                             value['mean_relative_speed'] = str(np.around(np.mean(value['relative_speed']), 3))
                             
                             file_end_point = file.rfind('_')
-                            nsys_root = 'https://oneflow-test.oss-cn-beijing.aliyuncs.com/EagerTest/onebrain_v100/1c0369e3/'
-                            nsys_file = 'resnet50_eager_' + file[18:file_end_point] + '.qdrep'
+                            nsys_root = 'https://oneflow-test.oss-cn-beijing.aliyuncs.com/EagerTest/'
+                            # nsys_file = 'resnet50_eager_' + file[18:file_end_point] + '.qdrep'
+                            nsys_file = 'resnet50_eager_%s_ws%s_' % (key, k[2]) + file[18:file_end_point] + '.qdrep'
                             value['nsys'] = nsys_root + nsys_file
 
         
