@@ -92,8 +92,8 @@ def extract_result(args, extract_func):
     throughput_final_result_dict = {}
     markdown_table_header = """
 
-|      | [{}](https://github.com/Oneflow-Inc/oneflow/tree/{}) | [Megatron](https://github.com/NVIDIA/Megatron-LM/commit/e156d2fea7fc5c98e645f7742eb86b643956d840)                                                     |
-| ---- | ------------------------------------------------------------ | ------------------------------------------------------------ |"""
+|      | [libai-%s](https://github.com/Oneflow-Inc/oneflow/tree/%s) | [Megatron](https://github.com/NVIDIA/Megatron-LM/commit/e156d2fea7fc5c98e645f7742eb86b643956d840)                                                     |
+| ---- | ------------------------------------------------------------ | ------------------------------------------------------------ |""" % (args.oneflow_commit, args.oneflow_commit)
     markdown_table_body = """
 | {case_name}   | [{libai_memory}]({libai_yaml}) MiB/[{libai_samples}]({libai_log}) samples/s                                 | {megatron_memory} MiB/[{megatron_samples}]({megatron_log}) samples/s |"""
     
@@ -115,7 +115,7 @@ def extract_result(args, extract_func):
         ]
         throughput_final_result_dict[case_header][
             "libai_yaml"
-        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/huoshanyingqin/26150ed/{}/config.yaml".format(
+        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/huoshanyingqin/{}/{}/config.yaml".format(args.oneflow_commit,
             "/".join(tmp_file_name[-3:-1])
         )
         throughput_final_result_dict[case_header]["libai_samples"] = libai_result_dict[
@@ -123,7 +123,7 @@ def extract_result(args, extract_func):
         ]
         throughput_final_result_dict[case_header][
             "libai_log"
-        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/huoshanyingqin/26150ed/{}".format(
+        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/huoshanyingqin/{}/{}".format(args.oneflow_commit,
             "/".join(tmp_file_name[-3:])
         )
         throughput_final_result_dict[case_header]["megatron_memory"] = 0

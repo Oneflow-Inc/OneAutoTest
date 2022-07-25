@@ -48,6 +48,7 @@ def _add_training_args(parser):
     group = parser.add_argument_group(title="training")
     group.add_argument("--test-log", type=str, help="log directory")
     group.add_argument("--compare-log", type=str, help="log directory")
+    group.add_argument("--oneflow-commit", type=str)
 
     return parser
 
