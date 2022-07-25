@@ -14,18 +14,20 @@ def extract_info_from_file(log_file):
                 ss = line.split(" ")
                 iteration_index = ss.index("iteration:")
                 iteration_number = int(ss[iteration_index + 1].strip().split("/")[0])
-                time_index = ss.index("time:")
-                samples = float(ss[time_index + 1].strip().split("(")[1][:-1])
-                if iteration_number == 200:
+                time_index = ss.index("time:")                
+                samples = float(ss[time_index + 8])
+                #samples = float(ss[time_index + 1].strip().split("(")[1][:-1])
+                if iteration_number == 219:
                     result_dict["samples"] = samples
             elif "MiB," in line and "utilization" not in line:
                 ss = line.split(" ")
-                memory_userd = int(ss[-2])
-                if (
-                    "memory" not in result_dict.keys()
-                    or result_dict["memory"] < memory_userd
-                ):
-                    result_dict["memory"] = memory_userd
+                if ss[-1] == 'MiB\n':
+                    memory_userd = int(ss[-2])
+                    if (
+                        "memory" not in result_dict.keys()
+                        or result_dict["memory"] < memory_userd
+                    ):
+                        result_dict["memory"] = memory_userd
     return result_dict
 
 
@@ -62,7 +64,7 @@ def megatron_extract(log_file):
 
 
 def extract_result(args, extract_func):
-    megatron_list = glob.glob(os.path.join(args.compare_log, "*/*/*.log"))
+    megatron_list = glob.glob(os.path.join(args.compare_log, "*/*.log"))
     megatron_list = sorted(megatron_list)
     megatron_throughput_final_result_dict = {}
     for m_l in megatron_list:
@@ -80,11 +82,11 @@ def extract_result(args, extract_func):
         ] = megatron_result_dict["samples"]
         megatron_throughput_final_result_dict[case_header][
             "megatron_log"
-        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/baseline/megatron/{}".format(
-            "/".join(tmp_file_name[-3:])
+        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/huoshanyingqin/baseline/megatron_base_supple/full/{}".format(
+            "/".join(tmp_file_name[-2:])
         )
 
-    logs_list = glob.glob(os.path.join(args.test_log, "*/*/*/output.log"))
+    logs_list = glob.glob(os.path.join(args.test_log, "*/*/output.log"))    
     logs_list = sorted(logs_list)
 
     throughput_final_result_dict = {}
@@ -94,6 +96,7 @@ def extract_result(args, extract_func):
 | ---- | ------------------------------------------------------------ | ------------------------------------------------------------ |"""
     markdown_table_body = """
 | {case_name}   | [{libai_memory}]({libai_yaml}) MiB/[{libai_samples}]({libai_log}) samples/s                                 | {megatron_memory} MiB/[{megatron_samples}]({megatron_log}) samples/s |"""
+    
     tmp_markdown_table_header = markdown_table_header.format(
         logs_list[0].split("/")[-4], logs_list[0].split("/")[-4],
     )
@@ -103,7 +106,6 @@ def extract_result(args, extract_func):
         tmp_file_name = l.split("/")
         # case_config = get_config("/".join(tmp_file_name[:-1]))
         case_header = "_".join(tmp_file_name[-2].split("_")[1:-2]).lower()
-        print(case_header)
 
         if case_header not in throughput_final_result_dict.keys():
             throughput_final_result_dict[case_header] = {}
@@ -113,16 +115,16 @@ def extract_result(args, extract_func):
         ]
         throughput_final_result_dict[case_header][
             "libai_yaml"
-        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/{}/config.yaml".format(
-            "/".join(tmp_file_name[-4:-1])
+        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/huoshanyingqin/26150ed/{}/config.yaml".format(
+            "/".join(tmp_file_name[-3:-1])
         )
         throughput_final_result_dict[case_header]["libai_samples"] = libai_result_dict[
             "samples"
         ]
         throughput_final_result_dict[case_header][
             "libai_log"
-        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/{}".format(
-            "/".join(tmp_file_name[-4:])
+        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/huoshanyingqin/26150ed/{}".format(
+            "/".join(tmp_file_name[-3:])
         )
         throughput_final_result_dict[case_header]["megatron_memory"] = 0
         throughput_final_result_dict[case_header]["megatron_samples"] = 0
