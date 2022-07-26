@@ -61,4 +61,8 @@ train.train_iter=$TRAIN_ITERS \
 train.log_period=$LOG_PERIOD \
 train.output_dir=$LOG_FILENAME 2>&1 | tee ${LOG_FILENAME}/output.log
 
+# zero
+#train.zero_optimization.enabled=True \
+#train.zero_optimization.stage=2 \
+
 rm -rf $LOG_FILENAME/model_final
