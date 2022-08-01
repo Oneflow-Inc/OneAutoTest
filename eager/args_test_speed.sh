@@ -27,8 +27,6 @@ rc=0
 # accumulate the score of every test
 trap 'rc=$(($rc + $?))' ERR
 
-#export ONEFLOW_MODELS_DIR=/dataset/e1a63606/onebench/scripts/models_nsys
-
 export ONEFLOW_MODELS_DIR=/path/to/models
 echo "test on master"
 
@@ -65,8 +63,6 @@ for((i=1;i<=10;i++));
 do
 
 echo "i = "$(expr $i);
-
-sleep 10s
 
 rm result || true
 
