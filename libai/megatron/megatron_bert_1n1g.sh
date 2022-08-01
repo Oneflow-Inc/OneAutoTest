@@ -23,5 +23,11 @@ bash examples/megatron_args_pretrain_bert.sh 1 4 0 127.0.0.1 1 4 true true 192 1
 #  1n4g	流水并行	bert_nl48_nah16_hs1024_fp16_actrue_mp1_pp4_mb64_gb512_1n4g
 bash examples/megatron_args_pretrain_bert.sh 1 4 0 127.0.0.1 1 4 true true 64 512 48
 
+#  1n4g 数据并行    bert_nl24_nah16_hs1024_fp16_acfalse_mp1_pp1_mb16_gb64_1n4g
+bash examples/megatron_args_pretrain_bert.sh 1 4 0 127.0.0.1 1 1 true false 16 64
+
+#  1n4g 数据并行    bert_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb128_gb512_1n4g
+bash examples/megatron_args_pretrain_bert.sh 1 4 0 127.0.0.1 1 1 true true 128 512
+
 #  1n4g	数据+模型并行	bert_nl24_nah16_hs1024_fp16_actrue_mp2_pp1_mb128_gb2048_1n4g
 bash examples/megatron_args_pretrain_bert.sh 1 4 0 127.0.0.1 2 1 true true 128 2048

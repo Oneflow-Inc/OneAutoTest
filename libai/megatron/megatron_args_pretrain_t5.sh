@@ -1,4 +1,8 @@
+set -ex
 #!/bin/bash
+
+# volcengine.com
+export NCCL_IB_PCI_RELAXED_ORDERING=1
 
 NNODES=${1:-1}
 GPUS_PER_NODE=${2:-8}
@@ -13,11 +17,13 @@ USE_FP16=${7:-false}
 ACTIVATION_CHECKPOINT=${8:-false}
 MICRO_BATCH_SIZE=${9:-16}
 GLOBAL_BATCH_SIZE=${10:-128}
-TRAIN_ITERS=${11:-320}
-LOG_INTERVAL=${12:-100}
-RUN_COMMIT=${13:-"e156d2f"}
-DATA_PATH=${14:-"/home/ylkj/dataset/loss_compara_content_sentence"}
-VOCAB_FILE=${15:-"/home/ylkj/dataset/bert-base-chinese-vocab.txt"}
+SPLIT_RANK=${11:-0}
+NUM_LAYER=${12:-0}
+TRAIN_ITERS=${13:-220}
+LOG_INTERVAL=${14:-100}
+RUN_COMMIT=${15:-"e156d2f"}
+DATA_PATH=${16:-"/dataset/source/dataset/loss_compara_content_sentence"}
+VOCAB_FILE=${17:-"/dataset/source/dataset/bert-base-chinese-vocab.txt"}
 
 
 SRC_DIR=$(realpath $(dirname $0)/..)
@@ -34,17 +40,25 @@ if $USE_FP16; then
     AMP_OR="FP16"
 fi
 
-LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_nl12_nah12_hs768_${AMP_OR}_ac${ACTIVATION_CHECKPOINT}_mp${MP}_pp${PP}_mb${MICRO_BATCH_SIZE}_gb${GLOBAL_BATCH_SIZE}_${NNODES}n${GPUS_PER_NODE}g_${RUN_TIME}
+# log
+#export CUDNN_LOGINFO_DBG=1
+#export CUDNN_LOGDEST_DBG=cudnn.log
+#export GLOG_v=3
+
+LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_nl${NUM_LAYER}_nah16_hs2304_${AMP_OR}_ac${ACTIVATION_CHECKPOINT}_mp${MP}_pp${PP}_mb${MICRO_BATCH_SIZE}_gb${GLOBAL_BATCH_SIZE}_${NNODES}n${GPUS_PER_NODE}g_${RUN_TIME}
 
 DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT"
 
+# nsys
+#nsys profile --stats true --output ${LOG_FILENAME} \
 CMD="python -m torch.distributed.launch $DISTRIBUTED_ARGS \
        pretrain_t5.py \
        --tensor-model-parallel-size $MP \
-	   --pipeline-model-parallel-size $PP \
-       --num-layers 12 \
-       --hidden-size 768 \
-       --num-attention-heads 12 \
+           --pipeline-model-parallel-size $PP \
+           --pipeline-model-parallel-split-rank $SPLIT_RANK \
+       --num-layers $NUM_LAYER \
+       --hidden-size 2304 \
+       --num-attention-heads 16 \
        --kv-channels 64 \
        --ffn-hidden-size 3072 \
        --encoder-seq-length 512 \
@@ -68,7 +82,7 @@ CMD="python -m torch.distributed.launch $DISTRIBUTED_ARGS \
        --save-interval 10000 \
        --eval-interval 1000 \
        --eval-iters 10 \
-	   --vocab-extra-ids 100 "
+           --vocab-extra-ids 100 "
 
 if $USE_FP16; then
     CMD+=" \
