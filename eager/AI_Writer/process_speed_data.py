@@ -52,7 +52,7 @@ if __name__ == "__main__":
                             
                             # if 1n1d or not
                             # if ", input_shape=[" in line and "])" in line:
-                            if "input_preLen=" in line:
+                            if "output_preLen=" in line:
                                 if '1n1d' not in dict[file].keys():
                                     dict[file]['1n1d'] = {}
 

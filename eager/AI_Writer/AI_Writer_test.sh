@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# bash AI_Writer_test.sh d62400de800a3e5cd3e4c7a9b58fd43520826272
+
 commit=$1
 
 echo commit = $commit

@@ -67,11 +67,11 @@ echo "i = "$(expr $i);
 rm result || true
 
 #python3 scripts/compare_speed_with_pytorch.py Vision/classification/image/resnet50/models/resnet50.py resnet50 1x3x224x224 --no-show-memory --times 200 | check_relative_speed 0.95 | write_to_file_and_print
-python3 compare_AI.py AI-Writer --input_preLen 20 | check_relative_speed 0.95 | write_to_file_and_print
-# python3 compare_AI.py AI-Writer --input_preLen 40 | check_relative_speed 0.95 | write_to_file_and_print
-# python3 compare_AI.py AI-Writer --input_preLen 160 | check_relative_speed 0.95 | write_to_file_and_print
-# python3 compare_AI.py AI-Writer --input_preLen 2560 | check_relative_speed 0.95 | write_to_file_and_print
-# python3 compare_AI.py AI-Writer --input_preLen 10240 | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 20 | check_relative_speed 0.95 | write_to_file_and_print
+# python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 40 | check_relative_speed 0.95 | write_to_file_and_print
+# python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 160 | check_relative_speed 0.95 | write_to_file_and_print
+# python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 2560 | check_relative_speed 0.95 | write_to_file_and_print
+# python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 10240 | check_relative_speed 0.95 | write_to_file_and_print
 
 export OMP_NUM_THREADS=1
 
