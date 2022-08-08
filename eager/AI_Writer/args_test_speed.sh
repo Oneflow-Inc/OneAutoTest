@@ -6,7 +6,9 @@ ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD=${1:-true}
 ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM=${2:-true}
 ONEFLOW_VM_ENABLE_STREAM_WAIT=${3:-true}
 ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE=${4:-true}
-ONEFLOW_EAGER_LOCAL_TO_GLOBAL_BALANCED_OVERRIDE=${5:-true}
+INFER_MODEL=${5:-"both"}
+
+ONEFLOW_EAGER_LOCAL_TO_GLOBAL_BALANCED_OVERRIDE=true
 
 export ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD=$ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD
 echo ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD=$ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD
@@ -66,11 +68,28 @@ echo "i = "$(expr $i);
 
 rm result || true
 
+if [ "$INFER_MODEL" = "oneflow" ]; then
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 20 --only-oneflow | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 40 --only-oneflow | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 160 --only-oneflow | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 2560 --only-oneflow | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 10240 --only-oneflow | check_relative_speed 0.95 | write_to_file_and_print
+
+elif [ "$INFER_MODEL" = "pytorch" ]; then
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 20 --only-pytorch | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 40 --only-pytorch | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 160 --only-pytorch | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 2560 --only-pytorch | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 10240 --only-pytorch | check_relative_speed 0.95 | write_to_file_and_print
+
+else
 python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 20 | check_relative_speed 0.95 | write_to_file_and_print
 python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 40 | check_relative_speed 0.95 | write_to_file_and_print
 python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 160 | check_relative_speed 0.95 | write_to_file_and_print
 python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 2560 | check_relative_speed 0.95 | write_to_file_and_print
 python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 10240 | check_relative_speed 0.95 | write_to_file_and_print
+
+fi
 
 export OMP_NUM_THREADS=1
 
