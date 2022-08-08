@@ -58,7 +58,7 @@ function write_to_file_and_print {
 
 python3 -m oneflow --doctor
 
-for((i=1;i<=12;i++));
+for((i=1;i<=11;i++));
 
 do
 
@@ -66,12 +66,11 @@ echo "i = "$(expr $i);
 
 rm result || true
 
-#python3 scripts/compare_speed_with_pytorch.py Vision/classification/image/resnet50/models/resnet50.py resnet50 1x3x224x224 --no-show-memory --times 200 | check_relative_speed 0.95 | write_to_file_and_print
 python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 20 | check_relative_speed 0.95 | write_to_file_and_print
-# python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 40 | check_relative_speed 0.95 | write_to_file_and_print
-# python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 160 | check_relative_speed 0.95 | write_to_file_and_print
-# python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 2560 | check_relative_speed 0.95 | write_to_file_and_print
-# python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 10240 | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 40 | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 160 | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 2560 | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 10240 | check_relative_speed 0.95 | write_to_file_and_print
 
 export OMP_NUM_THREADS=1
 
@@ -79,15 +78,26 @@ export OMP_NUM_THREADS=1
 
 done
 
-# LOG_FILENAME_1n1d=/path/to/data/resnet50_eager_1x3x224x224_ws1_${ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD}_${ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM}_${ONEFLOW_VM_ENABLE_STREAM_WAIT}_${ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE}
-# mkdir -p $LOG_FILENAME_1n1d
-# nsys profile --stats true --output ${LOG_FILENAME_1n1d} --sample none --cpuctxsw none \
-# python3 scripts/compare_speed_with_pytorch.py Vision/classification/image/resnet50/models/resnet50.py resnet50 1x3x224x224 --no-show-memory --times 200 --only-oneflow | check_relative_speed 0.95 | write_to_file_and_print
 
-# LOG_FILENAME_1n2d=/path/to/data/resnet50_eager_1x3x224x224_ws2_${ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD}_${ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM}_${ONEFLOW_VM_ENABLE_STREAM_WAIT}_${ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE}
-# mkdir -p $LOG_FILENAME_1n2d
-# nsys profile --stats true --output ${LOG_FILENAME_1n2d} --sample none --cpuctxsw none \
-# python3 -m oneflow.distributed.launch --master_port 31349 --nproc_per_node 2 scripts/compare_speed_with_pytorch.py Vision/classification/image/resnet50/models/resnet50.py resnet50 1x3x224x224 --no-show-memory --times 200 --ddp --only-oneflow | check_relative_speed 1.15 | write_to_file_and_print
+LOG_FILENAME_20=/path/to/writer/data/oneflow/AI_Writer_eager_outlen20_ws1_${ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD}_${ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM}_${ONEFLOW_VM_ENABLE_STREAM_WAIT}_${ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE}
+nsys profile --stats true --output ${LOG_FILENAME_20} --sample none \
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 20 | check_relative_speed 0.95 | write_to_file_and_print
+
+LOG_FILENAME_40=/path/to/writer/data/oneflow/AI_Writer_eager_outlen40_ws1_${ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD}_${ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM}_${ONEFLOW_VM_ENABLE_STREAM_WAIT}_${ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE}
+nsys profile --stats true --output ${LOG_FILENAME_40} --sample none \
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 40 | check_relative_speed 0.95 | write_to_file_and_print
+
+LOG_FILENAME_160=/path/to/writer/data/oneflow/AI_Writer_eager_outlen160_ws1_${ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD}_${ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM}_${ONEFLOW_VM_ENABLE_STREAM_WAIT}_${ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE}
+nsys profile --stats true --output ${LOG_FILENAME_160} --sample none \
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 160 | check_relative_speed 0.95 | write_to_file_and_print
+
+LOG_FILENAME_2560=/path/to/writer/data/oneflow/AI_Writer_eager_outlen2560_ws1_${ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD}_${ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM}_${ONEFLOW_VM_ENABLE_STREAM_WAIT}_${ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE}
+nsys profile --stats true --output ${LOG_FILENAME_2560} --sample none \
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 2560 | check_relative_speed 0.95 | write_to_file_and_print
+
+LOG_FILENAME_10240=/path/to/writer/data/oneflow/AI_Writer_eager_outlen10240_ws1_${ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD}_${ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM}_${ONEFLOW_VM_ENABLE_STREAM_WAIT}_${ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE}
+nsys profile --stats true --output ${LOG_FILENAME_10240} --sample none \
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 10240 | check_relative_speed 0.95 | write_to_file_and_print
 
 result="GPU Name: `nvidia-smi --query-gpu=name --format=csv,noheader -i 0` \n\n `cat result`"
 # escape newline for github actions: https://github.community/t/set-output-truncates-multiline-strings/16852/2
@@ -106,4 +116,3 @@ then
 else
   exit 0
 fi
-

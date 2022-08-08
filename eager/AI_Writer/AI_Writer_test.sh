@@ -25,7 +25,7 @@ TMP_COMPUTES=(true false)
 STREAM_WAITS=(true false)
 INFER_CACHES=(true false)
 
-DATA_FOLDER=data
+DATA_FOLDER=data/oneflow
 if [[ ! -z "$DATA_FOLDER" ]]; then
     mkdir -p $DATA_FOLDER
 fi
@@ -39,7 +39,7 @@ for WORKLOAD in ${WORKLOADS[@]}; do
 
                 for STREAM_WAIT in ${STREAM_WAITS[@]}; do
                         for INFER_CACHE in ${INFER_CACHES[@]}; do
-                                bash args_test_speed.sh $WORKLOAD $TMP_COMPUTE $STREAM_WAIT $INFER_CACHE 2>&1 | tee data/test_eager_commit_${WORKLOAD}_${TMP_COMPUTE}_${STREAM_WAIT}_${INFER_CACHE}_${commit:0:7}
+                                bash args_test_speed.sh $WORKLOAD $TMP_COMPUTE $STREAM_WAIT $INFER_CACHE 2>&1 | tee ${DATA_FOLDER}/test_eager_commit_${WORKLOAD}_${TMP_COMPUTE}_${STREAM_WAIT}_${INFER_CACHE}_${commit:0:7}
                                 break 4
                         done
 
