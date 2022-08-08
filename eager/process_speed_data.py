@@ -10,8 +10,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    file_prefix = "test_data_master_"
-
     file_suffixes = args.test_commits.split(" ")
 
     with open("process_res", "w") as process_res:
@@ -122,7 +120,7 @@ if __name__ == "__main__":
                             value['mean_relative_speed'] = str(np.around(np.mean(value['relative_speed']), 3))
                             
                             file_end_point = file.rfind('_')
-                            nsys_root = 'https://oneflow-test.oss-cn-beijing.aliyuncs.com/EagerTest/'
+                            nsys_root = 'https://oneflow-test.oss-cn-beijing.aliyuncs.com/EagerTest/...'
                             # nsys_file = 'resnet50_eager_' + file[18:file_end_point] + '.qdrep'
                             nsys_file = 'resnet50_eager_%s_ws%s_' % (key, k[2]) + file[18:file_end_point] + '.qdrep'
                             value['nsys'] = nsys_root + nsys_file
