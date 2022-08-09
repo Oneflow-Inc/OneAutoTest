@@ -8,6 +8,8 @@ ONEFLOW_VM_ENABLE_STREAM_WAIT=${3:-true}
 ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE=${4:-true}
 INFER_MODEL=${5:-"both"}
 
+OUTPUT_LENGTH=${6:-20}
+
 ONEFLOW_EAGER_LOCAL_TO_GLOBAL_BALANCED_OVERRIDE=true
 
 export ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD=$ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD
@@ -69,25 +71,13 @@ echo "i = "$(expr $i);
 rm result || true
 
 if [ "$INFER_MODEL" = "oneflow" ]; then
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 20 --only-oneflow | check_relative_speed 0.95 | write_to_file_and_print
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 40 --only-oneflow | check_relative_speed 0.95 | write_to_file_and_print
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 160 --only-oneflow | check_relative_speed 0.95 | write_to_file_and_print
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 2560 --only-oneflow | check_relative_speed 0.95 | write_to_file_and_print
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 10240 --only-oneflow | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen ${OUTPUT_LENGTH} --only-oneflow | check_relative_speed 0.95 | write_to_file_and_print
 
 elif [ "$INFER_MODEL" = "pytorch" ]; then
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 20 --only-pytorch | check_relative_speed 0.95 | write_to_file_and_print
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 40 --only-pytorch | check_relative_speed 0.95 | write_to_file_and_print
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 160 --only-pytorch | check_relative_speed 0.95 | write_to_file_and_print
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 2560 --only-pytorch | check_relative_speed 0.95 | write_to_file_and_print
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 10240 --only-pytorch | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen ${OUTPUT_LENGTH} --only-pytorch | check_relative_speed 0.95 | write_to_file_and_print
 
 else
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 20 | check_relative_speed 0.95 | write_to_file_and_print
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 40 | check_relative_speed 0.95 | write_to_file_and_print
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 160 | check_relative_speed 0.95 | write_to_file_and_print
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 2560 | check_relative_speed 0.95 | write_to_file_and_print
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 10240 | check_relative_speed 0.95 | write_to_file_and_print
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen ${OUTPUT_LENGTH} | check_relative_speed 0.95 | write_to_file_and_print
 
 fi
 
@@ -98,25 +88,10 @@ export OMP_NUM_THREADS=1
 done
 
 
-LOG_FILENAME_20=/path/to/writer/data/oneflow/AI_Writer_eager_outlen20_ws1_${ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD}_${ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM}_${ONEFLOW_VM_ENABLE_STREAM_WAIT}_${ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE}
-nsys profile --stats true --output ${LOG_FILENAME_20} --sample none \
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 20 | check_relative_speed 0.95 | write_to_file_and_print
+LOG_FILENAME=/path/to/writer/data/oneflow/AI_Writer_eager_outlen${OUTPUT_LENGTH}_ws1_${ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD}_${ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM}_${ONEFLOW_VM_ENABLE_STREAM_WAIT}_${ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE}
+nsys profile --stats true --output ${LOG_FILENAME} --sample none \
+python3 compare_speed_with_pytorch.py AI-Writer --output_preLen ${OUTPUT_LENGTH} | check_relative_speed 0.95 | write_to_file_and_print
 
-LOG_FILENAME_40=/path/to/writer/data/oneflow/AI_Writer_eager_outlen40_ws1_${ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD}_${ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM}_${ONEFLOW_VM_ENABLE_STREAM_WAIT}_${ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE}
-nsys profile --stats true --output ${LOG_FILENAME_40} --sample none \
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 40 | check_relative_speed 0.95 | write_to_file_and_print
-
-LOG_FILENAME_160=/path/to/writer/data/oneflow/AI_Writer_eager_outlen160_ws1_${ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD}_${ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM}_${ONEFLOW_VM_ENABLE_STREAM_WAIT}_${ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE}
-nsys profile --stats true --output ${LOG_FILENAME_160} --sample none \
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 160 | check_relative_speed 0.95 | write_to_file_and_print
-
-LOG_FILENAME_2560=/path/to/writer/data/oneflow/AI_Writer_eager_outlen2560_ws1_${ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD}_${ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM}_${ONEFLOW_VM_ENABLE_STREAM_WAIT}_${ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE}
-nsys profile --stats true --output ${LOG_FILENAME_2560} --sample none \
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 2560 | check_relative_speed 0.95 | write_to_file_and_print
-
-LOG_FILENAME_10240=/path/to/writer/data/oneflow/AI_Writer_eager_outlen10240_ws1_${ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD}_${ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM}_${ONEFLOW_VM_ENABLE_STREAM_WAIT}_${ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE}
-nsys profile --stats true --output ${LOG_FILENAME_10240} --sample none \
-python3 compare_speed_with_pytorch.py AI-Writer --output_preLen 10240 | check_relative_speed 0.95 | write_to_file_and_print
 
 result="GPU Name: `nvidia-smi --query-gpu=name --format=csv,noheader -i 0` \n\n `cat result`"
 # escape newline for github actions: https://github.community/t/set-output-truncates-multiline-strings/16852/2

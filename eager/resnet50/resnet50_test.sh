@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# bash resnet50_test.sh 43074d24166c5ff51c485667dd14e408ded04d5d
+
 commit=$1
 
 echo commit = $commit
