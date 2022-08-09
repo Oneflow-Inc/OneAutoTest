@@ -88,6 +88,7 @@ export OMP_NUM_THREADS=1
 done
 
 
+if [ "$INFER_MODEL" = "oneflow" ]; then
 LOG_FILENAME=/path/to/writer/data/oneflow/AI_Writer_eager_outlen${OUTPUT_LENGTH}_ws1_${ONEFLOW_VM_COMPUTE_ON_WORKER_THREAD}_${ONEFLOW_AD_PUT_LOSS_ON_TMP_COMPUTE_STREAM}_${ONEFLOW_VM_ENABLE_STREAM_WAIT}_${ONEFLOW_EAGER_ENABLE_LOCAL_INFER_CACHE}
 nsys profile --stats true --output ${LOG_FILENAME} --sample none \
 python3 compare_speed_with_pytorch.py AI-Writer --output_preLen ${OUTPUT_LENGTH} --only-oneflow | check_relative_speed 0.95 | write_to_file_and_print

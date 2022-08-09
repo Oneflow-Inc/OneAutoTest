@@ -26,8 +26,10 @@ mv AI-Writer-Web/ AI_Writer_Web/
 mv AI-Writer/ AI_Writer/
 ```
 
-克隆后，将[AI-Writer-Web/infer.py at main · xyn1201/AI-Writer-Web (github.com)](https://github.com/xyn1201/AI-Writer-Web/blob/main/infer.py) 和 [AI-Writer/infer.py at main · xyn1201/AI-Writer (github.com)](https://github.com/xyn1201/AI-Writer/blob/main/infer.py) 两个infer.py文件拷贝到两个仓库对应的文件夹下，并修改其中的/path/to/绝对路径名
+克隆后，将[AI-Writer-Web/infer.py](https://github.com/xyn1201/AI-Writer-Web/blob/main/infer.py) 和 [AI-Writer/infer.py](https://github.com/xyn1201/AI-Writer/blob/main/infer.py) 两个infer.py文件拷贝到两个仓库对应的文件夹下，并修改其中的/path/to/绝对路径名
+
+再将[AI-Writer-Web/config.py](https://github.com/xyn1201/AI-Writer-Web/blob/main/config.py) 拷贝到两个仓库对应的文件夹下
 
 ### 3. 复制脚本
 
-将 [OneAutoTest/eager/AI_Writer at dev_eager_test · Oneflow-Inc/OneAutoTest (github.com)](https://github.com/Oneflow-Inc/OneAutoTest/tree/dev_eager_test/eager/AI_Writer) 中的4个脚本拷贝到writer路径下
+将OneAutoTest/eager/AI_Writer下的4个脚本拷贝到writer路径下
