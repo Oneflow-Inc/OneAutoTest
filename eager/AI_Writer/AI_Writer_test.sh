@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# bash AI_Writer_test.sh d62400de800a3e5cd3e4c7a9b58fd43520826272 "oneflow"
+# bash AI_Writer_test.sh 43074d24166c5ff51c485667dd14e408ded04d5d "oneflow"
+# bash AI_Writer_test.sh 43074d24166c5ff51c485667dd14e408ded04d5d "pytorch"
 
 commit=$1
 
