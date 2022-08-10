@@ -50,6 +50,8 @@ python3 -m oneflow.distributed.launch \
 tools/train_net.py \
 --config-file $CONFIG \
 model.cfg.num_layers=$NUM_LAYER \
+train.zero_optimization.enabled=True \
+train.zero_optimization.stage=2 \
 train.dist.pipeline_num_layers=$NUM_LAYER \
 train.train_micro_batch_size=$MICRO_BATCH_SIZE \
 train.global_batch_size=$GLOBAL_BATCH_SIZE \
@@ -61,8 +63,5 @@ train.train_iter=$TRAIN_ITERS \
 train.log_period=$LOG_PERIOD \
 train.output_dir=$LOG_FILENAME 2>&1 | tee ${LOG_FILENAME}/output.log
 
-# zero
-#train.zero_optimization.enabled=True \
-#train.zero_optimization.stage=2 \
 
 rm -rf $LOG_FILENAME/model_final
