@@ -131,3 +131,4 @@ dmypy.json
 autoTest/scripts/libai/
 autoTest/scripts/models/
 autoTest/log/
+autoTest/oss/ossutilconfig
