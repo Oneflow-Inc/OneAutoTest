@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+autoTest/scripts/libai/
+autoTest/scripts/models/
+autoTest/log/
