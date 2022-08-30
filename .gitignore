@@ -131,3 +131,5 @@ dmypy.json
 autoTest/scripts/models
 autoTest/scripts/libai
 autoTest/oss
+autoTest/log
+autoTest/nohup.out
