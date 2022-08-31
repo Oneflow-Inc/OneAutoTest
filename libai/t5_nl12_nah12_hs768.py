@@ -11,8 +11,8 @@ from .common.data.t5_dataset import dataloader, tokenization
 
 from .common.models.graph import graph
 
-vocab_file = "/home/ylkj/dataset/bert-base-chinese-vocab.txt"
-data_prefix = "/home/ylkj/dataset/loss_compara_content_sentence"
+vocab_file = "/path/to/bert-base-chinese-vocab.txt"
+data_prefix = "/path/to/loss_compara_content_sentence"
 
 tokenization.tokenizer.vocab_file = vocab_file
 dataloader.train.dataset[0].data_prefix = data_prefix
@@ -38,13 +38,14 @@ model.cfg.max_position_embeddings = 512
 train.warmup_ratio = 0.01
 train.test_micro_batch_size = 4
 
-
 train.dist.pipeline_num_layers = 2 * model.cfg.hidden_layers
+
+train.input_placement_device = "cpu"
 
 # Set a constant lr scheduler after warmup
 optim.lr = 0.0001
 
 train.evaluation.evaluator = LazyCall(PPLEvaluator)()
 
-train.evaluation.enabled = True
+train.evaluation.enabled = False
 train.evaluation.eval_iter = 30
