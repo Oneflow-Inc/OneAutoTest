@@ -33,7 +33,7 @@ cd ${MODEL_DIR}
 #bash examples/args_train_ddp_graph.sh 1 2 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 256 1 false python3 ddp cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
 
 # ResNet50_graph_dlperf_cpudecode_FP32_b256_1n2g
-bash examples/args_train_ddp_graph.sh 1 2 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 64 1 false python3 graph cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
+#bash examples/args_train_ddp_graph.sh 1 2 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 64 1 false python3 graph cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
 
 # Graph or DDP  fp32  b256 gpu decode
 # ResNet50_graph_dlperf_gpudecode_FP32_b256_1n2g
@@ -45,29 +45,8 @@ bash examples/args_train_ddp_graph.sh 1 2 0 127.0.0.1 /ssd/dataset/ImageNet/ofre
 
 # Graph  fp16  b512 cpu decode
 # ResNet50_graph_dlperf_cpudecode_FP16_b512_1n2g
-bash examples/args_train_ddp_graph.sh 1 2 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 128 1 true python3 graph cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
+#bash examples/args_train_ddp_graph.sh 1 2 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 128 1 true python3 graph cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
 
-
-# 1n4g
-
-# Graph or DDP  fp32  b256 cpu decode
-# ResNet50_ddp_dlperf_cpudecode_FP32_b256_1n4g
-#bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 256 1 false python3 ddp cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
-
-# ResNet50_graph_dlperf_cpudecode_FP32_b256_1n4g
-#bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 256 1 false python3 graph cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
-
-# Graph or DDP  fp32  b256 gpu decode
-# ResNet50_graph_dlperf_gpudecode_FP32_b256_1n4g
-#bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 256 1 false python3 graph gpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
-
-# Graph  fp16  b512 gpu decode
-# ResNet50_graph_dlperf_gpudecode_FP16_b512_1n4g
-#bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 512 1 true python3 graph gpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
-
-# Graph  fp16  b512 cpu decode
-# ResNet50_graph_dlperf_cpudecode_FP16_b512_1n4g
-#bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 512 1 true python3 graph cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
 
 
 # analysis result

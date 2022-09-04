@@ -30,6 +30,7 @@ cd ${MODEL_DIR}
 
 # 1n4g
 
+export CUDA_VISIBLE_DEVICES=0,1,4,5
 # WDL_ddp_dlperf_vs2322444_devs16_hun2_b512_1n4g
 bash wdl_graph_ddp.sh 1 4 0 127.0.0.1 /data/dataset/wdl_ofrecord 512 1100 python3 ddp
 

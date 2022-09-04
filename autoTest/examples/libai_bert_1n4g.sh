@@ -31,6 +31,7 @@ python3 -m pip install -e . --user
 
 
 ## BERT
+export CUDA_VISIBLE_DEVICES=0,1,4,5
 #  1n4g 模型并行        bert_nl24_nah16_hs1024_fp16_acfalse_mp4_pp1_mb6_gb6_1n4g
 bash tools/args_libai_bert.sh configs/bert_nl24_nah16_hs1024.py 1 4 0 127.0.0.1 4 1 true false 6 6
 
