@@ -2,19 +2,18 @@
 
 参考 https://github.com/Oneflow-Inc/libai/pull/316#issuecomment-1198826336
 ### 准备环境
+``` bash 
+git clone git@github.com:Oneflow-Inc/libai.git && 在libai/engine/trainer.py里添加显存输出代码
+cd libai
+cd tools && 拷贝 args_libai_bert_init.sh args_libai_bert_loss.sh args_libai_gpt2_init.sh args_libai_gpt2_loss.sh args_libai_t5_init.sh args_libai_t5_loss.sh
+cd configs && 拷贝 OneAutoTest/libai/bert_nl24_nah16_hs1024.py OneAutoTest/libai/gpt2_nl24_nah16_hs1024.py OneAutoTest/libai/t5_nl12_nah12_hs768.py && 如果是25-28机，需添一句 train.rdma_enabled=False
+cd .. && 拷贝 init.sh loss.sh draw_loss.py compose.py
+mkdir loss_txt && mkdir curve
 
-    ```bash    
-    git clone git@github.com:Oneflow-Inc/libai.git && 在libai/engine/trainer.py里添加显存输出代码
-    cd libai
-    cd tools && 拷贝 args_libai_bert_init.sh args_libai_bert_loss.sh args_libai_gpt2_init.sh args_libai_gpt2_loss.sh args_libai_t5_init.sh args_libai_t5_loss.sh
-    cd configs && 拷贝 OneAutoTest/libai/bert_nl24_nah16_hs1024.py OneAutoTest/libai/gpt2_nl24_nah16_hs1024.py OneAutoTest/libai/t5_nl12_nah12_hs768.py && 如果是25-28机，需添一句 train.rdma_enabled=False
-    cd .. && 拷贝 init.sh loss.sh draw_loss.py compose.py
-    mkdir loss_txt && mkdir curve
-
-    # 分别为 master对照组 和 测试分支 创建虚拟环境
-    conda create -n acc python=3.8 && conda activate acc && 安装GradAcc测试分支对应的oneflow
-    conda create -n master python=3.8 && conda activate master && 安装对照组master分支对应的onflow
-    ```
+# 分别为 master对照组 和 测试分支 创建虚拟环境
+conda create -n acc python=3.8 && conda activate acc && 安装GradAcc测试分支对应的oneflow
+conda create -n master python=3.8 && conda activate master && 安装对照组master分支对应的oneflow
+```
 
 ### 生成模型初始化权重
 - 显存设置为iter=1时输出，不要注释掉checkpointer
@@ -33,7 +32,7 @@
     `args_libai_gpt2_loss.sh` 和 `args_libai_t5_loss.sh` 做相同修改
 - 显存设置为iter=99时输出，注释掉checkpointer
 - 把 `libai/data/build.py` 中 `persistent_workers=True if num_workers > 0 else False` 全部注释掉, 必要时把所有的shuffle都设置为False
-- 在libai/engine/trainer.py下加保存loss的语句
+- 在 `libai/engine/trainer.py` 下加保存loss的语句
     ```python
     total_losses_reduced = sum(metrics_dict.values())
     if dist.is_main_process():
