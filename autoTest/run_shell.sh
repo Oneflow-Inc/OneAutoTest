@@ -48,14 +48,12 @@
 #sed -i 's/01b1d32/oneflow-28/g' scripts/libai/tools/args_libai_bert.sh
 #sed -i 's/RUN_COMMIT/HOSTNAME/g' scripts/libai/tools/args_libai_bert.sh
 #sed -i 's/\/path\/to/\/ssd\/dataset\/libai_dataset/g' scripts/libai/configs/bert_nl24_nah16_hs1024.py
-#sed -i '$a train.rdma_enabled = False' scripts/libai/configs/bert_nl24_nah16_hs1024.py
 
 #cp ../libai/args_libai_gpt2.sh scripts/libai/tools/
 #cp ../libai/gpt2_nl24_nah16_hs1024.py scripts/libai/configs
 #sed -i 's/01b1d32/oneflow-28/g' scripts/libai/tools/args_libai_gpt2.sh
 #sed -i 's/RUN_COMMIT/HOSTNAME/g' scripts/libai/tools/args_libai_gpt2.sh
 #sed -i 's/\/path\/to/\/ssd\/dataset\/libai_dataset/g' scripts/libai/configs/gpt2_nl24_nah16_hs1024.py
-#sed -i '$a train.rdma_enabled = False' scripts/libai/configs/gpt2_nl24_nah16_hs1024.py
 
 # libai-bert
 cd /ssd/oneTest/OneAutoTest/autoTest && bash examples/libai_bert_1n1g.sh
