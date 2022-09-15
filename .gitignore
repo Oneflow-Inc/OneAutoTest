@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+libai/accuracy_verify/libai/
+libai/accuracy_verify/log/
