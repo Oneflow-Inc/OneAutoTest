@@ -36,8 +36,7 @@ model.cfg.max_position_embeddings = 512
 train.warmup_ratio = 0.01
 train.test_micro_batch_size = 4
 
-
-#train.dist.pipeline_num_layers = 2 * model.cfg.hidden_layers
+train.dist.pipeline_num_layers = 2 * model.cfg.hidden_layers
 
 train.input_placement_device = "cpu"
 
