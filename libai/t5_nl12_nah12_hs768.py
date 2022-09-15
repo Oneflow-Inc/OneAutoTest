@@ -26,7 +26,7 @@ model.cfg.bias_gelu_fusion = True
 model.cfg.bias_dropout_fusion = True
 
 # Set matched model arguments
-#model.cfg.hidden_layers = 12
+model.cfg.hidden_layers = 12
 model.cfg.hidden_size = 768
 model.cfg.intermediate_size = 3072
 model.cfg.num_attention_heads = 12
