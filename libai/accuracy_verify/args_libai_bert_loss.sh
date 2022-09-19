@@ -19,7 +19,7 @@ USE_FP16=${8:-true}
 ACTIVATION_CHECKPOINT=${9:-false}
 MICRO_BATCH_SIZE=${10:-4}
 GLOBAL_BATCH_SIZE=${11:-4}
-ACC_COMMIT=${12:-"c4ce8fb"}
+TEST_COMMIT=${12:-"c4ce8fb"}
 NUM_LAYER=${13:-24}
 RUN_COMMIT=${14:-"master"}
 TRAIN_ITERS=${15:-100}
@@ -42,18 +42,6 @@ fi
 FILENAME=${TRAN_MODEL}_nl${NUM_LAYER}_nah16_hs1024_${AMP_OR}_ac${ACTIVATION_CHECKPOINT}_mp${MP}_pp${PP}_mb${MICRO_BATCH_SIZE}_gb${GLOBAL_BATCH_SIZE}_${NNODES}n${GPUS_PER_NODE}g
 WEIGHT_FILENAME=$WEIGHT_FOLDER/${FILENAME}/model_final/
 
-
-for TEST_COMMIT in "master" ${ACC_COMMIT}
-do
-if [ ${TEST_COMMIT} == ${ACC_COMMIT} ]; then
-    source /home/xuyongning/miniconda3/bin/activate acc
-    sed -i "s#loss1.txt#loss_txt/${FILENAME}_loss_${TEST_COMMIT}.txt#g" draw_loss.py
-    sed -i "s#loss1#${FILENAME}_loss_${TEST_COMMIT}#g" draw_loss.py
-else
-    source /home/xuyongning/miniconda3/bin/activate master
-    sed -i "s#loss2.txt#loss_txt/${FILENAME}_loss_${TEST_COMMIT}.txt#g" draw_loss.py
-    sed -i "s#loss2#${FILENAME}_loss_${TEST_COMMIT}#g" draw_loss.py
-fi
 
 sed -i "s#your_loss#${FILENAME}_loss_${TEST_COMMIT}#g" libai/engine/trainer.py
 
@@ -93,21 +81,3 @@ train.output_dir=$LOG_FILENAME 2>&1 | tee ${LOG_FILENAME}/output.log
 rm -rf $LOG_FILENAME/model_final
 
 sed -i "s#${FILENAME}_loss_${TEST_COMMIT}#your_loss#g" libai/engine/trainer.py
-
-done
-
-sed -i "s#loss_curve.png#curve/loss_curve_${FILENAME}_${TEST_COMMIT}.png#g" draw_loss.py
-python3 draw_loss.py
-sed -i "s#curve/loss_curve_${FILENAME}_${TEST_COMMIT}.png#loss_curve.png#g" draw_loss.py
-
-for TEST_COMMIT in "master" ${ACC_COMMIT}
-do
-if [ ${TEST_COMMIT} == ${ACC_COMMIT} ]; then
-    sed -i "s#loss_txt/${FILENAME}_loss_${TEST_COMMIT}.txt#loss1.txt#g" draw_loss.py
-    sed -i "s#${FILENAME}_loss_${TEST_COMMIT}#loss1#g" draw_loss.py
-else
-    sed -i "s#loss_txt/${FILENAME}_loss_${TEST_COMMIT}.txt#loss2.txt#g" draw_loss.py
-    sed -i "s#${FILENAME}_loss_${TEST_COMMIT}#loss2#g" draw_loss.py
-fi
-done
-

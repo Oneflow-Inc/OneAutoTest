@@ -1,9 +1,14 @@
+
+MASTER_COMMIT=${1:-"ecafd61b09349a1c6c45333ea6eff96009cf66c0"}
+
+python3 -m pip uninstall oneflow -y
+python3 -m pip install https://oneflow-staging.oss-cn-beijing.aliyuncs.com/canary/commit/${MASTER_COMMIT}/cu112/oneflow-0.8.1%2Bcu112.git.${MASTER_COMMIT:0:7}-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 pip install -e .
 
 ## bert
 #  1n1g acc4        bert_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb32_gb128_1n1g
 bash tools/args_libai_bert_init.sh configs/bert_nl24_nah16_hs1024.py 1 1 0 127.0.0.1 1 1 true true 32 128
-
+<<Long
 export CUDA_VISIBLE_DEVICES=0,1,4,5
 #  1n4g dp4 acc4        bert_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb32_gb512_1n4g
 bash tools/args_libai_bert_init.sh configs/bert_nl24_nah16_hs1024.py 1 4 0 127.0.0.1 1 1 true true 32 512
@@ -64,3 +69,4 @@ bash tools/args_libai_t5_init.sh configs/t5_nl12_nah12_hs768.py 1 4 0 127.0.0.1 
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 #  1n8g 3-D acc4  t5_nl12_nah12_hs768_fp16_actrue_mp2_pp2_mb64_gb512_1n8g
 bash tools/args_libai_t5_init.sh configs/t5_nl12_nah12_hs768.py 1 8 0 127.0.0.1 2 2 true true 64 512
+Long

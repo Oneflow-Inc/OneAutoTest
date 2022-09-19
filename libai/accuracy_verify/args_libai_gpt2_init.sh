@@ -43,8 +43,6 @@ LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_nl${NUM_LAYER}_nah16_hs1024_${AMP_OR}_ac$
 echo LOG_FILENAME=$LOG_FILENAME
 mkdir -p $LOG_FILENAME
 
-source /home/xuyongning/miniconda3/bin/activate master
-
 # nsys
 #nsys profile --stats true --output ${LOG_FILENAME} \
 python3 -m oneflow.distributed.launch \
