@@ -18,4 +18,7 @@ sed -i '/99/1' ./libai/engine/trainer.py
 sed -i '/hooks.PeriodicCheckpointer/#hooks.PeriodicCheckpointer' ./libai/engine/default.py
 sed -i '/persistent_workers=True/#persistent_workers=True' ./libai/data/build.py
 sed -i '/shuffle=True/shuffle=False' ./libai/data/build.py
+sed -i '/total_losses_reduced = sum(metrics_dict.values())/a\            if dist.is_main_process():\n \
+                txt = open("loss_txt/your_loss.txt", "a")\n \
+                txt.write(str(total_losses_reduced.item())+"\n")' ./libai/engine/trainer.py
 bash loss.sh
