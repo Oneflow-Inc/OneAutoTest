@@ -5,7 +5,7 @@ ACC_COMMIT=${2:-"3d5e919cb700d84f52d4cf2730083931f17a91bb"}
 for TEST_COMMIT in ${MASTER_COMMIT} ${ACC_COMMIT}
 do
 python3 -m pip uninstall oneflow -y
-python3 -m pip install https://oneflow-staging.oss-cn-beijing.aliyuncs.com/canary/commit/${TEST_COMMIT}/cu112/oneflow-0.8.1%2Bcu112.git.${MASTER_COMMIT:0:7}-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+python3 -m pip install https://oneflow-staging.oss-cn-beijing.aliyuncs.com/canary/commit/${TEST_COMMIT}/cu112/oneflow-0.8.1%2Bcu112.git.${TEST_COMMIT:0:7}-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 pip install -e .
 
 ## bert
