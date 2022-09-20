@@ -1,15 +1,19 @@
 
 MASTER_COMMIT=${1:-"ecafd61b09349a1c6c45333ea6eff96009cf66c0"}
 ACC_COMMIT=${2:-"3d5e919cb700d84f52d4cf2730083931f17a91bb"}
-COMMIT=${3:-"master"}
+BRANCH=${3:-"dev_cc_acc_mem_v5"}
+COMMIT=${4:-"master"}
 
 for TEST_COMMIT in ${MASTER_COMMIT} ${ACC_COMMIT}
 do
 if [ $TEST_COMMIT != $MASTER_COMMIT ];then
-    COMMIT = "master"
+    COMMIT = ${ACC_COMMIT:0:7}
+    python3 -m pip uninstall oneflow -y
+    python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/${BRANCH}/cu112/${TEST_COMMIT}
+else
+    python3 -m pip uninstall oneflow -y
+    python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/master/cu112/${TEST_COMMIT}
 fi
-python3 -m pip uninstall oneflow -y
-python3 -m pip install https://oneflow-staging.oss-cn-beijing.aliyuncs.com/canary/commit/${TEST_COMMIT}/cu112/oneflow-0.8.1%2Bcu112.git.${TEST_COMMIT:0:7}-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 pip install -e .
 
 ## bert
