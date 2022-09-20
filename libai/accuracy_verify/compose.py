@@ -1,14 +1,14 @@
 import PIL.Image as Image
 import os
 
-IMAGES_PATH = './img_t5/'
+IMAGES_PATH = './img_model/'
 
 IMAGES_FORMAT = ['.png']
 IMAGE_SIZE_1 = 640
 IMAGE_SIZE_2 = 480
 IMAGE_ROW = 2
 IMAGE_COLUMN = 3
-IMAGE_SAVE_PATH = 'img_t5/compose_t5.png'
+IMAGE_SAVE_PATH = './curve/compose_model.png'
 
 image_names = [name for name in os.listdir(IMAGES_PATH) for item in IMAGES_FORMAT if
                os.path.splitext(name)[1] == item]

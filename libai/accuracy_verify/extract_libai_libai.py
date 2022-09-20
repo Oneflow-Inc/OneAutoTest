@@ -75,7 +75,7 @@ def extract_result(args, extract_func):
 
     logs_list_compare = glob.glob(os.path.join(args.compare_log, "*/*/output.log"))
     logs_list_compare = sorted(logs_list_compare)
-
+    
     throughput_final_result_dict = {}
     markdown_table_header = """
 
@@ -85,7 +85,7 @@ def extract_result(args, extract_func):
 | {case_name}   | [{libai_memory}]({libai_yaml}) MiB/[{libai_samples}]({libai_log}) samples/s                                 | [{libai_memory_compare}]({libai_yaml_compare}) MiB/[{libai_samples_compare}]({libai_log_compare}) samples/s |"""
 
     tmp_markdown_table_header = markdown_table_header.format(
-        logs_list[0].split("/")[-5], logs_list[0].split("/")[-5], logs_list_compare[0].split("/")[-4], logs_list_compare[0].split("/")[-4]
+        logs_list[0].split("/")[-4], logs_list[0].split("/")[-4], logs_list_compare[0].split("/")[-4], logs_list_compare[0].split("/")[-4]
     )
 
     for l in logs_list:
@@ -102,16 +102,16 @@ def extract_result(args, extract_func):
         ]
         throughput_final_result_dict[case_header][
             "libai_yaml"
-        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/loss_matching/GradAcc/oneflow-28/part2/test_logs_loss/c4ce8fb/{}/config.yaml".format(
-            "/".join(tmp_file_name[-3:-1])
+        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/loss_matching/GradAcc/oneflow-28/PR/test_logs_loss/{}/config.yaml".format(
+            "/".join(tmp_file_name[-4:-1])
         )
         throughput_final_result_dict[case_header]["libai_samples"] = libai_result_dict[
             "samples"
         ]
         throughput_final_result_dict[case_header][
             "libai_log"
-        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/loss_matching/GradAcc/oneflow-28/part2/test_logs_loss/c4ce8fb/{}".format(
-            "/".join(tmp_file_name[-3:])
+        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/loss_matching/GradAcc/oneflow-28/PR/test_logs_loss/{}".format(
+            "/".join(tmp_file_name[-4:])
         )
 
     for l in logs_list_compare:
@@ -128,16 +128,16 @@ def extract_result(args, extract_func):
         ]
         throughput_final_result_dict[case_header][
             "libai_yaml_compare"
-        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/loss_matching/GradAcc/oneflow-28/part2/test_logs_loss/master/{}/config.yaml".format(
-            "/".join(tmp_file_name[-3:-1])
+        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/loss_matching/GradAcc/oneflow-28/PR/test_logs_loss/{}/config.yaml".format(
+            "/".join(tmp_file_name[-4:-1])
         )
         throughput_final_result_dict[case_header]["libai_samples_compare"] = libai_result_dict[
             "samples"
         ]
         throughput_final_result_dict[case_header][
             "libai_log_compare"
-        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/loss_matching/GradAcc/oneflow-28/part2/test_logs_loss/master/{}".format(
-            "/".join(tmp_file_name[-3:])
+        ] = "https://oneflow-test.oss-cn-beijing.aliyuncs.com/loss_matching/GradAcc/oneflow-28/PR/test_logs_loss/{}".format(
+            "/".join(tmp_file_name[-4:])
         )
 
         tmp_markdown_table_header += markdown_table_body.format(
