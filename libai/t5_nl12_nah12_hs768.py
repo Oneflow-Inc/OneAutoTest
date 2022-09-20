@@ -18,8 +18,6 @@ tokenization.tokenizer.vocab_file = vocab_file
 dataloader.train.dataset[0].data_prefix = data_prefix
 dataloader.train.dataset[0].indexed_dataset.data_prefix = data_prefix
 
-train.eval_iter = 10
-
 # Set all dropout to 0.
 model.cfg.hidden_dropout_prob = 0.1
 model.cfg.attention_probs_dropout_prob = 0.1
