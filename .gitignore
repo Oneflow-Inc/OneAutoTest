@@ -130,3 +130,4 @@ dmypy.json
 
 libai/accuracy_verify/libai/
 libai/accuracy_verify/log/
+libai/accuracy_verify/new.ipynb

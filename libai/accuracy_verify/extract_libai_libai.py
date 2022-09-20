@@ -71,10 +71,10 @@ def megatron_extract(log_file):
 
 def extract_result(args, extract_func):
     logs_list = glob.glob(os.path.join(args.test_log, "*/*/output.log"))
-    logs_list = sorted(logs_list)
+    logs_list = sorted(logs_list, key=lambda x: x.split('/')[-2])
 
     logs_list_compare = glob.glob(os.path.join(args.compare_log, "*/*/output.log"))
-    logs_list_compare = sorted(logs_list_compare)
+    logs_list_compare = sorted(logs_list_compare, key=lambda x: x.split('/')[-2])
     
     throughput_final_result_dict = {}
     markdown_table_header = """
