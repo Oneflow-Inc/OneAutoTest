@@ -59,8 +59,8 @@ def draw_and_save(info_dic):
     # setup
     plt.rcParams["figure.dpi"] = 100
     plt.clf()
-    plt.xlabel(xlabel, fontproperties="Times New Roman")
-    plt.ylabel(ylabel, fontproperties="Times New Roman")
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     if xlim:
         plt.xlim(xlim[0], xlim[1])
     if ylim:

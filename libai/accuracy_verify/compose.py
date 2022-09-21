@@ -12,7 +12,7 @@ IMAGE_SAVE_PATH = './curve/compose_model.png'
 
 image_names = [name for name in os.listdir(IMAGES_PATH) for item in IMAGES_FORMAT if
                os.path.splitext(name)[1] == item]
-print(image_names)
+#print(image_names)
 
 if len(image_names) != IMAGE_ROW * IMAGE_COLUMN:
     raise ValueError("合成图片的参数和要求的数量不能匹配！")

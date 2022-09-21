@@ -79,13 +79,13 @@ def extract_result(args, extract_func):
     throughput_final_result_dict = {}
     markdown_table_header = """
 
-|      | [{}](https://github.com/Oneflow-Inc/oneflow/tree/{}) | [{}](https://github.com/Oneflow-Inc/oneflow/tree/{})                                                     |
-| ---- | ------------------------------------------------------------ | ------------------------------------------------------------ |"""
++------+--------------------------------------------------------+--------------------------------------------------------+
+|      | {}                                                     | {}                                                     |"""
     markdown_table_body = """
 | {case_name}   | [{libai_memory}]({libai_yaml}) MiB/[{libai_samples}]({libai_log}) samples/s                                 | [{libai_memory_compare}]({libai_yaml_compare}) MiB/[{libai_samples_compare}]({libai_log_compare}) samples/s |"""
 
     tmp_markdown_table_header = markdown_table_header.format(
-        logs_list[0].split("/")[-4], logs_list[0].split("/")[-4], logs_list_compare[0].split("/")[-4], logs_list_compare[0].split("/")[-4]
+        logs_list[0].split("/")[-4], logs_list_compare[0].split("/")[-4]
     )
 
     for l in logs_list:
@@ -93,10 +93,11 @@ def extract_result(args, extract_func):
         tmp_file_name = l.split("/")
         # case_config = get_config("/".join(tmp_file_name[:-1]))
         case_header = "_".join(tmp_file_name[-2].split("_")[1:-2]).lower()
+        case_header_2line = case_header.split("ac")[0] + "\ ac" + case_header.split("ac")[1] 
 
         if case_header not in throughput_final_result_dict.keys():
             throughput_final_result_dict[case_header] = {}
-        throughput_final_result_dict[case_header]["case_name"] = case_header
+        throughput_final_result_dict[case_header]["case_name"] = case_header_2line
         throughput_final_result_dict[case_header]["libai_memory"] = libai_result_dict[
             "memory"
         ]
@@ -119,10 +120,11 @@ def extract_result(args, extract_func):
         tmp_file_name = l.split("/")
         # case_config = get_config("/".join(tmp_file_name[:-1]))
         case_header = "_".join(tmp_file_name[-2].split("_")[1:-2]).lower()
+        case_header_2line = case_header.split("ac")[0] + "\ ac" + case_header.split("ac")[1]
 
         if case_header not in throughput_final_result_dict.keys():
             throughput_final_result_dict[case_header] = {}
-        throughput_final_result_dict[case_header]["case_name_compare"] = case_header
+        throughput_final_result_dict[case_header]["case_name_compare"] = case_header_2line
         throughput_final_result_dict[case_header]["libai_memory_compare"] = libai_result_dict[
             "memory"
         ]
@@ -143,6 +145,9 @@ def extract_result(args, extract_func):
         tmp_markdown_table_header += markdown_table_body.format(
             **throughput_final_result_dict[case_header]
         )
+
+    tmp_markdown_table_header += """
++------+--------------------------------------------------------+--------------------------------------------------------+"""
 
     with open("{}/dlperf_result.md".format(args.compare_log), "w",) as f:
         f.write(tmp_markdown_table_header)
