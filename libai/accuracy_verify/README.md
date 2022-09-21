@@ -33,6 +33,11 @@ bash run.sh "ecafd61b09349a1c6c45333ea6eff96009cf66c0" "3d5e919cb700d84f52d4cf27
 
 - 运行
     ```bash
+    jupyter nbconvert --execute --to latex process_data.ipynb --output new.tex
+    vim new.tex && 在其中添加一行 \usepackage{ctex} 用于解决中文输出问题
+    xelatex new.tex
+
+    # 如果notebook中没有中文，直接运行下方语句即可
     jupyter nbconvert --execute --to pdf process_data.ipynb --output new.pdf
     ```
     运行后耐心等待几分钟，会生成pdf文件
