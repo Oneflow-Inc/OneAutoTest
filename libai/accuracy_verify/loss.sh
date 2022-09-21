@@ -9,7 +9,7 @@ do
 if [ $TEST_COMMIT != $MASTER_COMMIT ];then
     COMMIT = ${ACC_COMMIT:0:7}
     python3 -m pip uninstall oneflow -y
-    python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/${BRANCH}/cu112/${TEST_COMMIT}
+    python3 -m pip install --pre oneflow -f https://staging.oneflow.info/canary/refs/heads/${BRANCH}/cu112/index.html
 else
     python3 -m pip uninstall oneflow -y
     python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/master/cu112/${TEST_COMMIT}

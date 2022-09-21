@@ -11,14 +11,31 @@ git clone git@github.com:Oneflow-Inc/libai.git
 
 ### 进行测试
 ```bash
-bash run.sh "ecafd61b09349a1c6c45333ea6eff96009cf66c0" "3d5e919cb700d84f52d4cf2730083931f17a91bb"
+bash run.sh "ecafd61b09349a1c6c45333ea6eff96009cf66c0" "3d5e919cb700d84f52d4cf2730083931f17a91bb" "dev_cc_acc_mem_v5"
 ```
 
 ### 处理测试数据
 注：在将.ipynb转为.pdf之前，需要先安装pandoc和texlive
-```bash
-jupyter nbconvert --execute --to pdf process_data.ipynb --output new.pdf
-```
+
+- 下载pandoc：https://github.com/jgm/pandoc/releases/tag/2.19.2
+
+    `export PATH="/path/to/pandoc-2.19.2/bin:$PATH"`
+
+- 下载texlive
+    ```
+    wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+    zcat install-tl-unx.tar.gz | tar xf -
+    cd install-tl-*
+    vim install-tl # 修改安装路径'/usr/local/texlive'
+    perl ./install-tl --no-interaction
+    ```
+    `export PATH="/path/to/texlive/2022/bin/x86_64-linux:$PATH"`
+
+- 运行
+    ```bash
+    jupyter nbconvert --execute --to pdf process_data.ipynb --output new.pdf
+    ```
+    运行后耐心等待几分钟，会生成pdf文件
 
 ## 测试结果
 
