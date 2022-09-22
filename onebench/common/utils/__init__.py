@@ -1,4 +1,4 @@
-from onebench.common.utils.logging import OneBenchLogger, logger
+from utils.logging import OneBenchLogger, logger
 
 __all__ = [
     'OneBenchLogger',
