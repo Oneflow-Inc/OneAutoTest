@@ -10,7 +10,7 @@ from pathlib import Path
 
 import xmltodict
 
-from utils import logger
+from onebench.common.utils import logger
 
 # --------------------------------------------------------
 # References:
