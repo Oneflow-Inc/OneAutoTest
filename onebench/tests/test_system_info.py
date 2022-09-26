@@ -1,5 +1,5 @@
 import sys
-sys.path.append("/home/xuyongning/OneAutoTest")
+sys.path.append("/path/to/OneAutoTest")
 from onebench.common.system_info import *
 import os
 import argparse
@@ -10,9 +10,14 @@ def extract_info(dict):
 ## 硬件信息
 - 操作系统: \n\r
     {os_release}
-- GPU: `{gpu_name} * {gpu_count}`\n
+- GPU: {gpu_name} * {gpu_count}\n
     driver_version: {driver_version}
     cuda_version: {cuda_version}
+    显存: {gpu_mem}
+    topo:
+```
+{gpu_topo}
+```
 - CPU:  运行`lscpu`\n
     Model name: {cpu_name}
     Architecture: {cpu_arch}
@@ -34,6 +39,8 @@ def extract_info(dict):
     body_dict["gpu_count"] = dict["Accelerator"]["gpu_count"]
     body_dict["driver_version"] = dict["Accelerator"]["nvidia_info"]["driver_version"]
     body_dict["cuda_version"] = dict["Accelerator"]["nvidia_info"]["cuda_version"]
+    body_dict["gpu_mem"] = dict["Accelerator"]["nvidia_info"]["gpu"][0]["fb_memory_usage"]["total"]
+    body_dict["gpu_topo"] = dict["Accelerator"]["topo"]
     body_dict["cpu_name"] = dict["CPU"]["Model name"]
     body_dict["cpu_arch"] = dict["CPU"]["Architecture"]
     body_dict["cpu_core_num"] = dict["CPU"]["CPU(s)"]
