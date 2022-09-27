@@ -17,7 +17,7 @@ fi
 SRC_DIR=$(realpath $(dirname $0)/..)
 echo "SRC_DIR=${SRC_DIR}"
 
-git_commit=$(python3 ${SRC_DIR}/tools/get_whl_git_commit.py)
+git_commit=$(python3 ${SRC_DIR}/../../tools/get_whl_git_commit.py)
 echo "git_commit=${git_commit}"
 
 
@@ -31,9 +31,12 @@ cd ${MODEL_DIR}
 
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 
-# graph fp16 b192
-# ResNet50_graph_train_gpudecode_FP16_b192_1n4g
+# graph fp16 gb1280
+# ResNet50_graph_train_gpudecode_FP16_b160_1n8g
 bash examples/args_train_ddp_graph.sh 1 8 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 160 50 true python3 graph gpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
+
+# ResNet50_graph_train_gpudecode_FP16_b40_acc4_1n8g
+bash examples/args_train_ddp_graph.sh 1 8 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 40 50 true python3 graph gpu 100 false "${NSYS_BIN}" ${RUN_COMMIT} 4 20
 
 python3 ${SRC_DIR}/../ResNet50/tools/extract_result.py --model-type "graph" --run-type ${RUN_TYPE} --test-commit ${git_commit} --test-log ${MODEL_DIR}/test_logs/$HOSTNAME --compare-commit ${git_commit} --url-path autoTest/commit/${RUN_COMMIT}/$(date "+%Y%m%d")/${git_commit}/ResNet50-graph/${RUN_TYPE}
 

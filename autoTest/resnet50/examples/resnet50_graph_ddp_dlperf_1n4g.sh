@@ -18,13 +18,16 @@ fi
 SRC_DIR=$(realpath $(dirname $0)/..)
 echo "SRC_DIR=${SRC_DIR}"
 
-git_commit=$(python3 ${SRC_DIR}/tools/get_whl_git_commit.py)
+git_commit=$(python3 ${SRC_DIR}/../../tools/get_whl_git_commit.py)
 echo "git_commit=${git_commit}"
 
 
 MODEL_DIR=${SRC_DIR}/scripts/models/Vision/classification/image/resnet50
 cd ${MODEL_DIR}
 
+
+sed -i '/self.cur_batch += 1/a\\n            if self.cur_iter == 200: \
+                break' ./train.py
 
 # 1n4g
 
@@ -48,6 +51,7 @@ bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 /ssd/dataset/ImageNet/ofre
 # ResNet50_graph_dlperf_cpudecode_FP16_b512_1n4g
 #bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 128 1 true python3 graph cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
 
+sed -i '/if self.cur_iter == 200:/, +2d' ./train.py
 
 # analysis result
 
