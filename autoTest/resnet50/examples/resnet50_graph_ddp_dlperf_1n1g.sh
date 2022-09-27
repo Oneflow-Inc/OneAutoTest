@@ -26,7 +26,7 @@ MODEL_DIR=${SRC_DIR}/scripts/models/Vision/classification/image/resnet50
 cd ${MODEL_DIR}
 
 
-sed -i '/self.cur_batch += 1/a\\n            if self.cur_iter == 200: \
+sed -i '/self.cur_batch += 1/a\\n            if self.cur_iter == 220: \
                 break' ./train.py
 
 # 1n1g
@@ -50,7 +50,7 @@ bash examples/args_train_ddp_graph.sh 1 1 0 127.0.0.1 /ssd/dataset/ImageNet/ofre
 # ResNet50_graph_dlperf_cpudecode_FP16_b512_1n1g
 #bash examples/args_train_ddp_graph.sh 1 1 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 128 1 true python3 graph cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
 
-sed -i '/if self.cur_iter == 200:/, +2d' ./train.py
+sed -i '/if self.cur_iter == 220:/, +1d' ./train.py
 
 
 # analysis result
