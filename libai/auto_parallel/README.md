@@ -4,6 +4,7 @@
 git clone git@github.com:Oneflow-Inc/OneAutoTest.git
 cd OneAutoTest/libai/auto_parallel
 git clone git@github.com:Oneflow-Inc/libai.git
+cd libai && pip install -e . && cd ..
 bash run.sh
 ```
 
