@@ -1,5 +1,7 @@
 rm -rf core.*
 
+set -ex
+
 
 # bash examples/args_train_ddp_graph.sh ${NUM_NODES} ${DEVICE_NUM_PER_NODE} ${NODE_RANK} ${MASTER_ADDR}
 # ${OFRECORD_PATH} ${TRAIN_BATCH_SIZE} ${EPOCH} ${USE_FP16} ${PYTHON_BIN} ${RUN_TYPE} ${DEBUG_AND_NCCL} ${NSYS_BIN} ${RUN_COMMIT}
@@ -17,10 +19,12 @@ USE_FP16=${8:-false}
 PYTHON_BIN=${9:-"python3"}
 RUN_TYPE=${10:-"ddp"} # graph+fp16
 DECODE_TYPE=${11:-"cpu"}
-PRINT_INTERVAL=${12:-1}
+PRINT_INTERVAL=${12:-100}
 DEBUG_AND_NCCL=${13:-false}
 NSYS_BIN=${14:-""}
 RUN_COMMIT=${15:-"master"}
+ACC=${16:-1}
+VAL_BATCH_SIZE=${17:-50}
 
 
 SRC_DIR=$(realpath $(dirname $0)/..)
@@ -34,7 +38,7 @@ TRAN_MODEL="resnet50"
 RUN_TIME=$(date "+%Y%m%d_%H%M%S%N")
 LOG_FOLDER=${SRC_DIR}/test_logs/$HOSTNAME/${NUM_NODES}n${DEVICE_NUM_PER_NODE}g
 mkdir -p $LOG_FOLDER
-LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_${RUN_TYPE}_DC${DECODE_TYPE}_${AMP_OR}_b${TRAIN_BATCH_SIZE}_${NUM_NODES}n${DEVICE_NUM_PER_NODE}g_${RUN_COMMIT}_${RUN_TIME}
+LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_${RUN_TYPE}_DC${DECODE_TYPE}_${AMP_OR}_mb${TRAIN_BATCH_SIZE}_gb$((${TRAIN_BATCH_SIZE}*${NUM_NODES}*${DEVICE_NUM_PER_NODE}*${ACC}))_acc${ACC}_${NUM_NODES}n${DEVICE_NUM_PER_NODE}g_${RUN_COMMIT}_${RUN_TIME}
 
 
 export PYTHONUNBUFFERED=1
@@ -59,8 +63,7 @@ fi
 #export ONEFLOW_STREAM_CUDA_EVENT_FLAG_BLOCKING_SYNC=true
 #export ONEFLOW_VM_WORKLOAD_ON_SCHEDULER_THREAD=1
 
-LEARNING_RATE=$(echo | awk "{print $NUM_NODES*$DEVICE_NUM_PER_NODE*$TRAIN_BATCH_SIZE/1000}")
-VAL_BATCH_SIZE=50
+LEARNING_RATE=$(echo | awk "{print $NUM_NODES*$DEVICE_NUM_PER_NODE*$TRAIN_BATCH_SIZE*$ACC/1000}")
 MOM=0.875
 OFRECORD_PART_NUM=256
 
@@ -97,7 +100,9 @@ CMD+="--lr ${LEARNING_RATE} "
 CMD+="--momentum ${MOM} "
 CMD+="--num-epochs ${EPOCH} "
 CMD+="--train-batch-size ${TRAIN_BATCH_SIZE} "
+CMD+="--train-global-batch-size $((${TRAIN_BATCH_SIZE}*${NUM_NODES}*${DEVICE_NUM_PER_NODE}*${ACC})) "
 CMD+="--val-batch-size ${VAL_BATCH_SIZE} "
+CMD+="--val-global-batch-size $((${VAL_BATCH_SIZE}*${NUM_NODES}*${DEVICE_NUM_PER_NODE}*${ACC})) "
 CMD+="--print-interval ${PRINT_INTERVAL} "
 CMD+="--exit-num ${EXIT_NUM} "
 #CMD+="--synthetic-data "

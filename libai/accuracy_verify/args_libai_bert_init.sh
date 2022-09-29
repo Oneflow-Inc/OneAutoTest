@@ -1,8 +1,7 @@
-
 set -ex
 # # bash tools/args_libai_bert.sh model_config pre_gpu node rank master_ip mp pp fp16 activation mbsz gbsz commit
 
-# volcengine.com 
+# volcengine.com
 #export NCCL_IB_PCI_RELAXED_ORDERING=1
 #export ONEFLOW_COMM_NET_IB_GID_INDEX=$NCCL_IB_GID_INDEX
 #export ONEFLOW_COMM_NET_IB_HCA=$NCCL_IB_HCA
@@ -21,13 +20,13 @@ ACTIVATION_CHECKPOINT=${9:-false}
 MICRO_BATCH_SIZE=${10:-4}
 GLOBAL_BATCH_SIZE=${11:-4}
 NUM_LAYER=${12:-24}
-RUN_COMMIT=${13:-"01b1d32"}
-TRAIN_ITERS=${14:-220}
-LOG_PERIOD=${15:-100}
+RUN_COMMIT=${13:-"master"}
+TRAIN_ITERS=${14:-2}
+LOG_PERIOD=${15:-1}
 
-TRAN_MODEL="LibAI_t5"
+TRAN_MODEL="LibAI_bert"
 RUN_TIME=$(date "+%Y%m%d_%H%M%S%N")
-LOG_FOLDER=test_logs/${RUN_COMMIT}/${NNODES}n${GPUS_PER_NODE}g
+LOG_FOLDER=test_logs_init/${RUN_COMMIT}/${NNODES}n${GPUS_PER_NODE}g
 
 AMP_OR="FP32"
 if $USE_FP16; then
@@ -40,8 +39,7 @@ fi
 #export GLOG_v=3
 #export ONEFLOW_DEBUG_MODE=1
 
-LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_nl${NUM_LAYER}_nah16_hs2304_${AMP_OR}_ac${ACTIVATION_CHECKPOINT}_mp${MP}_pp${PP}_mb${MICRO_BATCH_SIZE}_gb${GLOBAL_BATCH_SIZE}_${NNODES}n${GPUS_PER_NODE}g_${RUN_TIME}
-echo LOG_FILENAME=$LOG_FILENAME
+LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_nl${NUM_LAYER}_nah16_hs1024_${AMP_OR}_ac${ACTIVATION_CHECKPOINT}_mp${MP}_pp${PP}_mb${MICRO_BATCH_SIZE}_gb${GLOBAL_BATCH_SIZE}_${NNODES}n${GPUS_PER_NODE}g
 mkdir -p $LOG_FILENAME
 
 # nsys
@@ -51,7 +49,7 @@ python3 -m oneflow.distributed.launch \
 tools/train_net.py \
 --config-file $CONFIG \
 model.cfg.hidden_layers=$NUM_LAYER \
-train.dist.pipeline_num_layers=$((2*NUM_LAYER)) \
+train.dist.pipeline_num_layers=$NUM_LAYER \
 train.train_micro_batch_size=$MICRO_BATCH_SIZE \
 train.global_batch_size=$GLOBAL_BATCH_SIZE \
 train.dist.tensor_parallel_size=$MP \
@@ -66,4 +64,4 @@ train.output_dir=$LOG_FILENAME 2>&1 | tee ${LOG_FILENAME}/output.log
 #train.zero_optimization.enabled=True \
 #train.zero_optimization.stage=2 \
 
-rm -rf $LOG_FILENAME/model_final
+#rm -rf $LOG_FILENAME/model_final
