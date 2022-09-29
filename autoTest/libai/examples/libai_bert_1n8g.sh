@@ -18,7 +18,7 @@ fi
 SRC_DIR=$(realpath $(dirname $0)/..)
 echo "SRC_DIR=${SRC_DIR}"
 
-git_commit=$(python3 ${SRC_DIR}/tools/get_whl_git_commit.py)
+git_commit=$(python3 ${SRC_DIR}/../../tools/get_whl_git_commit.py)
 echo "git_commit=${git_commit}"
 
 # upload to oss
@@ -69,3 +69,4 @@ ${SRC_DIR}/oss/ossutil64 -c ${SRC_DIR}/oss/ossutilconfig cp -r -f ${MODEL_DIR}/t
 
 rm -rf ${MODEL_DIR}/test_logs
 rm -rf ${MODEL_DIR}/log
+
