@@ -26,9 +26,11 @@ dataloader.train.mixup_func = LazyCall(Mixup)(
 model.cfg.num_classes = 1000
 model.cfg.loss_func = SoftTargetCrossEntropy()
 # Refine optimizer cfg for vit model
-optim.lr = 5e-4
+optim.lr = 1e-3
 optim.eps = 1e-8
 optim.weight_decay = 0.05
+optim.params.clip_grad_max_norm = None
+optim.params.clip_grad_norm_type = None
 
 # Refine train cfg for vit model
 train.train_micro_batch_size = 128
