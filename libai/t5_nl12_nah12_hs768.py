@@ -19,11 +19,11 @@ dataloader.train.dataset[0].data_prefix = data_prefix
 dataloader.train.dataset[0].indexed_dataset.data_prefix = data_prefix
 
 # Set all dropout to 0.
-model.cfg.hidden_dropout_prob = 0.1
-model.cfg.attention_probs_dropout_prob = 0.1
-model.cfg.embedding_dropout_prob = 0.1
-model.cfg.bias_gelu_fusion = True
-model.cfg.bias_dropout_fusion = True
+#model.cfg.hidden_dropout_prob = 0.1
+#model.cfg.attention_probs_dropout_prob = 0.1
+#model.cfg.embedding_dropout_prob = 0.1
+#model.cfg.bias_gelu_fusion = True
+#model.cfg.bias_dropout_fusion = True
 
 # Set matched model arguments
 model.cfg.hidden_layers = 12
