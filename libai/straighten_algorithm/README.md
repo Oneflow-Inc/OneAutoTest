@@ -16,4 +16,6 @@ bash run.sh
 ```
 
 ### 处理数据
+先更改 `extract_straighten.py` L147,L155中的日期
+
 `python3 extract_straighten.py --test-log /path/to/bert/`
