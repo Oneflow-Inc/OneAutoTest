@@ -3,9 +3,10 @@
 set -ex
 
 
-RUN_COMMIT=${1:-"master"}
+DATA_PATH=${1-"/data/dataset/wdl_ofrecord"}
+RUN_COMMIT=${2:-"master"}
 # dlperf  nsys
-RUN_TYPE=${2:-"dlperf"}
+RUN_TYPE=${3:-"dlperf"}
 
 
 NSYS_BIN=""
@@ -31,13 +32,13 @@ cd ${MODEL_DIR}
 # 1n1g
 
 # WDL_ddp_dlperf_vs2322444_devs16_hun2_b512_1n1g
-bash wdl_graph_ddp.sh 1 1 0 127.0.0.1 /data/dataset/wdl_ofrecord 512 1100 python3 ddp
+bash wdl_graph_ddp.sh 1 1 0 127.0.0.1 ${DATA_PATH} 512 1100 python3 ddp
 
 # WDL_ddp_dlperf_vs2322444_devs16_hun2_b65536_1n1g
-bash wdl_graph_ddp.sh 1 1 0 127.0.0.1 /data/dataset/wdl_ofrecord 65536 1100 python3 ddp
+bash wdl_graph_ddp.sh 1 1 0 127.0.0.1 ${DATA_PATH} 65536 1100 python3 ddp
 
 # WDL_ddp_dlperf_vs2322444_devs16_hun2_b131072_1n1g
-bash wdl_graph_ddp.sh 1 1 0 127.0.0.1 /data/dataset/wdl_ofrecord 131072 1100 python3 ddp
+bash wdl_graph_ddp.sh 1 1 0 127.0.0.1 ${DATA_PATH} 131072 1100 python3 ddp
 
 
 ${SRC_DIR}/oss/ossutil64 -c ${SRC_DIR}/oss/ossutilconfig cp -r -f ${MODEL_DIR}/test_logs/$HOSTNAME/1n1g  oss://oneflow-test/autoTest/commit/${RUN_COMMIT}/$(date "+%Y%m%d")/${git_commit}/WDL-ddp/${RUN_TYPE}/1n1g/
@@ -46,13 +47,13 @@ rm -rf ${MODEL_DIR}/test_logs
 
 
 # WDL_graph_dlperf_vs2322444_devs16_hun2_b512_1n1g
-bash wdl_graph_ddp.sh 1 1 0 127.0.0.1 /data/dataset/wdl_ofrecord 512 1100 python3 graph
+bash wdl_graph_ddp.sh 1 1 0 127.0.0.1 ${DATA_PATH} 512 1100 python3 graph
 
 # WDL_graph_dlperf_vs2322444_devs16_hun2_b65536_1n1g
-bash wdl_graph_ddp.sh 1 1 0 127.0.0.1 /data/dataset/wdl_ofrecord 65536 1100 python3 graph
+bash wdl_graph_ddp.sh 1 1 0 127.0.0.1 ${DATA_PATH} 65536 1100 python3 graph
 
 # WDL_graph_dlperf_vs2322444_devs16_hun2_b131072_1n1g
-bash wdl_graph_ddp.sh 1 1 0 127.0.0.1 /data/dataset/wdl_ofrecord 131072 1100 python3 graph
+bash wdl_graph_ddp.sh 1 1 0 127.0.0.1 ${DATA_PATH} 131072 1100 python3 graph
 
 
 ${SRC_DIR}/oss/ossutil64 -c ${SRC_DIR}/oss/ossutilconfig cp -r -f ${MODEL_DIR}/test_logs/$HOSTNAME/1n1g  oss://oneflow-test/autoTest/commit/${RUN_COMMIT}/$(date "+%Y%m%d")/${git_commit}/WDL-graph/${RUN_TYPE}/1n1g/

@@ -2,8 +2,9 @@
 # /bash/bin
 set -ex
 
-RUN_COMMIT=${1:-"master"}
-RUN_TYPE=${2:-"dlperf"}
+DATA_PATH=${1:-"/ssd/dataset/ImageNet/ofrecord"}
+RUN_COMMIT=${2:-"master"}
+RUN_TYPE=${3:-"dlperf"}
 
 
 LOOP_NUM=1
@@ -34,22 +35,22 @@ sed -i '/self.cur_batch += 1/a\\n            if self.cur_iter == 220: \
 export CUDA_VISIBLE_DEVICES=0,1,4,5
 # Graph or DDP  fp32  b256 cpu decode
 # ResNet50_ddp_dlperf_cpudecode_FP32_b256_1n4g
-#bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 256 1 false python3 ddp cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
+#bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 ${DATA_PATH} 256 1 false python3 ddp cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
 
 # ResNet50_graph_dlperf_cpudecode_FP32_b256_1n4g
-#bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 64 1 false python3 graph cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
+#bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 ${DATA_PATH} 64 1 false python3 graph cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
 
 # Graph or DDP  fp32  b256 gpu decode
 # ResNet50_graph_dlperf_gpudecode_FP32_b256_1n4g
-bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 64 1 false python3 graph gpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
+bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 ${DATA_PATH} 64 1 false python3 graph gpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
 
 # Graph  fp16  b512 gpu decode
 # ResNet50_graph_dlperf_gpudecode_FP16_b512_1n4g
-bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 128 1 true python3 graph gpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
+bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 ${DATA_PATH} 128 1 true python3 graph gpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
 
 # Graph  fp16  b512 cpu decode
 # ResNet50_graph_dlperf_cpudecode_FP16_b512_1n4g
-#bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 /ssd/dataset/ImageNet/ofrecord 128 1 true python3 graph cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
+#bash examples/args_train_ddp_graph.sh 1 4 0 127.0.0.1 ${DATA_PATH} 128 1 true python3 graph cpu 100 false "${NSYS_BIN}" ${RUN_COMMIT}
 
 sed -i '/if self.cur_iter == 220:/, +1d' ./train.py
 

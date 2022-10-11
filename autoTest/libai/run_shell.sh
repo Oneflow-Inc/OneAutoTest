@@ -1,6 +1,5 @@
 # libai
 
-cd /ssd/oneTest/OneAutoTest/autoTest/libai/
 cp ../../libai/args_libai_bert.sh scripts/libai/tools/
 cp ../../libai/bert_nl24_nah16_hs1024.py scripts/libai/configs
 sed -i 's/01b1d32/oneflow-28/g' scripts/libai/tools/args_libai_bert.sh
@@ -21,11 +20,11 @@ sed -i '/hooks.PeriodicCheckpointer/#hooks.PeriodicCheckpointer' scripts/libai/l
 
 
 # libai-bert
-cd /ssd/oneTest/OneAutoTest/autoTest/libai && bash examples/libai_bert_1n1g.sh
-cd /ssd/oneTest/OneAutoTest/autoTest/libai && bash examples/libai_bert_1n4g.sh
-cd /ssd/oneTest/OneAutoTest/autoTest/libai && bash examples/libai_bert_1n8g.sh
+bash examples/libai_bert_1n1g.sh
+bash examples/libai_bert_1n4g.sh
+bash examples/libai_bert_1n8g.sh
 
 # libai-gpt
-cd /ssd/oneTest/OneAutoTest/autoTest/libai && bash examples/libai_gpt_1n1g.sh
-cd /ssd/oneTest/OneAutoTest/autoTest/libai && bash examples/libai_gpt_1n4g.sh
-cd /ssd/oneTest/OneAutoTest/autoTest/libai && bash examples/libai_gpt_1n8g.sh
+bash examples/libai_gpt_1n1g.sh
+bash examples/libai_gpt_1n4g.sh
+bash examples/libai_gpt_1n8g.sh
