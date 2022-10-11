@@ -23,7 +23,7 @@ git_commit=$(python3 ${SRC_DIR}/../../tools/get_whl_git_commit.py)
 echo "git_commit=${git_commit}"
 
 # upload to oss
-chmod +x ${SRC_DIR}/oss/ossutil64
+chmod +x ${SRC_DIR}/../oss/ossutil64
 
 MODEL_DIR=${SRC_DIR}/scripts/models/RecommenderSystems/wide_and_deep
 cd ${MODEL_DIR}
@@ -42,7 +42,7 @@ bash wdl_graph_ddp.sh 1 8 0 127.0.0.1 ${DATA_PATH} 65536 1100 python3 ddp
 bash wdl_graph_ddp.sh 1 8 0 127.0.0.1 ${DATA_PATH} 131072 1100 python3 ddp
 
 
-${SRC_DIR}/oss/ossutil64 -c ${SRC_DIR}/oss/ossutilconfig cp -r -f ${MODEL_DIR}/test_logs/$HOSTNAME/1n8g  oss://oneflow-test/autoTest/commit/${RUN_COMMIT}/$(date "+%Y%m%d")/${git_commit}/WDL-ddp/${RUN_TYPE}/1n8g/
+${SRC_DIR}/../oss/ossutil64 -c ${SRC_DIR}/../oss/ossutilconfig cp -r -f ${MODEL_DIR}/test_logs/$HOSTNAME/1n8g  oss://oneflow-test/autoTest/commit/${RUN_COMMIT}/$(date "+%Y%m%d")/${git_commit}/WDL-ddp/${RUN_TYPE}/1n8g/
 
 rm -rf ${MODEL_DIR}/test_logs
 
@@ -57,7 +57,7 @@ bash wdl_graph_ddp.sh 1 8 0 127.0.0.1 ${DATA_PATH} 65536 1100 python3 graph
 bash wdl_graph_ddp.sh 1 8 0 127.0.0.1 ${DATA_PATH} 131072 1100 python3 graph
 
 
-${SRC_DIR}/oss/ossutil64 -c ${SRC_DIR}/oss/ossutilconfig cp -r -f ${MODEL_DIR}/test_logs/$HOSTNAME/1n8g  oss://oneflow-test/autoTest/commit/${RUN_COMMIT}/$(date "+%Y%m%d")/${git_commit}/WDL-graph/${RUN_TYPE}/1n8g/
+${SRC_DIR}/../oss/ossutil64 -c ${SRC_DIR}/../oss/ossutilconfig cp -r -f ${MODEL_DIR}/test_logs/$HOSTNAME/1n8g  oss://oneflow-test/autoTest/commit/${RUN_COMMIT}/$(date "+%Y%m%d")/${git_commit}/WDL-graph/${RUN_TYPE}/1n8g/
 
 rm -rf ${MODEL_DIR}/test_logs
 rm -rf ${MODEL_DIR}/log
