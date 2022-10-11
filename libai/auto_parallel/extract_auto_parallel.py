@@ -65,7 +65,7 @@ def extract_result(args, extract_func):
         l_ap = l[ap_start_point:].split("_")[0]
 
         parallel_start_point = l.index("mp")
-        l_parallel = l[parallel_start_point:parallel_start_point + 7]
+        l_parallel = l[parallel_start_point:parallel_start_point + 7] + "_" + l.split("_")[-3]
         
         libai_result_dict = extract_func(l)
         tmp_file_name = l.split("/")
@@ -107,13 +107,13 @@ def extract_result(args, extract_func):
 
     with open("{}/dlperf_result.md".format(args.test_log), "w",) as f:
         f.write(markdown_table_header)
-        f.write(markdown_line["mp1_pp1"])
-        f.write(markdown_line["mp4_pp1"])
-        f.write(markdown_line["mp2_pp1"])
-        f.write(markdown_line["mp2_pp2"])
-        f.write(markdown_line["mp1_pp4"])
-        f.write(markdown_line["mp1_pp2"])
-
+        f.write(markdown_line["mp1_pp1_1n1g"])
+        f.write(markdown_line["mp1_pp1_1n4g"])
+        f.write(markdown_line["mp4_pp1_1n4g"])
+        f.write(markdown_line["mp2_pp1_1n4g"])
+        f.write(markdown_line["mp2_pp2_1n4g"])
+        f.write(markdown_line["mp1_pp4_1n4g"])
+        f.write(markdown_line["mp1_pp2_1n4g"])
 
 if __name__ == "__main__":
     args = get_args()
