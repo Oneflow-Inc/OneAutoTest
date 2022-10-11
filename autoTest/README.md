@@ -24,7 +24,7 @@ cd OneAutoTest && git checkout dev_autoTest && cd autoTest
 cd libai && mkdir scripts && cd scripts
 git clone https://github.com/Oneflow-Inc/libai.git
 cd .. && mkdir libai_dataset && cd libai_dataset
-
+../../oss/ossutil64 -c ../../oss/ossutilconfig cp -r -f oss://oneflow-test/OneFlowAutoTest/libai/dataset/ ./
 cd .. && bash run_shell.sh && cd ..
 
 # Test resnet50
