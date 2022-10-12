@@ -29,7 +29,7 @@ bash tools/args_libai_bert_init.sh configs/bert_nl24_nah16_hs1024.py 1 8 0 127.0
 
 ## gpt
 #  1n1g acc4        gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb8_gb32_1n1g
-bash tools/args_libai_gpt2_init.sh configs/gpt2_nl24_nah16_hs1024.py 1 1 0 127.0.0.1 1 1 true true 8 32
+#bash tools/args_libai_gpt2_init.sh configs/gpt2_nl24_nah16_hs1024.py 1 1 0 127.0.0.1 1 1 true true 8 32
 
 export CUDA_VISIBLE_DEVICES=0,1,4,5
 #  1n4g dp4 acc4        gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb4_gb64_1n4g
@@ -39,7 +39,7 @@ bash tools/args_libai_gpt2_init.sh configs/gpt2_nl24_nah16_hs1024.py 1 4 0 127.0
 bash tools/args_libai_gpt2_init.sh configs/gpt2_nl24_nah16_hs1024.py 1 4 0 127.0.0.1 2 1 true true 8 64
 
 #  1n4g 2-D 数据+流水并行 acc4  gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp2_mb8_gb64_1n4g
-bash tools/args_libai_gpt2_init.sh configs/gpt2_nl24_nah16_hs1024.py 1 4 0 127.0.0.1 1 2 true true 8 64
+#bash tools/args_libai_gpt2_init.sh configs/gpt2_nl24_nah16_hs1024.py 1 4 0 127.0.0.1 1 2 true true 8 64
 
 #  1n4g 2-D 模型+流水并行 acc4  gpt2_nl24_nah16_hs1024_fp16_actrue_mp2_pp2_mb16_gb64_1n4g
 bash tools/args_libai_gpt2_init.sh configs/gpt2_nl24_nah16_hs1024.py 1 4 0 127.0.0.1 2 2 true true 16 64

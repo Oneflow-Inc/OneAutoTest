@@ -62,6 +62,7 @@ model.cfg.hidden_dropout_prob=0.0 \
 model.cfg.attention_probs_dropout_prob=0.0 \
 model.cfg.bias_dropout_fusion=False \
 model.cfg.hidden_layers=$NUM_LAYER \
+train.rdma_enabled=False \
 train.load_weight=${WEIGHT_FILENAME} \
 train.dist.pipeline_num_layers=$NUM_LAYER \
 train.train_micro_batch_size=$MICRO_BATCH_SIZE \
