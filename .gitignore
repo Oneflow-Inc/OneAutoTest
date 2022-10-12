@@ -131,7 +131,6 @@ dmypy.json
 autoTest/resnet50/scripts
 autoTest/libai/scripts
 autoTest/wdl/scripts
-autoTest/oss
 autoTest/resnet50/log
 autoTest/libai/log
 autoTest/wdl/log

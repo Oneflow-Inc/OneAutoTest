@@ -21,9 +21,6 @@ echo "SRC_DIR=${SRC_DIR}"
 git_commit=$(python3 ${SRC_DIR}/../../tools/get_whl_git_commit.py)
 echo "git_commit=${git_commit}"
 
-# upload to oss
-chmod +x ${SRC_DIR}/../oss/ossutil64
-
 MODEL_DIR=${SRC_DIR}/scripts/libai
 cd ${MODEL_DIR}
 
@@ -40,11 +37,3 @@ bash tools/args_libai_gpt2.sh configs/gpt2_nl24_nah16_hs1024.py 1 1 0 127.0.0.1 
 
 #  1n1g         gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb8_gb8_1n1g
 bash tools/args_libai_gpt2.sh configs/gpt2_nl24_nah16_hs1024.py 1 1 0 127.0.0.1 1 1 true true 8 8
-
-
-
-${SRC_DIR}/../oss/ossutil64 -c ${SRC_DIR}/../oss/ossutilconfig cp -r -f ${MODEL_DIR}/test_logs/$HOSTNAME/1n1g  oss://oneflow-test/autoTest/commit/${RUN_COMMIT}/$(date "+%Y%m%d")/${git_commit}/libai/1n1g/
-
-
-rm -rf ${MODEL_DIR}/test_logs
-rm -rf ${MODEL_DIR}/log

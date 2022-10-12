@@ -16,15 +16,13 @@ cd OneAutoTest && git checkout dev_autoTest && cd autoTest
   - `resnet50/run_shell.sh` DATA_PATH
   - `wdl/run_shell.sh` DATA_PATH
 
-- set ossutil64 and ossutilconfig in OneAutoTest/autoTest/oss/
-
 ### Test
 ```bash
 # Test libai
 cd libai && mkdir scripts && cd scripts
 git clone https://github.com/Oneflow-Inc/libai.git
 cd .. && mkdir libai_dataset && cd libai_dataset
-../../oss/ossutil64 -c ../../oss/ossutilconfig cp -r -f oss://oneflow-test/OneFlowAutoTest/libai/dataset/ ./
+wget https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/dataset/bert-base-chinese-vocab.txt && wget https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/dataset/gpt2-merges.txt && wget https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/dataset/gpt2-vocab.json && wget https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/dataset/loss_compara_content_sentence.bin && wget https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/dataset/loss_compara_content_sentence.idx
 cd .. && bash run_shell.sh && cd ..
 
 # Test resnet50
