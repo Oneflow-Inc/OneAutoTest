@@ -1,9 +1,9 @@
 
 cp args_libai_bert.sh args_libai_gpt2.sh args_libai_t5.sh args_libai_vit.sh args_libai_swin.sh ./libai/tools/
 cp ../bert_nl24_nah16_hs1024.py ../gpt2_nl24_nah16_hs1024.py ../t5_nl12_nah12_hs768.py ../vit_imagenet.py ../swin_imagenet.py ./libai/configs/
-sed -i 's/\/path\/to/\/ssd\/dataset\/libai_dataset/g' ./libai/configs/bert_nl24_nah16_hs1024.py
-sed -i 's/\/path\/to/\/ssd\/dataset\/libai_dataset/g' ./libai/configs/gpt2_nl24_nah16_hs1024.py
-sed -i 's/\/path\/to/\/ssd\/dataset\/libai_dataset/g' ./libai/configs/t5_nl12_nah12_hs768.py
+sed -i 's/\/path\/to/..\/libai_dataset/g' ./libai/configs/bert_nl24_nah16_hs1024.py
+sed -i 's/\/path\/to/..\/libai_dataset/g' ./libai/configs/gpt2_nl24_nah16_hs1024.py
+sed -i 's/\/path\/to/..\/libai_dataset/g' ./libai/configs/t5_nl12_nah12_hs768.py
 sed -i 's/\/path\/to\/dataset/\/ssd\/dataset\/ImageNet\/extract/g' ./libai/configs/vit_imagenet.py
 sed -i 's/\/path\/to\/dataset/\/ssd\/dataset\/ImageNet\/extract/g' ./libai/configs/swin_imagenet.py
 sed -i '$agraph.auto_parallel.mainstem_algo = True \
