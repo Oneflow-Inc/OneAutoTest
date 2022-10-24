@@ -6,9 +6,11 @@ BRANCH=${3:-"dev_cc_acc_mem_v5"}
 cp args_libai_bert_init.sh args_libai_bert_loss.sh args_libai_gpt2_init.sh args_libai_gpt2_loss.sh args_libai_t5_init.sh args_libai_t5_loss.sh ./libai/tools/
 cp ../bert_nl24_nah16_hs1024.py ../gpt2_nl24_nah16_hs1024.py ../t5_nl12_nah12_hs768.py ./libai/configs/
 sed -i 's/\/path\/to/..\/libai_dataset/g' ./libai/configs/bert_nl24_nah16_hs1024.py
+#sed -i '$agraph.enabled = False' ./libai/configs/bert_nl24_nah16_hs1024.py
 sed -i 's/\/path\/to/..\/libai_dataset/g' ./libai/configs/gpt2_nl24_nah16_hs1024.py
 sed -i 's/\/path\/to/..\/libai_dataset/g' ./libai/configs/t5_nl12_nah12_hs768.py
 cp init.sh loss.sh draw_loss.py compose.py ./libai/
+cp -r examples ./libai
 cd libai && mkdir loss_txt && mkdir curve
 
 sed -i '/for self.iter in range(start_iter, max_iter):/a\                    if self.iter == 1: \
