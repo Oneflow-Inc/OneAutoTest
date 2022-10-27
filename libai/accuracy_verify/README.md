@@ -15,6 +15,7 @@ cd ..
 
 ### 进行测试
 ```bash
+# master commit / branch commit / branch name
 bash run.sh "ecafd61b09349a1c6c45333ea6eff96009cf66c0" "3d5e919cb700d84f52d4cf2730083931f17a91bb" "dev_cc_acc_mem_v5"
 ```
 
@@ -91,6 +92,13 @@ bash run.sh "ecafd61b09349a1c6c45333ea6eff96009cf66c0" "3d5e919cb700d84f52d4cf27
     jupyter nbconvert --execute --to pdf process_data.ipynb --output new.pdf
     ```
     运行后耐心等待几分钟，会生成pdf文件
+
+### 发版性能测试
+```bash
+cp ../args_libai_bert.sh ../args_libai_gpt2.sh ./libai/
+cp case.sh ./libai/ && cd libai
+bash case.sh "3d5e919"
+```
 
 ## 测试结果
 
