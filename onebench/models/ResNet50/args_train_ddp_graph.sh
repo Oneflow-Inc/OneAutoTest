@@ -34,8 +34,8 @@ ONEFLOW_COMMIT=$(python3 -c 'import oneflow; print(oneflow.__git_commit__)')
 TRAN_MODEL="resnet50"
 RUN_TIME=$(date "+%Y%m%d_%H%M%S%N")
 LOG_FOLDER=${SRC_DIR}/test_logs/$HOSTNAME/${ONEFLOW_COMMIT}/${NUM_NODES}n${DEVICE_NUM_PER_NODE}g
+
 if [ ! -d $LOG_FOLDER ]; then
-  
   mkdir -p $LOG_FOLDER
 fi
 
@@ -45,6 +45,14 @@ if [ $DATA_PATH == '' ]; then
 fi
 
 LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_${RUN_TYPE}_${synthetic}data_DC${DECODE_TYPE}_${AMP_OR}_mb${TRAIN_BATCH_SIZE}_gb$((${TRAIN_BATCH_SIZE}*${NUM_NODES}*${DEVICE_NUM_PER_NODE}*${ACC}))_acc${ACC}_${NUM_NODES}n${DEVICE_NUM_PER_NODE}g_${ONEFLOW_COMMIT}_${RUN_TIME}
+
+if [ ${EPOCH} -lt 2 ];then
+    sed -i '/self.cur_batch += 1/a\\n            if self.cur_iter == 320: \
+                break' ${SRC_DIR}/train.py
+fi
+sed -i '/self.cur_batch += 1/a\\n            if self.cur_iter == 100: \
+                cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
+                os.system(cmd)' ${SRC_DIR}/train.py
 
 
 export PYTHONUNBUFFERED=1
@@ -105,3 +113,5 @@ $CMD 2>&1 | tee ${LOG_FILENAME}.log
 echo "Writting log to ${LOG_FILENAME}.log"
 
 echo "done"
+
+git checkout train.py
