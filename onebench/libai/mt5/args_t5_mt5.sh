@@ -23,12 +23,13 @@ HIDDEN_SIZE=${17:-768}
 
 
 ONEFLOW_COMMIT=$(python3 -c 'import oneflow; print(oneflow.__git_commit__)')
-!sed -i '/import time/a\import os' ./libai/libai/engine/trainer.py
 #注释掉模型保存
-!sed -i 's/hooks.PeriodicCheckpointer/#&/' ./libai/libai/engine/default.py
-!sed -i '/for self.iter in range(start_iter, max_iter):/a\                    if self.iter == 99: \
-\n                      cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
-\n                      os.system(cmd)' ./libai/libai/engine/trainer.py
+sed -i 's/hooks.PeriodicCheckpointer/#&/' ./libai/engine/default.py
+sed -i '/cfg.train.warmup_iter = math.ceil/i\        cfg.train.train_iter = train_iter' ./libai/engine/default.py
+sed -i '/import time/a\import os' ./libai/engine/trainer.py
+sed -i '/for self.iter in range(start_iter, max_iter):/a\                    if self.iter == 99: \
+                        cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
+                        os.system(cmd)' ./libai/engine/trainer.py
 
 
 TRAN_MODEL="LibAI_t5_mt5"
@@ -55,11 +56,11 @@ python3 -m oneflow.distributed.launch \
 --nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT \
 tools/train_net.py \
 --config-file projects/T5/configs/mt5_pretrain.py \
-model.cfg.hidden_layers=$HIDDEN_LAYER \
+model.cfg.hidden_layers=$NUM_LAYER \
 model.cfg.hidden_size=$HIDDEN_SIZE \
 model.cfg.num_attention_heads=$NUM_ATT_HEADS \
 model.cfg.intermediate_size=3072 \
-train.dist.pipeline_num_layers=$((2*HIDDEN_LAYER)) \
+train.dist.pipeline_num_layers=$((2*NUM_LAYER)) \
 train.train_micro_batch_size=$MICRO_BATCH_SIZE \
 train.global_batch_size=$GLOBAL_BATCH_SIZE \
 train.dist.tensor_parallel_size=$MP \
@@ -73,4 +74,4 @@ train.zero_optimization.enabled=$ZERO_ENABLE \
 train.zero_optimization.stage=$ZERO_STAGE \
 train.output_dir=$LOG_FILENAME 2>&1 | tee ${LOG_FILENAME}/output.log
 
-git checkout ./libai/libai/engine/*.py
+git checkout ./libai/engine/*.py
