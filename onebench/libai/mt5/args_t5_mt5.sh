@@ -25,7 +25,6 @@ HIDDEN_SIZE=${17:-768}
 ONEFLOW_COMMIT=$(python3 -c 'import oneflow; print(oneflow.__git_commit__)')
 #注释掉模型保存
 sed -i 's/hooks.PeriodicCheckpointer/#&/' ./libai/engine/default.py
-sed -i '/cfg.train.warmup_iter = math.ceil/i\        cfg.train.train_iter = train_iter' ./libai/engine/default.py
 sed -i '/import time/a\import os' ./libai/engine/trainer.py
 sed -i '/for self.iter in range(start_iter, max_iter):/a\                    if self.iter == 99: \
                         cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
@@ -50,8 +49,12 @@ echo LOG_FILENAME=$LOG_FILENAME
 mkdir -p $LOG_FILENAME
 
 
-# nsys
-#nsys profile --stats true --output ${LOG_FILENAME} \
+# nsys -delay=500
+# export ONEFLOW_DEBUG_MODE=1
+# export GLOG_v=3
+# export ONEFLOW_PROFILER_KERNEL_PROFILE_KERNEL_FORWARD_RANGE=True
+
+# nsys profile --stats true --output ${LOG_FILENAME} --sample none --cpuctxsw none \
 python3 -m oneflow.distributed.launch \
 --nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT \
 tools/train_net.py \
@@ -67,8 +70,10 @@ train.dist.tensor_parallel_size=$MP \
 train.dist.pipeline_parallel_size=$PP \
 train.amp.enabled=$USE_FP16 \
 train.activation_checkpoint.enabled=$ACTIVATION_CHECKPOINT \
+train.num_accumulation_steps=$ACC \
 train.evaluation.enabled=false \
 train.train_iter=$TRAIN_ITERS \
+train.train_epoch=0 \
 train.log_period=$LOG_PERIOD \
 train.zero_optimization.enabled=$ZERO_ENABLE \
 train.zero_optimization.stage=$ZERO_STAGE \
