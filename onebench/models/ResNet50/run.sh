@@ -14,8 +14,8 @@ wget -nc https://raw.githubusercontent.com/Oneflow-Inc/OneAutoTest/main/onebench
 
 cd ..
 
-bash examples/args_train_ddp_graph.sh 1 1 0 127.0.0.1 192 50 1 graph gpu true 1 100 $DATA_PATH python3
+#bash examples/args_train_ddp_graph.sh 1 1 0 127.0.0.1 192 50 1 graph gpu true 1 100 $DATA_PATH python3
 
-# bash examples/args_train_ddp_graph.sh 1 8 0 127.0.0.1 192 50 1 graph gpu true 50 100 $DATA_PATH python3
+bash examples/args_train_ddp_graph.sh 1 8 0 127.0.0.1 192 50 1 graph gpu true 50 100 $DATA_PATH python3
 
-# bash examples/args_train_ddp_graph.sh 1 8 0 127.0.0.1 40 20 1 graph gpu true 50 100 $DATA_PATH python3
+bash examples/args_train_ddp_graph.sh 1 8 0 127.0.0.1 40 20 4 graph gpu true 50 100 $DATA_PATH python3
