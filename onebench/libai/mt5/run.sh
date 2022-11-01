@@ -28,6 +28,7 @@ git remote set-branches origin $TEST_BRANCH
 git fetch --depth 1 origin $TEST_BRANCH
 git checkout $TEST_BRANCH
 
+python3 -m pip install -r requirements.txt
 python3 -m pip install -e . --user
 
 # args: nnodes nproc_per_node node_rank master_addr \
