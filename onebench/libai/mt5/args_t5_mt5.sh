@@ -18,6 +18,8 @@ LOG_PERIOD=${14:-100}
 NUM_LAYER=${15:-12}
 NUM_ATT_HEADS=${16:-12}
 HIDDEN_SIZE=${17:-768}
+HEAD_SIZE=${18:-64}
+INTERMEDIATE_SIZE=${19:-3072}
 
 
 
@@ -39,6 +41,10 @@ AMP_OR="FP32"
 if $USE_FP16; then
     AMP_OR="FP16"
 fi
+
+# const 
+TRAIN_EPOCH=0
+EVALUATION_ENABLED=false
 
 
 DP=`expr $NNODES \* $GPUS_PER_NODE \/ $MP \/ $PP`
@@ -62,7 +68,8 @@ tools/train_net.py \
 model.cfg.hidden_layers=$NUM_LAYER \
 model.cfg.hidden_size=$HIDDEN_SIZE \
 model.cfg.num_attention_heads=$NUM_ATT_HEADS \
-model.cfg.intermediate_size=3072 \
+model.cfg.intermediate_size=$INTERMEDIATE_SIZE \
+model.cfg.head_size=$HEAD_SIZE \
 train.dist.pipeline_num_layers=$((2*NUM_LAYER)) \
 train.train_micro_batch_size=$MICRO_BATCH_SIZE \
 train.global_batch_size=$GLOBAL_BATCH_SIZE \
@@ -71,9 +78,9 @@ train.dist.pipeline_parallel_size=$PP \
 train.amp.enabled=$USE_FP16 \
 train.activation_checkpoint.enabled=$ACTIVATION_CHECKPOINT \
 train.num_accumulation_steps=$ACC \
-train.evaluation.enabled=false \
+train.evaluation.enabled=$EVALUATION_ENABLED \
 train.train_iter=$TRAIN_ITERS \
-train.train_epoch=0 \
+train.train_epoch=$TRAIN_EPOCH \
 train.log_period=$LOG_PERIOD \
 train.zero_optimization.enabled=$ZERO_ENABLE \
 train.zero_optimization.stage=$ZERO_STAGE \

@@ -30,7 +30,12 @@ git checkout $TEST_BRANCH
 
 python3 -m pip install -e . --user
 
-# NNODES GPUS_PER_NODE 
+# args: nnodes nproc_per_node node_rank master_addr \
+#       tensor_parallel_size pipeline_parallel_size amp activation_checkpoint \
+#       train_micro_batch_size global_batch_size zero_optimization zero_optimization.stage \
+#       train_iter log_period
+#       hidden_layers num_attention_heads hidden_size
+#       head_size intermediate_size
 bash tools/args_t5_mt5.sh 1 1 0 127.0.0.1 1 1 true true 4 32
 
 
