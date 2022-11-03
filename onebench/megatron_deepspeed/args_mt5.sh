@@ -1,9 +1,9 @@
 
 set -ex
 # A100
-# bash args_deepspeed_t5.sh 1 8 0 127.0.0.1 2 1 true true 1 8 true 1 220 100 24 64 1024 32768 128
+# bash args_mt5.sh 1 8 0 127.0.0.1 2 1 true true 1 8 true 1 220 100 24 64 1024 32768 128
 # 3080TI
-# bash args_deepspeed_t5.sh 1 8 0 127.0.0.1 2 1 true true 1 8 true 1 220 100 12 12 768 3072 64
+# bash args_mt5.sh 1 1 0 127.0.0.1 1 1 true true 4 32 true 1 220 100 12 12 768 3072 64
 
 
 export OMP_NUM_THREADS=1
@@ -30,7 +30,7 @@ HIDDEN_SIZE=${17:-768}
 INTERMEDIATE_SIZE=${18:-32768}
 HEAD_SIZE=${19:-64}
 
-
+CHECKPOINT_PATH=checkpoints/t5
 VOCAB_FILE=libai_dataset/bert-base-chinese-vocab.txt
 DATA_PATH=libai_dataset/loss_compara_content_sentence
 
@@ -60,6 +60,11 @@ sed -i '/while iteration < args.train_iters:/a\        if iteration == 101: \
             cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
             os.system(cmd)' ./megatron/training.py
 
+# not pipeline
+sed -i '/deepspeed.PipelineEngine), model/i\         pass' ./megatron/training.py
+sed -i '/deepspeed.PipelineEngine), model/i\    if args.deepspeed and isinstance(model[0], deepspeed.PipelineEngine):' ./megatron/training.py
+sed -i '/# DeepSpeed uses eval_batch()/i\                pass' ./megatron/training.py
+sed -i '/# DeepSpeed uses eval_batch()/i\            if args.deepspeed and isinstance(model[0], deepspeed.PipelineEngine):' ./megatron/training.py
 
 LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_nl${NUM_LAYER}_nah${NUM_ATT_HEADS}_hs${HIDDEN_SIZE}_${AMP_OR}_ac${ACTIVATION_CHECKPOINT}_DP${DP}_MP${MP}_PP${PP}_zero${ZERO_ENABLE}_stage${ZERO_STAGE}_mbs${MICRO_BATCH_SIZE}_gbs${GLOBAL_BATCH_SIZE}_acc${ACC}_${NNODES}n${GPUS_PER_NODE}g_${RUN_TIME}
 
