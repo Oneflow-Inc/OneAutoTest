@@ -1,11 +1,13 @@
 set -ex
 
-TEST_BRANCH=${1:-"main"}
+ONEFLOW_BRANCH_NAME=${1:-"master"}
+LIBAI_BRANCH_NAME=${2:-"main"}
 
-#python3 -m pip uninstall -y oneflow 
+python3 -m pip uninstall -y oneflow
 
-#python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/master/cu112/ee077040fbd240ca3b35492a0c224fc17bffc271/index.html
-#python3 -m pip install --pre oneflow -f https://staging.oneflow.info/commit/2d080aac5c41c02346641a5576b359bc95399214/cu112/index.html
+python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/${ONEFLOW_BRANCH_NAME}/cu112
+
+# python3 -m pip install --pre oneflow -f https://staging.oneflow.info/canary/refs/heads/${ONEFLOW_BRANCH_NAME}/cu112/index.html
 
 if [ ! -d "./libai" ]; then
   git clone --depth 1 https://github.com/Oneflow-Inc/libai.git
@@ -24,9 +26,9 @@ fi
 wget -nc https://raw.githubusercontent.com/Oneflow-Inc/OneAutoTest/main/onebench/libai/mt5/args_t5_mt5.sh -P ./libai/tools/
 
 cd libai
-git remote set-branches origin $TEST_BRANCH
-git fetch --depth 1 origin $TEST_BRANCH
-git checkout $TEST_BRANCH
+git remote set-branches origin $ONEFLOW_BRANCH_NAME
+git fetch --depth 1 origin $ONEFLOW_BRANCH_NAME
+git checkout $ONEFLOW_BRANCH_NAME
 
 python3 -m pip install -r requirements.txt
 python3 -m pip install -e . --user
