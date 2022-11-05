@@ -26,9 +26,9 @@ fi
 wget -nc https://raw.githubusercontent.com/Oneflow-Inc/OneAutoTest/main/onebench/libai/mt5/args_t5_mt5.sh -P ./libai/tools/
 
 cd libai
-git remote set-branches origin $ONEFLOW_BRANCH_NAME
-git fetch --depth 1 origin $ONEFLOW_BRANCH_NAME
-git checkout $ONEFLOW_BRANCH_NAME
+git remote set-branches origin $LIBAI_BRANCH_NAME
+git fetch --depth 1 origin $LIBAI_BRANCH_NAME
+git checkout $LIBAI_BRANCH_NAME
 
 python3 -m pip install -r requirements.txt
 python3 -m pip install -e . --user
