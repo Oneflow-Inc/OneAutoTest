@@ -40,6 +40,6 @@ python3 -m pip install -e . --user
 #       hidden_layers num_attention_heads hidden_size intermediate_size head_size 
 
 # A100
-bash tools/args_train.sh projects/T5/configs/mt5_pretrain.py 1 8 0 127.0.0.1 2 1 true true 1 8 true 1 220 100 24 64 1024 32768 128
+bash tools/args_train.sh projects/T5/configs/mt5_pretrain.py 1 8 0 127.0.0.1 2 1 true true true 1 8 true 1 220 100 24 64 1024 32768 128
 # 3080TI
-# bash tools/args_train.sh projects/T5/configs/mt5_pretrain.py 1 1 0 127.0.0.1 1 1 true true 4 32 true 1 220 100 12 12 768 3072 64
+# bash tools/args_train.sh projects/T5/configs/mt5_pretrain.py 1 1 0 127.0.0.1 1 1 true true true 4 32 true 1 220 100 12 12 768 3072 64

@@ -35,10 +35,16 @@ sed -i '/for self.iter in range(start_iter, max_iter):/a\                    if 
                         cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
                         os.system(cmd)' ./libai/engine/trainer.py
 
+GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
+GPU_NAME="${GPU_NAME// /_}"
 TRAN_MODEL=${CONFIG##*/}
 TRAN_MODEL="LibAI_${TRAN_MODEL%*.py}"
 RUN_TIME=$(date "+%Y%m%d_%H%M%S%N")
-LOG_FOLDER=test_logs/${ONEFLOW_COMMIT}/${NNODES}n${GPUS_PER_NODE}g
+LOG_FOLDER=test_logs/$HOSTNAME/${GPU_NAME}/${ONEFLOW_COMMIT}/${NNODES}n${GPUS_PER_NODE}g
+
+if [ ! -d $LOG_FOLDER ]; then
+  mkdir -p $LOG_FOLDER
+fi
 
 AMP_OR="FP32"
 if $USE_FP16; then
@@ -60,8 +66,6 @@ ACC=`expr $GLOBAL_BATCH_SIZE \/ $DP \/ $MICRO_BATCH_SIZE`
 
 LOG_FILENAME=$LOG_FOLDER/${TRAN_MODEL}_${RUN_TYPE}_nl${NUM_LAYER}_nah${NUM_ATT_HEADS}_hs${HIDDEN_SIZE}_${AMP_OR}_ac${ACTIVATION_CHECKPOINT}_DP${DP}_MP${MP}_PP${PP}_zero${ZERO_ENABLE}_stage${ZERO_STAGE}_mbs${MICRO_BATCH_SIZE}_gbs${GLOBAL_BATCH_SIZE}_acc${ACC}_${NNODES}n${GPUS_PER_NODE}g_${RUN_TIME}
 echo LOG_FILENAME=$LOG_FILENAME
-mkdir -p $LOG_FILENAME
-
 
 # nsys -delay=500
 # export ONEFLOW_DEBUG_MODE=1
