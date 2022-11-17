@@ -33,7 +33,9 @@ ONEFLOW_COMMIT=$(python3 -c 'import oneflow; print(oneflow.__git_commit__)')
 
 TRAN_MODEL="resnet50"
 RUN_TIME=$(date "+%Y%m%d_%H%M%S%N")
-LOG_FOLDER=${SRC_DIR}/test_logs/$HOSTNAME/${ONEFLOW_COMMIT}/${NUM_NODES}n${DEVICE_NUM_PER_NODE}g
+GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
+GPU_NAME="${GPU_NAME// /_}"
+LOG_FOLDER=${SRC_DIR}/test_logs/$HOSTNAME/${GPU_NAME}/${ONEFLOW_COMMIT}/${NUM_NODES}n${DEVICE_NUM_PER_NODE}g
 
 if [ ! -d $LOG_FOLDER ]; then
   mkdir -p $LOG_FOLDER
