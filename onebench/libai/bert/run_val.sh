@@ -1,22 +1,17 @@
 set -ex
 
-ONEFLOW_BRANCH_NAME=${1:-"master"}
-LIBAI_BRANCH_NAME=${2:-"main"}
+#oneflow验证分支
+ONEFLOW_VAL_BRANCH_NAME=$1
+ONEFLOW_BASE_BRANCH_NAME=${2:-"master"}
+LIBAI_BRANCH_NAME=${3:-"main"}
 
-INSTALL=${3:-false}
-
-if $INSTALL; then
-  python3 -m pip uninstall -y oneflow
-  python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/${ONEFLOW_BRANCH_NAME}/cu112
-  #python3 -m pip install --pre oneflow -f https://staging.oneflow.info/canary/refs/heads/${ONEFLOW_BRANCH_NAME}/cu112/index.html
-fi
-
+python3 -m pip uninstall -y oneflow
+python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/$ONEFLOW_BASE_BRANCH_NAME/cu112
 
 if [ ! -d "./libai" ]; then
   git clone -b $LIBAI_BRANCH_NAME --depth 1 https://github.com/Oneflow-Inc/libai.git
 fi
 
-mkdir -p data_test/bert_data
 if [ ! -d "./libai/data_test/bert_data" ]; then
   mkdir -p ./libai/data_test/bert_data
 fi
@@ -33,7 +28,8 @@ if [ $LIBAI_BRANCH_NAME != 'main' ]; then
     git checkout $LIBAI_BRANCH_NAME
 fi
 
-python3 -m pip install -r requirements.txt
+
+#python3 -m pip install -r requirements.txt
 python3 -m pip install -e . --user
 
 # args: config-file nnodes nproc_per_node node_rank master_addr \
@@ -42,10 +38,14 @@ python3 -m pip install -e . --user
 #       train_iter log_period
 #       hidden_layers num_attention_heads hidden_size intermediate_size head_size 
 
-bash tools/args_train.sh configs/bert_large_pretrain.py 1 1 0 127.0.0.1 \
-1 1 false false false \
-1 1 false 0 \
-220 100 \
-24 16 1024 4096
+bash tools/args_train.sh configs/bert_large_pretrain.py 1 1 0 127.0.0.1 1 1 true true true 32 128 false 0 1 1 24 16 1024 4096 64 true false
+
+bash tools/args_train.sh configs/bert_large_pretrain.py 1 1 0 127.0.0.1 1 1 true true true 32 128 false 0 220 1 24 16 1024 4096 64 false true
+
+python3 -m pip uninstall -y oneflow
+python3 -m pip install --pre oneflow -f https://staging.oneflow.info/canary/refs/heads/${ONEFLOW_VAL_BRANCH_NAME}/cu112/index.html
+
+bash tools/args_train.sh configs/bert_large_pretrain.py 1 1 0 127.0.0.1 1 1 true true true 32 128 false 0 220 1 24 16 1024 4096 64 false true
+
 
 
