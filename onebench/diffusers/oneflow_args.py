@@ -33,7 +33,7 @@ def parse_args():
     parser.add_argument(
         "--prompt",
         type=str,
-        default="a dog, baroque painting, beautiful detailed intricate insanely detailed octane render trending on artstation, 8 k artistic photography, photorealistic, soft natural volumetric cinematic perfect light, chiaroscuro, award - winning photograph",
+        default="a photo of an astronaut riding a horse on mars",
     )
     parser.add_argument("--model_id", type=str, default="CompVis/stable-diffusion-v1-4")
     parser.add_argument(

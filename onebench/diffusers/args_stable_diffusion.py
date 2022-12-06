@@ -3,13 +3,7 @@ import os
 import subprocess
 import re
 from timeit import default_timer as timer
-import torch
-from diffusers import (
-    StableDiffusionPipeline,
-    DPMSolverMultistepScheduler,
-    DDPMScheduler,
-    EulerDiscreteScheduler,
-)
+
 
 def gpu_memory_used():
     output = subprocess.check_output(
@@ -28,8 +22,15 @@ def gpu_memory_used():
             mem_used_by_me += mem_used
     return mem_used_by_me
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Simple demo of image generation.")
+    parser.add_argument(
+        "--dl_frame",
+        type=str,
+        choices=["oneflow", "pytorch"],
+        default="oneflow",
+    )
     parser.add_argument(
         "--prompt",
         type=str,
@@ -64,30 +65,59 @@ def parse_args():
     parser.add_argument(
         "--scheduler",
         type=str,
-        default="ddpm",
-        choices=["ddpm", "dmp"],
+        default="",
         help="Scheduler.",
     )
-    parser.add_argument("--saving_path", type=str, default="pytorch-sd-output", help="Directory where the generated images will be saved")
+    parser.add_argument(
+        "--saving_path",
+        type=str,
+        default="sd-output",
+        help="Directory where the generated images will be saved",
+    )
     args = parser.parse_args()
     return args
 
 
 if __name__ == "__main__":
     args = parse_args()
-    if args.scheduler == "dmp":
-        model_scheduler = DPMSolverMultistepScheduler.from_pretrained(
-            args.model_id, subfolder="scheduler"
+
+    if args.dl_frame == "pytorch":
+        import torch
+        from diffusers import (
+            StableDiffusionPipeline,
+            DPMSolverMultistepScheduler,
+            DDPMScheduler,
+            PNDMScheduler,
+            EulerDiscreteScheduler,
         )
     else:
-        model_scheduler = DDPMScheduler.from_pretrained(
-            args.model_id, subfolder="scheduler"
+        import oneflow as torch
+        from diffusers import (
+            OneFlowStableDiffusionPipeline as StableDiffusionPipeline,
+            OneFlowDPMSolverMultistepScheduler as DPMSolverMultistepScheduler,
+            OneFlowDDPMScheduler as DDPMScheduler,
+            OneFlowPNDMScheduler as PNDMScheduler,
+            OneFlowEulerDiscreteScheduler as EulerDiscreteScheduler,
         )
 
     if "stabilityai/stable-diffusion-2" == args.model_id:
         model_scheduler = EulerDiscreteScheduler.from_pretrained(
             args.model_id, subfolder="scheduler"
         )
+    elif "v1-4" in args.model_id:
+        if args.scheduler == "dmp":
+            model_scheduler = DPMSolverMultistepScheduler.from_pretrained(
+                args.model_id, subfolder="scheduler"
+            )
+        elif args.scheduler == "ddpm":
+            model_scheduler = DDPMScheduler.from_pretrained(
+                args.model_id, subfolder="scheduler"
+            )
+        else:
+            model_scheduler = PNDMScheduler.from_pretrained(
+                args.model_id, subfolder="scheduler"
+            )
+
     load_start = timer()
     pipe = StableDiffusionPipeline.from_pretrained(
         args.model_id,
@@ -99,16 +129,16 @@ if __name__ == "__main__":
 
     pipe = pipe.to("cuda")
     print(
-                "[pytorch]",
-                "[compile(s)]",
-                f"{timer() - load_start}",
-            )
+        f"[{args.dl_frame}]",
+        "[compile(s)]",
+        f"{timer() - load_start}",
+    )
     os.makedirs(args.saving_path, exist_ok=True)
-    cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv"
+    # cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv"
 
     with torch.autocast("cuda"):
         for j in range(args.num_images_per_prompt):
-            print("[pytorch]", "[gpu_memory]", f"{gpu_memory_used()} MiB")
+            print(f"[{args.dl_frame}]", "[gpu_memory]", f"{gpu_memory_used()} MiB")
             start = timer()
             images = pipe(
                 args.prompt,
@@ -118,7 +148,7 @@ if __name__ == "__main__":
                 compile_unet=True,
             ).images
             print(
-                "[pytorch]",
+                f"[{args.dl_frame}]",
                 f"[{args.img_width}x{args.img_height}]",
                 "[elapsed(s)]",
                 "[pipe]",
@@ -129,5 +159,10 @@ if __name__ == "__main__":
                 prompt = args.prompt.strip().replace("\n", " ")
                 dst = os.path.join(args.saving_path, f"{prompt[:100]}-{j}-{i}.png")
                 image.save(dst)
-            print("[pytorch]", "[elapsed(s)]", "[save]", f"{timer() - save_start}")
-            print("[pytorch]", "[last_gpu_memory]", f"{gpu_memory_used()} MiB")
+            print(
+                f"[{args.dl_frame}]",
+                "[elapsed(s)]",
+                "[save]",
+                f"{timer() - save_start}",
+            )
+            print(f"[{args.dl_frame}]", "[last_gpu_memory]", f"{gpu_memory_used()} MiB")

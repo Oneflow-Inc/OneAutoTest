@@ -17,9 +17,9 @@ if [ ! -d "./test_logs/$GPU_NAME" ]; then
   mkdir -p ./test_logs/$GPU_NAME 
 fi
 cd test_logs
-python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-python3 -m pip uninstall -y oneflow
-python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/master/cu112
+# python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+# python3 -m pip uninstall -y oneflow
+# python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/master/cu112
 
 
 
@@ -48,14 +48,14 @@ export HF_HOME=/hf/home/
 
 # mkdir $GPU_NAME
 
-python3 ../oneflow_args.py \
+python3 ../args_stable_diffusion.py \
+--dl_frame "oneflow" \
 --model_id "CompVis/stable-diffusion-v1-4" \
 --num_images_per_prompt 20 \
 --num_inference_steps 50 \
 --img_height 512 \
 --img_width 512 \
---scheduler "ddpm" \
---saving_path "oneflow-sd-output" 2>&1 | tee $GPU_NAME/oneflow-args.log
+--saving_path "$GPU_NAME/oneflow-sd-output" 2>&1 | tee $GPU_NAME/oneflow-args.log
 
 
 ### pytorch 
@@ -70,13 +70,14 @@ cd ..
 
 # mkdir $GPU_NAME
 
-python3 ../pytorch_args.py \
+python3 ../args_stable_diffusion.py \
+--dl_frame "pytorch" \
 --model_id "CompVis/stable-diffusion-v1-4" \
 --num_images_per_prompt 20 \
 --num_inference_steps 50 \
 --img_height 512 \
 --img_width 512 \
 --scheduler "ddpm" \
---saving_path "pytorch-sd-output" 2>&1 | tee $GPU_NAME/pytorch-args.log
+--saving_path "$GPU_NAME/pytorch-sd-output" 2>&1 | tee $GPU_NAME/pytorch-args.log
 
 
