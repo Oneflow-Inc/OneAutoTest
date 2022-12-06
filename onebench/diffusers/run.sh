@@ -27,18 +27,20 @@ python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/mast
 #  1. 要安装pytorch
 #  2. 先已经安装了transformers，因此需要先安装transformers
 python3 -m pip uninstall -y diffusers transformers
-if [ ! -d "./transformers" ]; then
-  git clone --depth 1 https://github.com/Oneflow-Inc/transformers.git
-  cd transformers
-  python3 -m pip install -e .
-  cd ..
+if [ -d "./transformers" ]; then
+  rm -rf transformers
 fi
-if [ ! -d "./diffusers" ]; then
-  git clone --depth 1 https://github.com/Oneflow-Inc/diffusers.git
-  cd diffusers
-  python3 -m pip install -e .[oneflow]
-  cd ..
+git clone --depth 1 https://github.com/Oneflow-Inc/transformers.git
+cd transformers
+python3 -m pip install -e .
+cd ..
+if [ -d "./diffusers" ]; then
+  rm -rf diffusers
 fi
+git clone --depth 1 https://github.com/Oneflow-Inc/diffusers.git
+cd diffusers
+python3 -m pip install -e .[oneflow]
+cd ..
 
 export HUGGING_FACE_HUB_TOKEN=xxxx
 export HF_HOME=/hf/home/
