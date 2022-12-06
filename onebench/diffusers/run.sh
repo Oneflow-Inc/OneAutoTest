@@ -8,76 +8,106 @@ set -ex
 # 模型下载
 # user_header="Authorization: Bearer xxxxxx"
 # wget --header="${user_header}" https://huggingface.co/CompVis/stable-diffusion-v-1-4-original/resolve/main/sd-v1-4.ckpt -O models/sd-v1-4.ckpt
-
+STABLE_VERSION=${1:-"sdv1.4"} # sdv1.4 sdv2
+SCHEDULER=${2:-""}
 
 GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
 GPU_NAME="${GPU_NAME// /_}"
 
-if [ ! -d "./test_logs/$GPU_NAME" ]; then
-  mkdir -p ./test_logs/$GPU_NAME 
+if [ ! -d "./test_logs" ]; then
+  mkdir -p ./test_logs
 fi
 cd test_logs
-# python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-# python3 -m pip uninstall -y oneflow
-# python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/master/cu112
+python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+python3 -m pip uninstall -y oneflow
+python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/master/cu112
 
-
+export HUGGING_FACE_HUB_TOKEN=xxxx
+export HF_HOME=/hf/home
 
 # 两个问题
 #  1. 要安装pytorch
 #  2. 先已经安装了transformers，因此需要先安装transformers
 python3 -m pip uninstall -y diffusers transformers
-if [ -d "./transformers" ]; then
-  rm -rf transformers
+if [ ! -d "./transformers" ]; then
+  git clone --depth 1 https://github.com/Oneflow-Inc/transformers.git
 fi
-git clone --depth 1 https://github.com/Oneflow-Inc/transformers.git
+
 cd transformers
 python3 -m pip install -e .
 cd ..
-if [ -d "./diffusers" ]; then
-  rm -rf diffusers
+
+if [ ! -d "./diffusers" ]; then
+  git clone --depth 1 https://github.com/Oneflow-Inc/diffusers.git
 fi
-git clone --depth 1 https://github.com/Oneflow-Inc/diffusers.git
 cd diffusers
 python3 -m pip install -e .[oneflow]
 cd ..
 
-export HUGGING_FACE_HUB_TOKEN=xxxx
-export HF_HOME=/hf/home/
+
+NUM_IMAGES_PER_PROMPT=20
+NUM_INFERENCE_STEPS=50
+IMG_HEIGHT=512
+IMG_WIDTH=512
+MODEL_ID_NAME="CompVis/stable-diffusion-v1-4"
+
+if [ "$SCHEDULER" == "dmp" ]; then
+    NUM_INFERENCE_STEPS=20
+fi
+if [ "$STABLE_VERSION" == "sdv2" ]; then
+    MODEL_ID_NAME="stabilityai/stable-diffusion-2"
+    MODEL_ID_NAME=20
+    IMG_HEIGHT=768
+    IMG_WIDTH=768
+fi
+
+if [ -d "./stable_logs" ]; then
+  rm -rf stable_logs
+fi
+mkdir stable_logs
+
+wget -nc https://raw.githubusercontent.com/Oneflow-Inc/OneAutoTest/main/onebench/diffusers/args_stable_diffusion.py
+
+CMD=""
+CMD+="python3 args_stable_diffusion.py "
+CMD+="--model_id $MODEL_ID_NAME "
+CMD+="--num_images_per_prompt $NUM_IMAGES_PER_PROMPT "
+CMD+="--num_inference_steps $NUM_INFERENCE_STEPS "
+CMD+="--img_height $IMG_HEIGHT "
+CMD+="--img_width $IMG_WIDTH "
+
+if [ -n "$SCHEDULER" ]; then
+    CMD+="--scheduler $SCHEDULER "
+fi
 
 
-# mkdir $GPU_NAME
+# run oneflow
+DL_FRAME="oneflow"
+LOG_FILENAME=stable_logs/${GPU_NAME}_${DL_FRAME}_${NUM_INFERENCE_STEPS}_HEIGHT${IMG_WIDTH}X${IMG_HEIGHT}_${STABLE_VERSION}_${NUM_IMAGES_PER_PROMPT}
+DL_FRAME="${CMD} --dl_frame $DL_FRAME --saving_path $LOG_FILENAME "
+echo "Rum ${DL_FRAME} cmd ${DL_FRAME}"
 
-python3 ../args_stable_diffusion.py \
---dl_frame "oneflow" \
---model_id "CompVis/stable-diffusion-v1-4" \
---num_images_per_prompt 20 \
---num_inference_steps 50 \
---img_height 512 \
---img_width 512 \
---saving_path "$GPU_NAME/oneflow-sd-output" 2>&1 | tee $GPU_NAME/oneflow-args.log
-
+$DL_FRAME 2>&1 | tee ${LOG_FILENAME}.log
 
 ### pytorch 
+DL_FRAME="pytorch"
+
 python3 -m pip uninstall -y diffusers transformers
-
-rm -rf ./diffusers
-git clone --depth 1 https://github.com/huggingface/diffusers.git
-cd diffusers
 python3 -m pip install transformers
+
+if [ ! -d "./${DL_FRAME}/diffusers" ]; then
+  mkdir -p ./${DL_FRAME}/diffusers
+  git clone --depth 1 https://github.com/huggingface/diffusers.git ./${DL_FRAME}/diffusers
+fi
+cd ./${DL_FRAME}/diffusers
 python3 -m pip install --upgrade diffusers[torch]
-cd ..
+cd -
 
-# mkdir $GPU_NAME
+LOG_FILENAME=stable_logs/${GPU_NAME}_${DL_FRAME}_${NUM_INFERENCE_STEPS}_HEIGHT${IMG_WIDTH}X${IMG_HEIGHT}_${STABLE_VERSION}_${NUM_IMAGES_PER_PROMPT}
+DL_FRAME="${CMD} --dl_frame $DL_FRAME --saving_path $LOG_FILENAME "
+echo "Rum ${DL_FRAME} cmd ${DL_FRAME}"
 
-python3 ../args_stable_diffusion.py \
---dl_frame "pytorch" \
---model_id "CompVis/stable-diffusion-v1-4" \
---num_images_per_prompt 20 \
---num_inference_steps 50 \
---img_height 512 \
---img_width 512 \
---scheduler "ddpm" \
---saving_path "$GPU_NAME/pytorch-sd-output" 2>&1 | tee $GPU_NAME/pytorch-args.log
+
+$DL_FRAME 2>&1 | tee ${LOG_FILENAME}.log
 
 

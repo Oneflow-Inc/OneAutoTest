@@ -34,7 +34,7 @@ def parse_args():
     parser.add_argument(
         "--prompt",
         type=str,
-        default="a dog, baroque painting, beautiful detailed intricate insanely detailed octane render trending on artstation, 8 k artistic photography, photorealistic, soft natural volumetric cinematic perfect light, chiaroscuro, award - winning photograph",
+        default="Giant Floating Circular Ancient Sacred Sublime Cosmic Structure by Andreas Rocha",
     )
     parser.add_argument("--model_id", type=str, default="CompVis/stable-diffusion-v1-4")
     parser.add_argument(
@@ -157,7 +157,7 @@ if __name__ == "__main__":
             save_start = timer()
             for i, image in enumerate(images):
                 prompt = args.prompt.strip().replace("\n", " ")
-                dst = os.path.join(args.saving_path, f"{prompt[:100]}-{j}-{i}.png")
+                dst = os.path.join(args.saving_path, f"{prompt[:50]}-{j}-{i}.png")
                 image.save(dst)
             print(
                 f"[{args.dl_frame}]",
