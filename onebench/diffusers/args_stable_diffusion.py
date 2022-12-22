@@ -162,7 +162,6 @@ if __name__ == "__main__":
                 width=args.img_width,
                 height=args.img_height,
                 num_inference_steps=args.num_inference_steps,
-                compile_unet=True,
             ).images
             print(
                 f"[{args.dl_frame}]",
