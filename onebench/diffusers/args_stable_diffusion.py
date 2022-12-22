@@ -136,13 +136,21 @@ if __name__ == "__main__":
         args.prompt = '中国海边城市, 科幻, 未来感, 唯美, 插画.'
 
     load_start = timer()
-    pipe = StableDiffusionPipeline.from_pretrained(
-        args.model_id,
-        use_auth_token=True,
-        revision="fp16",
-        torch_dtype=torch.float16,
-        scheduler=model_scheduler,
-    )
+    if "Taiyi" in args.model_id:
+        pipe = StableDiffusionPipeline.from_pretrained(
+            args.model_id,
+            use_auth_token=True,
+            torch_dtype=torch.float16,
+            scheduler=model_scheduler,
+        )
+    else:
+        pipe = StableDiffusionPipeline.from_pretrained(
+            args.model_id,
+            use_auth_token=True,
+            revision="fp16",
+            torch_dtype=torch.float16,
+            scheduler=model_scheduler,
+        )
 
     pipe = pipe.to("cuda")
     print(
