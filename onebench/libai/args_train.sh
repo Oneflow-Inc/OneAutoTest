@@ -105,6 +105,7 @@ model.cfg.intermediate_size=$INTERMEDIATE_SIZE \
 model.cfg.ffn_hidden_size=$INTERMEDIATE_SIZE \
 model.cfg.head_size=$HEAD_SIZE \
 graph.enabled=$GRAPH_ENABLED \
+train.dist.pipeline_num_layers=$NUM_LAYER \
 train.train_micro_batch_size=$MICRO_BATCH_SIZE \
 train.global_batch_size=$GLOBAL_BATCH_SIZE \
 train.dist.tensor_parallel_size=$MP \

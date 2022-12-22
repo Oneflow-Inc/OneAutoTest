@@ -51,7 +51,7 @@ python3 -m pip install -e . --user
 bash tools/args_train.sh configs/bert_large_pretrain.py 1 1 0 127.0.0.1 1 1 true true false 4 4 false 0 220 100 24 16 1024 4096
 
 #  1n1g         bert_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb32_gb256_1n1g
-bash tools/args_train.sh configs/bert_large_pretrain.py 1 1 0 127.0.0.1 1 1 true true true true 16 128 false 0 220 100 24 16 1024 4096
+bash tools/args_train.sh configs/bert_large_pretrain.py 1 1 0 127.0.0.1 1 1 true true true 16 128 false 0 220 100 24 16 1024 4096
 
 #  1n1g         bert_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb32_gb32_1n1g
 bash tools/args_train.sh configs/bert_large_pretrain.py 1 1 0 127.0.0.1 1 1 true true true 32 32 false 0 220 100 24 16 1024 4096
