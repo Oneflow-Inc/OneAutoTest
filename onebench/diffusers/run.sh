@@ -56,15 +56,14 @@ if [ "$SCHEDULER" == "dmp" ]; then
 fi
 if [ "$STABLE_VERSION" == "sdv2" ]; then
     MODEL_ID_NAME="stabilityai/stable-diffusion-2"
-    MODEL_ID_NAME=20
     IMG_HEIGHT=768
     IMG_WIDTH=768
 fi
 
-if [ -d "./stable_logs" ]; then
-  rm -rf stable_logs
+if [ ! -d "./stable_logs" ]; then
+  mkdir stable_logs
 fi
-mkdir stable_logs
+
 
 wget -nc https://raw.githubusercontent.com/Oneflow-Inc/OneAutoTest/main/onebench/diffusers/args_stable_diffusion.py
 
@@ -110,4 +109,4 @@ echo "Rum ${DL_FRAME} cmd ${DL_FRAME}"
 
 $DL_FRAME 2>&1 | tee ${LOG_FILENAME}.log
 
-
+python3 -m pip uninstall -y diffusers transformers
