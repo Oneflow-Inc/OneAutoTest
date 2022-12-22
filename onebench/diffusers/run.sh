@@ -60,6 +60,13 @@ if [ "$STABLE_VERSION" == "sdv2" ]; then
     IMG_WIDTH=768
 fi
 
+if [ "$STABLE_VERSION" == "taiyi" ]; then
+    MODEL_ID_NAME="IDEA-CCNL/Taiyi-Stable-Diffusion-1B-Chinese-v0.1"
+    IMG_HEIGHT=512
+    IMG_WIDTH=512
+fi
+
+
 if [ ! -d "./stable_logs" ]; then
   mkdir stable_logs
 fi
@@ -74,6 +81,12 @@ CMD+="--num_images_per_prompt $NUM_IMAGES_PER_PROMPT "
 CMD+="--num_inference_steps $NUM_INFERENCE_STEPS "
 CMD+="--img_height $IMG_HEIGHT "
 CMD+="--img_width $IMG_WIDTH "
+
+
+if [ "$STABLE_VERSION" == "taiyi" ]; then
+    PROMPT="中国海边城市, 科幻, 未来感, 唯美, 插画."
+    CMD+="--prompt $PROMPT "
+fi
 
 if [ -n "$SCHEDULER" ]; then
     CMD+="--scheduler $SCHEDULER "
