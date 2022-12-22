@@ -16,7 +16,6 @@ if [ ! -d "./libai" ]; then
   git clone -b $LIBAI_BRANCH_NAME --depth 1 https://github.com/Oneflow-Inc/libai.git
 fi
 
-mkdir -p data_test/bert_data
 if [ ! -d "./libai/data_test/bert_data" ]; then
   mkdir -p ./libai/data_test/bert_data
 fi
@@ -33,6 +32,7 @@ if [ $LIBAI_BRANCH_NAME != 'main' ]; then
     git checkout $LIBAI_BRANCH_NAME
 fi
 
+python3 -m pip uninstall -y libai
 python3 -m pip install -r requirements.txt
 python3 -m pip install -e . --user
 
@@ -115,3 +115,5 @@ bash tools/args_train.sh configs/bert_large_pretrain.py 1 8 0 127.0.0.1 2 1 true
 
 #  1n8g 数据+流水并行   bert_nl24_nah16_hs1024_fp16_actrue_mp1_pp4_mb32_gb512_1n8g
 bash tools/args_train.sh configs/bert_large_pretrain.py 1 8 0 127.0.0.1 1 4 true true true 32 512 false 0 220 100 24 16 1024 4096
+
+python3 -m pip uninstall -y libai
