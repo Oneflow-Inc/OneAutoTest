@@ -21,6 +21,7 @@ os.environ["ONEFLOW_KERNEL_GLU_ENABLE_DUAL_GEMM_IMPL"] = "1"
 os.environ["ONEFLOW_CONV_ALLOW_HALF_PRECISION_ACCUMULATION"] = "1"
 os.environ["ONEFLOW_MATMUL_ALLOW_HALF_PRECISION_ACCUMULATION"] = "1"
 
+
 def gpu_memory_used():
     output = subprocess.check_output(
         [
@@ -115,7 +116,9 @@ if __name__ == "__main__":
             OneFlowPNDMScheduler as PNDMScheduler,
             OneFlowEulerDiscreteScheduler as EulerDiscreteScheduler,
         )
-
+    model_scheduler = PNDMScheduler.from_pretrained(
+        args.model_id, subfolder="scheduler"
+    )
     if "stabilityai/stable-diffusion-2" == args.model_id:
         model_scheduler = EulerDiscreteScheduler.from_pretrained(
             args.model_id, subfolder="scheduler"
@@ -129,10 +132,8 @@ if __name__ == "__main__":
             model_scheduler = DDPMScheduler.from_pretrained(
                 args.model_id, subfolder="scheduler"
             )
-        else:
-            model_scheduler = PNDMScheduler.from_pretrained(
-                args.model_id, subfolder="scheduler"
-            )
+    elif "Taiyi" in args.model_id:
+        args.prompt = '中国海边城市, 科幻, 未来感, 唯美, 插画.'
 
     load_start = timer()
     pipe = StableDiffusionPipeline.from_pretrained(
