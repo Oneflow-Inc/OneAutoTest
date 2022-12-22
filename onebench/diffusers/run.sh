@@ -60,6 +60,13 @@ if [ "$STABLE_VERSION" == "sdv2" ]; then
     IMG_WIDTH=768
 fi
 
+if [ "$STABLE_VERSION" == "taiyi" ]; then
+    MODEL_ID_NAME="IDEA-CCNL/Taiyi-Stable-Diffusion-1B-Chinese-v0.1"
+    IMG_HEIGHT=512
+    IMG_WIDTH=512
+fi
+
+
 if [ ! -d "./stable_logs" ]; then
   mkdir stable_logs
 fi
@@ -82,7 +89,8 @@ fi
 
 # run oneflow
 DL_FRAME="oneflow"
-LOG_FILENAME=stable_logs/${GPU_NAME}_${DL_FRAME}_${NUM_INFERENCE_STEPS}_HEIGHT${IMG_WIDTH}X${IMG_HEIGHT}_${STABLE_VERSION}_${NUM_IMAGES_PER_PROMPT}
+ONEFLOW_VERSION=$(python3 -c 'import oneflow; print(oneflow.__version__)')
+LOG_FILENAME=stable_logs/${GPU_NAME}_${DL_FRAME}_${NUM_INFERENCE_STEPS}_${IMG_WIDTH}X${IMG_HEIGHT}_${STABLE_VERSION}_${NUM_IMAGES_PER_PROMPT}_${ONEFLOW_VERSION}
 DL_FRAME="${CMD} --dl_frame $DL_FRAME --saving_path $LOG_FILENAME "
 echo "Rum ${DL_FRAME} cmd ${DL_FRAME}"
 
@@ -90,7 +98,7 @@ $DL_FRAME 2>&1 | tee ${LOG_FILENAME}.log
 
 ### pytorch 
 DL_FRAME="pytorch"
-
+TORCH_VERSION=$(python3 -c 'import torch; print(torch.__version__)')
 python3 -m pip uninstall -y diffusers transformers
 python3 -m pip install transformers
 
@@ -102,7 +110,7 @@ cd ./${DL_FRAME}/diffusers
 python3 -m pip install --upgrade diffusers[torch]
 cd -
 
-LOG_FILENAME=stable_logs/${GPU_NAME}_${DL_FRAME}_${NUM_INFERENCE_STEPS}_HEIGHT${IMG_WIDTH}X${IMG_HEIGHT}_${STABLE_VERSION}_${NUM_IMAGES_PER_PROMPT}
+LOG_FILENAME=stable_logs/${GPU_NAME}_${DL_FRAME}_${NUM_INFERENCE_STEPS}_${IMG_WIDTH}X${IMG_HEIGHT}_${STABLE_VERSION}_${NUM_IMAGES_PER_PROMPT}_${TORCH_VERSION}
 DL_FRAME="${CMD} --dl_frame $DL_FRAME --saving_path $LOG_FILENAME "
 echo "Rum ${DL_FRAME} cmd ${DL_FRAME}"
 

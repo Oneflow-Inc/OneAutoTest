@@ -4,6 +4,23 @@ import subprocess
 import re
 from timeit import default_timer as timer
 
+os.environ["ONEFLOW_MLIR_CSE"] = "1"
+os.environ["ONEFLOW_MLIR_ENABLE_INFERENCE_OPTIMIZATION"] = "1"
+os.environ["ONEFLOW_MLIR_ENABLE_ROUND_TRIP"] = "1"
+os.environ["ONEFLOW_MLIR_FUSE_FORWARD_OPS"] = "1"
+os.environ["ONEFLOW_MLIR_GROUP_MATMUL"] = "1"
+os.environ["ONEFLOW_MLIR_PREFER_NHWC"] = "1"
+
+os.environ["ONEFLOW_KERNEL_ENABLE_FUSED_CONV_BIAS"] = "1"
+os.environ["ONEFLOW_KERNEL_ENABLE_FUSED_LINEAR"] = "1"
+
+os.environ["ONEFLOW_KERENL_CONV_ENABLE_CUTLASS_IMPL"] = "1"
+os.environ["ONEFLOW_KERENL_FMHA_ENABLE_TRT_FLASH_ATTN_IMPL"] = "1"
+os.environ["ONEFLOW_KERNEL_GLU_ENABLE_DUAL_GEMM_IMPL"] = "1"
+
+os.environ["ONEFLOW_CONV_ALLOW_HALF_PRECISION_ACCUMULATION"] = "1"
+os.environ["ONEFLOW_MATMUL_ALLOW_HALF_PRECISION_ACCUMULATION"] = "1"
+
 
 def gpu_memory_used():
     output = subprocess.check_output(
@@ -99,7 +116,9 @@ if __name__ == "__main__":
             OneFlowPNDMScheduler as PNDMScheduler,
             OneFlowEulerDiscreteScheduler as EulerDiscreteScheduler,
         )
-
+    model_scheduler = PNDMScheduler.from_pretrained(
+        args.model_id, subfolder="scheduler"
+    )
     if "stabilityai/stable-diffusion-2" == args.model_id:
         model_scheduler = EulerDiscreteScheduler.from_pretrained(
             args.model_id, subfolder="scheduler"
@@ -113,19 +132,25 @@ if __name__ == "__main__":
             model_scheduler = DDPMScheduler.from_pretrained(
                 args.model_id, subfolder="scheduler"
             )
-        else:
-            model_scheduler = PNDMScheduler.from_pretrained(
-                args.model_id, subfolder="scheduler"
-            )
+    elif "Taiyi" in args.model_id:
+        args.prompt = '中国海边城市, 科幻, 未来感, 唯美, 插画.'
 
     load_start = timer()
-    pipe = StableDiffusionPipeline.from_pretrained(
-        args.model_id,
-        use_auth_token=True,
-        revision="fp16",
-        torch_dtype=torch.float16,
-        scheduler=model_scheduler,
-    )
+    if "Taiyi" in args.model_id:
+        pipe = StableDiffusionPipeline.from_pretrained(
+            args.model_id,
+            use_auth_token=True,
+            torch_dtype=torch.float16,
+            scheduler=model_scheduler,
+        )
+    else:
+        pipe = StableDiffusionPipeline.from_pretrained(
+            args.model_id,
+            use_auth_token=True,
+            revision="fp16",
+            torch_dtype=torch.float16,
+            scheduler=model_scheduler,
+        )
 
     pipe = pipe.to("cuda")
     print(
@@ -145,7 +170,6 @@ if __name__ == "__main__":
                 width=args.img_width,
                 height=args.img_height,
                 num_inference_steps=args.num_inference_steps,
-                compile_unet=True,
             ).images
             print(
                 f"[{args.dl_frame}]",
