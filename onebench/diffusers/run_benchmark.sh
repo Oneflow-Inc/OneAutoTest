@@ -11,7 +11,8 @@ set -ex
 STABLE_VERSION=${1:-"sdv1_5"} # sdv1_4 sdv2 sdv2_1 taiyi
 INSTALL_ONEFLOW=${2:-"master"}
 
-
+export HUGGING_FACE_HUB_TOKEN=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
+export HF_HOME=/ssd/home/ouyangyu
 
 # install oneflow 
 python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
@@ -73,7 +74,7 @@ sed -i '/for r in range(repeat):/a\
         os.system(cmd)' ./scripts/$BENCHMARK_SCRIPT
 if [ "$STABLE_VERSION" == "sdv1_5" ]; then
   sed -i 's/cmd = "nvidia-smi/    &/' ./scripts/$BENCHMARK_SCRIPT
-  sed -i 's/print("\n");os.system(cmd)/    &/' ./scripts/$BENCHMARK_SCRIPT
+  sed -i 's/os.system(cmd)/    &/' ./scripts/$BENCHMARK_SCRIPT
 fi
 
 if [ ! -d "./diffusers" ]; then
