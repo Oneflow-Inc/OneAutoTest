@@ -154,8 +154,6 @@ def extract_info_from_file(log_file):
                             result_dict["min_throughput"] = throughput_value
                 if "[eval]" in line:
                     epoch_num = ss[epoch_key + 1].split("/")[0]
-                    if int(epoch_num) != (int(result_dict["num_epochs"]) - 1):
-                        continue
                     top_value = round(float(ss[top_key + 1][:-1]) * 100, 2)
                     if (
                         "max_top1" not in result_dict.keys()
@@ -194,7 +192,9 @@ def extract_result(args, extract_func):
             result_dict = extract_func(log)
             if "nvidia_name" in result_dict.keys():
                 nvidia_name = result_dict["nvidia_name"]
-            result_dict["url"] = "{}/{}/{}".format(args.url_header, args.url_path, log)
+            result_dict["url"] = "{}/{}".format(args.url_header, log)
+            if int(result_dict['num_epochs']) < 20:
+                result_dict["max_top1"] = "-"
 
             file_path, filename = os.path.split(log)
             case_name = "_".join(filename.split("_")[:-3])
@@ -204,14 +204,15 @@ def extract_result(args, extract_func):
                 throughput_final_result_dict[case_name][commit] = result_dict
 
     markdown_table_header = markdown_table_header.format(nvidia_name)
+    last_markdown_body = ""
     for case_name, case_value in throughput_final_result_dict.items():
         markdown_table_body = """
 | {} |""".format(
             case_name
         )
-        num_devices_per_node = int(case_value[commit]["num_devices_per_node"])
-        num_nodes = int(case_value[commit]["num_nodes"])
         for commit in commit_list:
+            num_devices_per_node = int(case_value[commit]["num_devices_per_node"])
+            num_nodes = int(case_value[commit]["num_nodes"])
             tmp_markdown_table_body = " [{}-{}] MiB / [{}]({}) / {}".format(
                 case_value[commit]["min_memory"],
                 case_value[commit]["max_memory"],
@@ -221,15 +222,16 @@ def extract_result(args, extract_func):
             )
             tmp_markdown_table_body += " | "
             markdown_table_body += tmp_markdown_table_body
+        last_markdown_body += markdown_table_body
 
     with open(
         "./extract_result.md",
         "w",
     ) as f:
         f.writelines(markdown_table_header)
-        f.writelines(markdown_table_body)
+        f.writelines(last_markdown_body)
 
-    print(markdown_table_header, markdown_table_body)
+    print(markdown_table_header, last_markdown_body)
 
 
 if __name__ == "__main__":
