@@ -10,24 +10,25 @@ set -ex
 # wget --header="${user_header}" https://huggingface.co/CompVis/stable-diffusion-v-1-4-original/resolve/main/sd-v1-4.ckpt -O models/sd-v1-4.ckpt
 STABLE_VERSION=${1:-"sdv1_5"} # sdv1_4 sdv2 sdv2_1 taiyi
 INSTALL_ONEFLOW=${2:-"master"}
+CUDA_VERSION=${3:-"cu116"}
 
-export HUGGING_FACE_HUB_TOKEN=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
-export HF_HOME=/ssd/home/ouyangyu
+export HUGGING_FACE_HUB_TOKEN=hf_
+export HF_HOME=/hf/home
 
 # install oneflow 
 python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 if [ "$INSTALL_ONEFLOW" != "false" ]; then
   python3 -m pip uninstall -y oneflow
   if [ "$INSTALL_ONEFLOW" != "master" ]; then
-    python3 -m pip install --pre oneflow -f https://oneflow-staging.oss-cn-beijing.aliyuncs.com/branch/master/cu112/${INSTALL_ONEFLOW}/index.html
+    python3 -m pip install --pre oneflow -f https://oneflow-staging.oss-cn-beijing.aliyuncs.com/branch/master/${CUDA_VERSION}/${INSTALL_ONEFLOW}/index.html
   else
-    python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/${INSTALL_ONEFLOW}/cu112
+    python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/${INSTALL_ONEFLOW}/${CUDA_VERSION}
   fi
 fi
 
 
 declare -A STABLE_DIFFUSION_SCRIPTS=(
-  [sdv2_1]=stable_diffusion_2.py
+  [sdv2_1]=stable_diffusion_2_1.py
   [sdv2_0]=stable_diffusion_2.py
   [sdv1_5]=stable_diffusion_v1_5.py
   [taiyi]=taiyi_stable_diffusion_chinese.py
