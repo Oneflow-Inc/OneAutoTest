@@ -17,6 +17,9 @@ export HF_HOME=/hf/home
 
 # install oneflow 
 python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+python3 -m pip install sentencepiece click
+
 if [ "$INSTALL_ONEFLOW" != "false" ]; then
   python3 -m pip uninstall -y oneflow
   if [ "$INSTALL_ONEFLOW" != "master" ]; then
@@ -32,6 +35,7 @@ declare -A STABLE_DIFFUSION_SCRIPTS=(
   [sdv2_0]=stable_diffusion_2.py
   [sdv1_5]=stable_diffusion_v1_5.py
   [taiyi]=taiyi_stable_diffusion_chinese.py
+  [alt_m9]=alt_diffusion_m9.py
 )
 BENCHMARK_SCRIPT=${STABLE_DIFFUSION_SCRIPTS["$STABLE_VERSION"]}
 echo "using $BENCHMARK_SCRIPT benchmark script"
@@ -73,10 +77,10 @@ cd ..
 sed -i '/for r in range(repeat):/a\
         cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
         os.system(cmd)' ./scripts/$BENCHMARK_SCRIPT
-if [ "$STABLE_VERSION" == "sdv1_5" ]; then
-  sed -i 's/cmd = "nvidia-smi/    &/' ./scripts/$BENCHMARK_SCRIPT
-  sed -i 's/os.system(cmd)/    &/' ./scripts/$BENCHMARK_SCRIPT
-fi
+# if [ "$STABLE_VERSION" == "sdv1_5" ]; then
+#   sed -i 's/cmd = "nvidia-smi/    &/' ./scripts/$BENCHMARK_SCRIPT
+#   sed -i 's/os.system(cmd)/    &/' ./scripts/$BENCHMARK_SCRIPT
+# fi
 
 if [ ! -d "./diffusers" ]; then
   git clone --depth 1 https://github.com/Oneflow-Inc/diffusers.git
