@@ -18,7 +18,7 @@ export HF_HOME=/hf/home
 # install oneflow 
 python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
-python3 -m pip install sentencepiece click
+python3 -m pip install sentencepiece click transformers
 
 if [ "$INSTALL_ONEFLOW" != "false" ]; then
   python3 -m pip uninstall -y oneflow
@@ -44,9 +44,7 @@ if [ "$BENCHMARK_SCRIPT" == "" ]; then
   exit
 fi
 
-
-
-python3 -m pip uninstall -y diffusers transformers
+python3 -m pip uninstall -y diffusers
 
 if [ ! -d "./diffusion-benchmark" ]; then
   git clone --depth 1 https://github.com/Oneflow-Inc/diffusion-benchmark.git
@@ -55,15 +53,15 @@ cd diffusion-benchmark
 DIFFUSION_BENCHMARK_COMMIT=$(git log --pretty=format:"%H" -n 1)
 echo "diffusion-benchmark(git_commit)=$DIFFUSION_BENCHMARK_COMMIT"
 
-if [ ! -d "./transformers" ]; then
-  git clone --depth 1 https://github.com/Oneflow-Inc/transformers.git
-fi
+# if [ ! -d "./transformers" ]; then
+#   git clone --depth 1 https://github.com/Oneflow-Inc/transformers.git
+# fi
 
-cd transformers
-ONEFLOW_TRANSFORMERS_COMMIT=$(git log --pretty=format:"%H" -n 1)
-echo "oneflow-transformers(git_commit)=$ONEFLOW_TRANSFORMERS_COMMIT"
-python3 -m pip install -e .
-cd ..
+# cd transformers
+# ONEFLOW_TRANSFORMERS_COMMIT=$(git log --pretty=format:"%H" -n 1)
+# echo "oneflow-transformers(git_commit)=$ONEFLOW_TRANSFORMERS_COMMIT"
+# python3 -m pip install -e .
+# cd ..
 
 if [ ! -d "./diffusers" ]; then
   git clone --depth 1 https://github.com/Oneflow-Inc/diffusers.git
@@ -98,7 +96,7 @@ if [ "$STABLE_VERSION" == "sdv2_0" ] || [ "$STABLE_VERSION" == "sdv2_1" ]; then
 fi
 
 CMD=""
-CMD+="python3 scripts/$BENCHMARK_SCRIPT --repeat 10"
+CMD+="python3 scripts/$BENCHMARK_SCRIPT --repeat 10 --height $IMG_HEIGHT --width $IMG_WIDTH"
 
 # run oneflow
 DL_FRAME="oneflow"
@@ -112,6 +110,8 @@ mkdir -p $LOG_FOLDER/$ONEFLOW_COMMIT
 LOG_FILENAME=$LOG_FOLDER/$ONEFLOW_COMMIT/${GPU_NAME}_${DL_FRAME}_${BENCHMARK_SCRIPT}_${ONEFLOW_COMMIT}
 DL_FRAME="${CMD} --output $LOG_FILENAME "
 
+# remove
+python3 -m pip uninstall -y accelerate
 
 $DL_FRAME 2>&1 | tee ${LOG_FILENAME}.log
 
@@ -129,8 +129,7 @@ sed -i 's/oneflow as //g' ./scripts/$BENCHMARK_SCRIPT
 sed -i 's/OneFlow//g' ./scripts/$BENCHMARK_SCRIPT
 
 TORCH_VERSION=$(python3 -c 'import torch; print(torch.__version__)')
-python3 -m pip uninstall -y diffusers transformers
-python3 -m pip install transformers
+python3 -m pip uninstall -y diffusers
 
 if [ ! -d "./${DL_FRAME}/diffusers" ]; then
   mkdir -p ./${DL_FRAME}/diffusers
