@@ -1,8 +1,8 @@
 name: Compare Master DLPerf
 
 on:
-  schedule:
-    - cron: '10 20 * * *'
+  # schedule:
+  #   - cron: '10 20 * * *'
   workflow_dispatch:
     inputs:
       branch_name:

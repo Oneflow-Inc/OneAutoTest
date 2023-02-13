@@ -50,13 +50,13 @@ def _add_training_args(parser):
     group.add_argument(
         "--test_commits",
         type=str,
-        default="151eccef,71de123,55b822e",
+        default="false_false,false_true,true_false,true_true,master_true,master_false",
         help="test commit ,eg: 71de123,55b822e",
     )
     group.add_argument(
-        "--test_logs", type=str, default="NVIDIA_GeForce_RTX_3080_Ti", help="log directory"
+        "--test_logs", type=str, default="feat-straighten-op_graph/NVIDIA_GeForce_RTX_3080_Ti", help="log directory"
     )
-    group.add_argument("--models_commit", type=str, default="0bdae6c6", help="libai commit, eg: 0bdae6c6")
+    group.add_argument("--models_commit", type=str, default="975f49b", help="libai commit, eg: 0bdae6c6")
 
     group.add_argument(
         "--url_header",
@@ -75,7 +75,7 @@ def extract_info_from_file(log_file):
     result_dict["memory"] = 0
     with open(log_file, "r") as f:
         for line in f.readlines():
-            if "iteration:" in line and "time:" in line:
+            if "iteration:" in line and "time:" in line and "total_throughput:" in line:
                 ss = line.split(" ")
                 iteration_index = ss.index("iteration:")
                 iteration_number = int(ss[iteration_index + 1].strip().split("/")[0])
@@ -146,7 +146,7 @@ def extract_result(args, extract_func):
     nvidia_name = ""
     for commit in commit_list:
         
-        logs_list = glob.glob(os.path.join(args.test_logs, "{}/*/output.log".format(commit)))
+        logs_list = glob.glob(os.path.join(args.test_logs, "{}/*/*/output.log".format(commit)))
         logs_list = sorted(logs_list)
 
         for log in logs_list:
@@ -196,7 +196,7 @@ def extract_result(args, extract_func):
                 print(case_name)
             result_dict["num_devices_per_node"] = pre_node
             result_dict["num_nodes"] = node
-            result_dict["config_url"] = "{}/{}/config.yml".format(args.url_header,tmp_file_path)
+            result_dict["config_url"] = "{}/{}/config.yaml".format(args.url_header,tmp_file_path)
             result_dict["log_url"] = "{}/{}".format(args.url_header,log)
             if case_name not in throughput_final_result_dict.keys():
                 throughput_final_result_dict[case_name] = {}

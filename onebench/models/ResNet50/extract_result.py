@@ -58,9 +58,9 @@ def _add_training_args(parser):
         help="test commit ,eg: 65fd4d9,ee07704",
     )
     group.add_argument(
-        "--test_logs", type=str, default="./test_logs", help="log directory"
+        "--test_logs", type=str, default="./3080TI/ResNet50", help="log directory"
     )
-    group.add_argument("--models_commit", type=str, default="935e9c1", help="935e9c1")
+    group.add_argument("--models_commit", type=str, default="fc7cbf8d", help="935e9c1")
     group.add_argument(
         "--url_path",
         type=str,
@@ -82,7 +82,8 @@ def extract_info_from_file(log_file):
     with open(log_file, "r") as f:
         for line in f.readlines():
             ss = line.lstrip().split(" ")
-            if "MiB," in line and "utilization" not in line:
+            if "MiB," in line and "utilization" not in line and len(ss) == 18:
+
                 memory_userd = int(ss[-2])
                 if (
                     "max_memory" not in result_dict.keys()
