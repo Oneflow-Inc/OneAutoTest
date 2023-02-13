@@ -43,7 +43,7 @@ jobs:
             all_test_result=$(find ./${upload_issue_date} -name "*.png")
             all_test_result=$(echo ${all_test_result} | sed 's+./+https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneAutoTest/onebench/oneflow/autoprof/')
             echo "issue_title=${issue_title}_OneFlow_Autoprof_Discover_Report_On_${branch_name}" >> $GITHUB_ENV
-            echo "issue_comment_body=""${all_test_result}" >> $GITHUB_ENV
+            echo "issue_comment_body=OneFlow Autoprof Discover"$(date "+%Y年%m月%d日")" 测试结果： \n ""${all_test_result}" >> $GITHUB_ENV
           fi
       - name: Create Issue Comment
         if: env.get_result == '1'
