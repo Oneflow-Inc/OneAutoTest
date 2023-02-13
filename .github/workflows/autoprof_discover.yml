@@ -42,12 +42,12 @@ jobs:
             issue_title=$(date "+%Y%m")
             all_test_result_log=$(find ./${upload_issue_date} -name "oneflow_autoprof_discover_*.log")
             all_test_result_csv=$(find ./${upload_issue_date} -name "oneflow_autoprof_discover_*.csv")
-            echo "OneFlow Autoprof Discover"$(date "+%Y年%m月%d日")" 测试结果如下： \n " > ./oneflow_autoprof_discover.md
-            echo "```" >> ./oneflow_autoprof_discover.md
+            echo "OneFlow Autoprof Discover"$(date "+%Y年%m月%d日")" 测试结果如下：  " > ./oneflow_autoprof_discover.md
+            echo '```' >> ./oneflow_autoprof_discover.md
             echo $all_test_result_log >> ./oneflow_autoprof_discover.md
-            echo "\n" >> ./oneflow_autoprof_discover.md
+            echo '  ' >> ./oneflow_autoprof_discover.md
             echo $all_test_result_csv >> ./oneflow_autoprof_discover.md
-            echo "```" >> ./oneflow_autoprof_discover.md
+            echo '```' >> ./oneflow_autoprof_discover.md
             sed -i "s+./${upload_issue_date}/+https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneAutoTest/onebench/oneflow/autoprof/${upload_issue_date}/+g" ./oneflow_autoprof_discover.md
             all_test_result_md=./oneflow_autoprof_discover.md
             echo "issue_title=${issue_title}_OneFlow_Autoprof_Discover_Report_On_${branch_name}" >> $GITHUB_ENV
