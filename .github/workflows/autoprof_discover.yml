@@ -40,10 +40,13 @@ jobs:
           if [ ! -d "/${upload_issue_date}" ]; then
             echo "get_result=1" >> $GITHUB_ENV
             issue_title=$(date "+%Y%m")
-            all_test_result=$(find ./${upload_issue_date} -name "*.*")
-            all_test_result=$(echo ${all_test_result} | sed 's+./+https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneAutoTest/onebench/oneflow/autoprof/+g')
+            all_test_result=$(find ./${upload_issue_date} -name "oneflow_autoprof_discover_*.*")
+            echo "OneFlow Autoprof Discover"$(date "+%Y年%m月%d日")" 测试结果： \n " > ./oneflow_autoprof_discover.md
+            echo $all_test_result > ./oneflow_autoprof_discover.md
+            esed -i 's+./+https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneAutoTest/onebench/oneflow/autoprof/+g' ./oneflow_autoprof_discover.md
+            all_test_result_md=./oneflow_autoprof_discover.md
             echo "issue_title=${issue_title}_OneFlow_Autoprof_Discover_Report_On_${branch_name}" >> $GITHUB_ENV
-            echo "issue_comment_body=OneFlow Autoprof Discover"$(date "+%Y年%m月%d日")" 测试结果： \n ""${all_test_result}" >> $GITHUB_ENV
+            echo "issue_comment_body=""${all_test_result_md}" >> $GITHUB_ENV
           fi
       - name: Create Issue Comment
         if: env.get_result == '1'
