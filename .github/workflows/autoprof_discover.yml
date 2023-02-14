@@ -50,10 +50,15 @@ jobs:
             echo '```' >> ./oneflow_autoprof_discover.md
             sed -i "s+./${upload_issue_date}/+https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneAutoTest/onebench/oneflow/autoprof/${upload_issue_date}/+g" ./oneflow_autoprof_discover.md
             echo '  ' >> ./oneflow_autoprof_discover.md
-            echo '@ouyangyu   @daquexian' >> ./oneflow_autoprof_discover.md
-
+            # error
+            test_error_content=$(cat $all_test_result_log | grep 'ERROR:')
+            if [ -n "$test_error_content" ];then
+              echo '```' >> ./oneflow_autoprof_discover.md
+              echo "$test_error_content" >> ./oneflow_autoprof_discover.md
+              echo '```' >> ./oneflow_autoprof_discover.md
+              echo '@ouyangyu   @daquexian  @mosout ' >> ./oneflow_autoprof_discover.md
+            fi
             all_test_result_md=./oneflow_autoprof_discover.md
-
             echo "issue_title=${issue_title}_OneFlow_Autoprof_Discover_Report_On_${branch_name}" >> $GITHUB_ENV
             echo "issue_comment_body=""${all_test_result_md}" >> $GITHUB_ENV
           fi
