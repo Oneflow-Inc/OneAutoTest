@@ -7,7 +7,7 @@ on:
     inputs:
       upload_day_ago:
         description: "upload_day_ago"
-        default: "0"
+        default: "1"
         required: false
       branch_name:
         description: "branch_name"
