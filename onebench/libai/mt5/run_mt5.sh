@@ -3,11 +3,16 @@ set -ex
 ONEFLOW_BRANCH_NAME=${1:-"master"}
 LIBAI_BRANCH_NAME=${2:-"main"}
 
-python3 -m pip uninstall -y oneflow
+INSTALL=${3:-false}
 
-python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/${ONEFLOW_BRANCH_NAME}/cu112
-
-# python3 -m pip install --pre oneflow -f https://staging.oneflow.info/canary/refs/heads/${ONEFLOW_BRANCH_NAME}/cu112/index.html
+if $INSTALL; then
+  python3 -m pip uninstall -y oneflow
+  if [ $LIBAI_BRANCH_NAME == 'master' ]; then
+    python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/${ONEFLOW_BRANCH_NAME}/cu117
+  else
+    python3 -m pip install --pre oneflow -f https://staging.oneflow.info/canary/refs/heads/${ONEFLOW_BRANCH_NAME}/cu117/index.html
+  fi
+fi
 
 if [ ! -d "./libai" ]; then
   git clone --depth 1 https://github.com/Oneflow-Inc/libai.git

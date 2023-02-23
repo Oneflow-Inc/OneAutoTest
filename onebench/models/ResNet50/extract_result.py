@@ -54,23 +54,23 @@ def _add_training_args(parser):
     group.add_argument(
         "--test_commits",
         type=str,
-        default="master",
-        help="test commit ,eg: 65fd4d9,ee07704",
+        default="2856d43",
+        help="test commit ,eg: 2856d43,38876404",
     )
     group.add_argument(
-        "--test_logs", type=str, default="./3080TI/ResNet50", help="log directory"
+        "--test_logs", type=str, default="NVIDIA_GeForce_RTX_3080_Ti", help="log directory"
     )
     group.add_argument("--models_commit", type=str, default="fc7cbf8d", help="935e9c1")
     group.add_argument(
         "--url_path",
         type=str,
-        default="3080TI/ResNet50",
+        default="dev_cc_fuse_nccl_logical/NVIDIA_GeForce_RTX_3080_Ti",
         help="log directory",
     )
     group.add_argument(
         "--url_header",
         type=str,
-        default="https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest",
+        default="https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneAutoTest/onebench/resnet50",
         help="log directory",
     )
 
@@ -193,7 +193,7 @@ def extract_result(args, extract_func):
             result_dict = extract_func(log)
             if "nvidia_name" in result_dict.keys():
                 nvidia_name = result_dict["nvidia_name"]
-            result_dict["url"] = "{}/{}".format(args.url_header, log)
+            result_dict["url"] = "{}/dev_cc_fuse_nccl_logical/{}".format(args.url_header, log)
             if int(result_dict['num_epochs']) < 20:
                 result_dict["max_top1"] = "-"
 

@@ -2,13 +2,15 @@ set -ex
 
 ONEFLOW_BRANCH_NAME=${1:-"master"}
 LIBAI_BRANCH_NAME=${2:-"main"}
-
 INSTALL=${3:-false}
 
 if $INSTALL; then
   python3 -m pip uninstall -y oneflow
-  python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/${ONEFLOW_BRANCH_NAME}/cu117
-  #python3 -m pip install --pre oneflow -f https://staging.oneflow.info/canary/refs/heads/${ONEFLOW_BRANCH_NAME}/cu117/index.html
+  if [ $LIBAI_BRANCH_NAME == 'master' ]; then
+    python3 -m pip install --pre oneflow -f https://staging.oneflow.info/branch/${ONEFLOW_BRANCH_NAME}/cu117
+  else
+    python3 -m pip install --pre oneflow -f https://staging.oneflow.info/canary/refs/heads/${ONEFLOW_BRANCH_NAME}/cu117/index.html
+  fi
 fi
 
 

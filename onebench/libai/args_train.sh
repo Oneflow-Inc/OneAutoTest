@@ -67,7 +67,7 @@ LOG_FILENAME=${TRAN_MODEL}_${RUN_TYPE}_nl${NUM_LAYER}_nah${NUM_ATT_HEADS}_hs${HI
 
 
 if [[ $UNSET_DROPOUT = "true" ]]; then
-    sed -i 's/persistent_workers=True/#persistent_workers=True/g' ./libai/data/build.py
+    #sed -i 's/persistent_workers=True/#persistent_workers=True/g' ./libai/data/build.py
     sed -i 's/shuffle=True/shuffle=False/g' ./libai/data/build.py
     hidden_dropout_prob=0.0
     attention_probs_dropout_prob=0.0
