@@ -117,3 +117,9 @@ echo "Writting log to ${LOG_FILENAME}.log"
 echo "done"
 
 git checkout train.py
+
+ONEFLOW_VERSION=$(python3 -c 'import oneflow; print(oneflow.__version__)')
+ONEFLOW_MODELS_COMMIT=$(git log --pretty=format:"%H" -n 1)
+echo "oneflow-version(git_commit)=$ONEFLOW_VERSION" >> ${LOG_FILENAME}.log
+echo "oneflow-commit(git_commit)=$ONEFLOW_COMMIT" >> ${LOG_FILENAME}.log
+echo "oneflow-models(git_commit)=$ONEFLOW_MODELS_COMMIT" >> ${LOG_FILENAME}.log

@@ -50,11 +50,11 @@ def _add_training_args(parser):
     group.add_argument(
         "--test_commits",
         type=str,
-        default="2856d43,38876404",
+        default="false_false,false_true,true_false,true_true,master_false",
         help="test commit ,eg: 71de123,55b822e",
     )
     group.add_argument(
-        "--test_logs", type=str, default="dev_cc_fuse_nccl_logical/NVIDIA_GeForce_RTX_3080_Ti", help="log directory"
+        "--test_logs", type=str, default="feat-straighten-op_graph/NVIDIA_GeForce_RTX_3080_Ti", help="log directory"
     )
     group.add_argument("--models_commit", type=str, default="1f10864", help="libai commit, eg: 0bdae6c6")
 
@@ -146,7 +146,7 @@ def extract_result(args, extract_func):
     nvidia_name = ""
     for commit in commit_list:
         
-        logs_list = glob.glob(os.path.join(args.test_logs, "{}/*/output.log".format(commit)))
+        logs_list = glob.glob(os.path.join(args.test_logs, "{}/*/*/output.log".format(commit)))
         logs_list = sorted(logs_list)
 
         for log in logs_list:

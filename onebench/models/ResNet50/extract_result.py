@@ -54,7 +54,7 @@ def _add_training_args(parser):
     group.add_argument(
         "--test_commits",
         type=str,
-        default="2856d43",
+        default="208f43fd,2856d43",
         help="test commit ,eg: 2856d43,38876404",
     )
     group.add_argument(
@@ -141,7 +141,10 @@ def extract_info_from_file(log_file):
 
                 if "[train]" in line:
                     iter_num = ss[iter_key + 1].split("/")[0]
-                    throughput_value = float(ss[throughtput_key + 1])
+                    try:
+                        throughput_value = float(ss[throughtput_key + 1])
+                    except:
+                        continue
                     if int(iter_num) > 100:
                         if (
                             "max_throughput" not in result_dict.keys()
