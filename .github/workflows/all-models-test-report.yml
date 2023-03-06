@@ -1,8 +1,8 @@
 name: All Models Test Report
 
 on:
-  schedule:
-    - cron: '10 21 * * *'
+  # schedule:
+  #   - cron: '10 21 * * *'
   workflow_dispatch:
     inputs:
       upload_day_ago:
