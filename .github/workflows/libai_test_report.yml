@@ -1,0 +1,51 @@
+name: OneFlow libai Test Result
+
+on:
+  schedule:
+    - cron: '10 9 * * *'
+  workflow_dispatch:
+    inputs:
+      upload_day_ago:
+        description: "upload_day_ago"
+        default: "1"
+        required: false
+      branch_name:
+        description: "branch_name"
+        default: "master"
+        required: false
+jobs:
+  test_result:
+    name: Get Test Result
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout OneFlow Test
+        uses: actions/checkout@v2
+      - name: Get Test result
+        id: get-test-result
+        env:
+          upload_day_ago: ${{ github.event.inputs.upload_day_ago }}
+          branch_name: ${{ github.event.inputs.branch_name }}
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+        run: |
+          set -x
+          upload_day_ago=${upload_day_ago:-1}
+          branch_name=${branch_name:-"master"}
+          upload_issue_date=$(date -d "${upload_day_ago} day ago" +%Y%m%d)
+          curl http://gosspublic.alicdn.com/ossutil/1.6.19/ossutil64 -o $HOME/ossutil64
+          chmod 755 $HOME/ossutil64
+          $HOME/ossutil64 config -e oss-cn-beijing.aliyuncs.com -i ${OSS_ACCESS_KEY_ID} -k ${OSS_ACCESS_KEY_SECRET}  -L EN -c $HOME/.ossutilconfig
+          $HOME/ossutil64 cp -r oss://oneflow-test/OneAutoTest/onebench/libai/${branch_name}/ $HOME/  --include "${upload_issue_date}_result.md"
+          if [ -f "${HOME}/${upload_issue_date}_result.md" ]; then
+            echo "get_result=1" >> $GITHUB_ENV
+            issue_title=$(date "+%Y%m")
+            all_test_result_md=${HOME}/${upload_issue_date}_result.md
+            echo "issue_title=${issue_title}_OneFlow_libai_Report_On_${branch_name}" >> $GITHUB_ENV
+            echo "issue_comment_body=""${all_test_result_md}" >> $GITHUB_ENV
+          fi
+      - name: Create Issue Comment
+        if: env.get_result == '1'
+        uses: ./.github/actions/issue
+        with:
+          issue_title: ${{ env.issue_title }}
+          issue_comment_body: ${{ env.issue_comment_body }}         
