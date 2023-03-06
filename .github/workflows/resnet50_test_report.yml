@@ -36,11 +36,11 @@ jobs:
           chmod 755 $HOME/ossutil64
           $HOME/ossutil64 config -e oss-cn-beijing.aliyuncs.com -i ${OSS_ACCESS_KEY_ID} -k ${OSS_ACCESS_KEY_SECRET}  -L EN -c $HOME/.ossutilconfig
           $HOME/ossutil64 cp -r oss://oneflow-test/OneAutoTest/onebench/resnet50/${branch_name} ./  --include "${upload_issue_date}_result.md"
-
           if [ ! -f "${upload_issue_date}_result.md" ]; then
             echo "get_result=1" >> $GITHUB_ENV
             issue_title=$(date "+%Y%m")
-            all_test_result_md=./${upload_issue_date}_result.md
+            cat ${upload_issue_date}_result.md > $HOME/test_result.md
+            all_test_result_md=$HOME/test_result.md
             echo "issue_title=${issue_title}_OneFlow_ResNet50_Report_On_${branch_name}" >> $GITHUB_ENV
             echo "issue_comment_body=""${all_test_result_md}" >> $GITHUB_ENV
           fi
