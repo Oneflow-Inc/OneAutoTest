@@ -2,7 +2,7 @@ name: OneFlow Autoprof Discover
 
 on:
   schedule:
-    - cron: '10 9 * * *'
+    - cron: '10 1 * * *'
   workflow_dispatch:
     inputs:
       upload_day_ago:
