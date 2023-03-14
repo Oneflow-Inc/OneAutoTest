@@ -50,7 +50,7 @@ if $GRAPH_ENABLED; then
     RUN_TYPE="graph"
 fi
 
-# const 
+# const
 TRAIN_EPOCH=0
 LOAD_WEIGHT=""
 EVALUATION_ENABLED=false
@@ -61,13 +61,15 @@ bias_dropout_fusion=true
 DP=`expr $NNODES \* $GPUS_PER_NODE \/ $MP \/ $PP`
 ACC=`expr $GLOBAL_BATCH_SIZE \/ $DP \/ $MICRO_BATCH_SIZE`
 
-LOG_FOLDER=test_logs/$HOSTNAME/${GPU_NAME}
+echo ENABLE_NCCL_LOGICAL_FUSION=$ENABLE_NCCL_LOGICAL_FUSION
+echo ONEFLOW_GRAPH_NCCL_LOGICAL_FUSION_BUCKET_SIZE=$ONEFLOW_GRAPH_NCCL_LOGICAL_FUSION_BUCKET_SIZE
+LOG_FOLDER=test_logs/$HOSTNAME/${GPU_NAME}/${ENABLE_NCCL_LOGICAL_FUSION}_${ONEFLOW_GRAPH_NCCL_LOGICAL_FUSION_BUCKET_SIZE}
 
 LOG_FILENAME=${TRAN_MODEL}_${RUN_TYPE}_nl${NUM_LAYER}_nah${NUM_ATT_HEADS}_hs${HIDDEN_SIZE}_${AMP_OR}_ac${ACTIVATION_CHECKPOINT}_DP${DP}_MP${MP}_PP${PP}_zero${ZERO_ENABLE}_stage${ZERO_STAGE}_mbs${MICRO_BATCH_SIZE}_gbs${GLOBAL_BATCH_SIZE}_acc${ACC}_${NNODES}n${GPUS_PER_NODE}g
 
 
 if [[ $UNSET_DROPOUT = "true" ]]; then
-    #sed -i 's/persistent_workers=True/#persistent_workers=True/g' ./libai/data/build.py
+    sed -i 's/persistent_workers=True/#persistent_workers=True/g' ./libai/data/build.py
     sed -i 's/shuffle=True/shuffle=False/g' ./libai/data/build.py
     hidden_dropout_prob=0.0
     attention_probs_dropout_prob=0.0
@@ -123,7 +125,11 @@ train.load_weight=$LOAD_WEIGHT \
 train.output_dir=$LOG_FILENAME 2>&1 | tee ${LOG_FILENAME}/output.log
 
 ONEFLOW_VERSION=$(python3 -c 'import oneflow; print(oneflow.__version__)')
+
 ONEFLOW_LIBAI_COMMIT=$(git log --pretty=format:"%H" -n 1)
+
+echo ENABLE_NCCL_LOGICAL_FUSION=$ENABLE_NCCL_LOGICAL_FUSION >> ${LOG_FILENAME}/output.log
+echo ONEFLOW_GRAPH_NCCL_LOGICAL_FUSION_BUCKET_SIZE=$ONEFLOW_GRAPH_NCCL_LOGICAL_FUSION_BUCKET_SIZE >> ${LOG_FILENAME}/output.log
 echo "oneflow-version(git_commit)=$ONEFLOW_VERSION" >> ${LOG_FILENAME}/output.log
 echo "oneflow-commit(git_commit)=$ONEFLOW_COMMIT" >> ${LOG_FILENAME}/output.log
 echo "oneflow-libai(git_commit)=$ONEFLOW_LIBAI_COMMIT" >> ${LOG_FILENAME}/output.log
