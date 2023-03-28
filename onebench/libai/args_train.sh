@@ -76,7 +76,8 @@ if [[ $UNSET_DROPOUT = "true" ]]; then
 fi
 
 if [[ $SAVE_MODEL = "false" ]]; then
-    sed -i 's/hooks.PeriodicCheckpointer/#&/' ./libai/engine/default.py
+    #sed -i 's/hooks.PeriodicCheckpointer/#&/' ./libai/engine/default.py
+    sed -i '/if self.cfg.train.evaluation.enabled:/i\        ret.pop()' ./libai/engine/default.py
     LOG_FOLDER=$LOG_FOLDER/${ONEFLOW_COMMIT}
 fi
 
