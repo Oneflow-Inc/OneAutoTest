@@ -2,7 +2,6 @@ import math
 import matplotlib.pyplot as plt
 import json
 import os
-
 import click
 
 @click.command()
@@ -73,7 +72,6 @@ def print_loss(path):
         plt.title(name[62:])
         plt.legend()   #打上标签
         plt.savefig("./" + name + "._100-220.png")
-
 
 if __name__ == '__main__':
     print_loss()
