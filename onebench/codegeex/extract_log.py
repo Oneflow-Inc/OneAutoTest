@@ -1,6 +1,7 @@
 import os
 import re
 import numpy as np
+import argparse
 
 def process_logs(log_files_prefix, num_runs, is_faster_transformer=False):
     memory_usage = []
@@ -22,10 +23,10 @@ def process_logs(log_files_prefix, num_runs, is_faster_transformer=False):
 
     return np.mean(memory_usage), np.mean(process_code_time)
 
-def main():
+def main(logs_path, framework_list):
     lengths = [128, 256, 512, 1024, 2048]
-    framework_list = ["oneflow", "pytorch", "faster_transformer"]
     num_runs = 10
+    framework_list = ["oneflow", "pytorch", "faster_transformer"]
 
     results = {}
 
@@ -33,7 +34,7 @@ def main():
         results[length] = {}
 
         for framework in framework_list:
-            log_files_prefix = f"{length}_{framework}_run"
+            log_files_prefix = os.path.join(logs_path_dict[framework], f"{length}_{framework}_run")
             avg_memory, avg_time = process_logs(log_files_prefix, num_runs, is_faster_transformer=(framework == "faster_transformer"))
             results[length][framework] = (avg_memory, avg_time)
 
@@ -49,4 +50,16 @@ def main():
     print(markdown_table)
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--oneflow_logs_path", type=str, required=True, help="Path to the OneFlow log files")
+    parser.add_argument("--pytorch_logs_path", type=str, required=True, help="Path to the PyTorch log files")
+    parser.add_argument("--faster_transformer_logs_path", type=str, required=True, help="Path to the FasterTransformer log files")
+    args = parser.parse_args()
+
+    logs_path_dict = {
+        "oneflow": args.oneflow_logs_path,
+        "pytorch": args.pytorch_logs_path,
+        "faster_transformer": args.faster_transformer_logs_path,
+    }
+
+    main(logs_path_dict)
