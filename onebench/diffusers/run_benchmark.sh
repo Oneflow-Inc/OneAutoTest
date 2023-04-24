@@ -13,13 +13,15 @@ STABLE_VERSION=${1:-"sdv1_5"} # sdv1_5 sdv2_0 sdv2_1 taiyi
 INSTALL_ONEFLOW=${2:-"master"}
 CUDA_VERSION=${3:-"cu117"}
 
+SRC_DIR=$(realpath $(dirname $0))
+mkdir -p ${SRC_DIR}/hf/home
 export HUGGING_FACE_HUB_TOKEN=hf_
-export HF_HOME=/data/home/zhouhongjun/sd_test/hf/home
+export HF_HOME=${SRC_DIR}/hf/home
 
 # install oneflow 
 python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
-python3 -m pip install sentencepiece click transformers
+python3 -m pip install sentencepiece click 
 
 if [ "$INSTALL_ONEFLOW" != "false" ]; then
   python3 -m pip uninstall -y oneflow
@@ -30,6 +32,8 @@ if [ "$INSTALL_ONEFLOW" != "false" ]; then
   fi
 fi
 
+# install torch
+python3 -m pip install "torch<2" "transformers>=4.26" "diffusers[torch]==0.14.0"
 
 declare -A STABLE_DIFFUSION_SCRIPTS=(
   [sdv2_1]=stable_diffusion_2_1.py
@@ -54,15 +58,6 @@ cd diffusion-benchmark
 DIFFUSION_BENCHMARK_COMMIT=$(git log --pretty=format:"%H" -n 1)
 echo "diffusion-benchmark(git_commit)=$DIFFUSION_BENCHMARK_COMMIT"
 
-# if [ ! -d "./transformers" ]; then
-#   git clone --depth 1 https://github.com/Oneflow-Inc/transformers.git
-# fi
-
-# cd transformers
-# ONEFLOW_TRANSFORMERS_COMMIT=$(git log --pretty=format:"%H" -n 1)
-# echo "oneflow-transformers(git_commit)=$ONEFLOW_TRANSFORMERS_COMMIT"
-# python3 -m pip install -e .
-# cd ..
 
 if [ ! -d "./diffusers" ]; then
   git clone --depth 1 https://github.com/Oneflow-Inc/diffusers.git
@@ -99,8 +94,6 @@ if [ "$STABLE_VERSION" == "sdv1_5" ] || [ "$STABLE_VERSION" == "taiyi" ]; then
     sed -i 's/images = pipe(prompt).images/images = pipe(prompt, height=height, width=width).images/g' ./scripts/$BENCHMARK_SCRIPT
     sed -i 's/def benchmark(token, prompt, repeat, output):/def benchmark(token, prompt, repeat, output, height, width):/g' ./scripts/$BENCHMARK_SCRIPT
 fi
-
-cat ./scripts/$BENCHMARK_SCRIPT
 
 
 GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
@@ -145,10 +138,13 @@ echo "oneflow-diffusers(git_commit)=$ONEFLOW_DIFFUSERS_COMMIT" >> ${LOG_FILENAME
 ### pytorch 
 DL_FRAME="pytorch"
 LOG_FOLDER=stable_logs/$GPU_NAME/$DL_FRAME
+
+git checkout ./scripts/$BENCHMARK_SCRIPT
 sed -i 's/oneflow as //g' ./scripts/$BENCHMARK_SCRIPT
-sed -i 's/torch.mock_torch.enable()//g' ./scripts/$BENCHMARK_SCRIPT
-sed -i 's/from onediff import OneFlowStableDiffusionPipeline/from diffusers import StableDiffusionPipeline/g' ./scripts/$BENCHMARK_SCRIPT
-cat ./scripts/$BENCHMARK_SCRIPT
+sed -i 's/OneFlow//g' ./scripts/$BENCHMARK_SCRIPT
+sed -i '/for r in range(repeat):/a\
+        cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
+        os.system(cmd)' ./scripts/$BENCHMARK_SCRIPT
 
 TORCH_VERSION=$(python3 -c 'import torch; print(torch.__version__)')
 python3 -m pip uninstall -y diffusers
