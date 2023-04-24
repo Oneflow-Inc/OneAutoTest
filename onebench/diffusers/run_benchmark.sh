@@ -8,12 +8,13 @@ set -ex
 # Model download
 # user_header="Authorization: Bearer xxxxxx"
 # wget --header="${user_header}" https://huggingface.co/CompVis/stable-diffusion-v-1-4-original/resolve/main/sd-v1-4.ckpt -O models/sd-v1-4.ckpt
-STABLE_VERSION=${1:-"sdv1_5"} # sdv1_4 sdv2 sdv2_1 taiyi
+
+STABLE_VERSION=${1:-"sdv1_5"} # sdv1_5 sdv2_0 sdv2_1 taiyi
 INSTALL_ONEFLOW=${2:-"master"}
-CUDA_VERSION=${3:-"cu116"}
+CUDA_VERSION=${3:-"cu117"}
 
 export HUGGING_FACE_HUB_TOKEN=hf_
-export HF_HOME=/hf/home
+export HF_HOME=/data/home/zhouhongjun/sd_test/hf/home
 
 # install oneflow 
 python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
@@ -72,17 +73,36 @@ echo "oneflow-diffusers(git_commit)=$ONEFLOW_DIFFUSERS_COMMIT"
 python3 -m pip install -e .[oneflow]
 cd ..
 
+if [ "$STABLE_VERSION" == "sdv2_0" ]; then
+    sed -i '/import oneflow as torch/a\torch.mock_torch.enable()' ./scripts/$BENCHMARK_SCRIPT
+    sed -i '/from diffusers import (/,/)/c\
+from diffusers import EulerDiscreteScheduler\' ./scripts/$BENCHMARK_SCRIPT
+    sed -i '/from diffusers/a\from onediff import OneFlowStableDiffusionPipeline as StableDiffusionPipeline' ./scripts/$BENCHMARK_SCRIPT
+fi
+
+if [ "$STABLE_VERSION" == "sdv1_5" ]; then
+    sed -i '/import oneflow as torch/a\torch.mock_torch.enable()' ./scripts/$BENCHMARK_SCRIPT
+    sed -i 's/from diffusers/from onediff/g' ./scripts/$BENCHMARK_SCRIPT
+fi
+
+if [ "$STABLE_VERSION" == "taiyi" ]; then
+    sed -i 's/from diffusers/from onediff/g' ./scripts/$BENCHMARK_SCRIPT
+fi
+
 sed -i '/for r in range(repeat):/a\
         cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
         os.system(cmd)' ./scripts/$BENCHMARK_SCRIPT
-# if [ "$STABLE_VERSION" == "sdv1_5" ]; then
-#   sed -i 's/cmd = "nvidia-smi/    &/' ./scripts/$BENCHMARK_SCRIPT
-#   sed -i 's/os.system(cmd)/    &/' ./scripts/$BENCHMARK_SCRIPT
-# fi
 
-if [ ! -d "./diffusers" ]; then
-  git clone --depth 1 https://github.com/Oneflow-Inc/diffusers.git
+if [ "$STABLE_VERSION" == "sdv1_5" ] || [ "$STABLE_VERSION" == "taiyi" ]; then
+    sed -i '/@click.option("--output", default="output")/a\@click.option("--height", default=512)\
+@click.option("--width", default=512)' ./scripts/$BENCHMARK_SCRIPT
+    sed -i 's/images = pipe(prompt).images/images = pipe(prompt, height=height, width=width).images/g' ./scripts/$BENCHMARK_SCRIPT
+    sed -i 's/def benchmark(token, prompt, repeat, output):/def benchmark(token, prompt, repeat, output, height, width):/g' ./scripts/$BENCHMARK_SCRIPT
 fi
+
+cat ./scripts/$BENCHMARK_SCRIPT
+
+
 GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
 GPU_NAME="${GPU_NAME// /_}"
 
@@ -119,14 +139,16 @@ $DL_FRAME 2>&1 | tee ${LOG_FILENAME}.log
 echo "oneflow-version(git_commit)=$ONEFLOW_VERSION" >> ${LOG_FILENAME}.log
 echo "oneflow-commit(git_commit)=$ONEFLOW_COMMIT" >> ${LOG_FILENAME}.log
 echo "diffusion-benchmark(git_commit)=$DIFFUSION_BENCHMARK_COMMIT" >> ${LOG_FILENAME}.log
-echo "oneflow-transformers(git_commit)=$ONEFLOW_TRANSFORMERS_COMMIT" >> ${LOG_FILENAME}.log
+#echo "oneflow-transformers(git_commit)=$ONEFLOW_TRANSFORMERS_COMMIT" >> ${LOG_FILENAME}.log
 echo "oneflow-diffusers(git_commit)=$ONEFLOW_DIFFUSERS_COMMIT" >> ${LOG_FILENAME}.log
 
 ### pytorch 
 DL_FRAME="pytorch"
 LOG_FOLDER=stable_logs/$GPU_NAME/$DL_FRAME
 sed -i 's/oneflow as //g' ./scripts/$BENCHMARK_SCRIPT
-sed -i 's/OneFlow//g' ./scripts/$BENCHMARK_SCRIPT
+sed -i 's/torch.mock_torch.enable()//g' ./scripts/$BENCHMARK_SCRIPT
+sed -i 's/from onediff import OneFlowStableDiffusionPipeline/from diffusers import StableDiffusionPipeline/g' ./scripts/$BENCHMARK_SCRIPT
+cat ./scripts/$BENCHMARK_SCRIPT
 
 TORCH_VERSION=$(python3 -c 'import torch; print(torch.__version__)')
 python3 -m pip uninstall -y diffusers
