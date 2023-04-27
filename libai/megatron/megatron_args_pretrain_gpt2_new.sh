@@ -94,22 +94,27 @@ CMD="python -m torch.distributed.launch $DISTRIBUTED_ARGS \
         --log-interval $LOG_PERIOD \
         --save-interval $save_checkpoint_period \
         --eval-interval 1000 \
-        --no-bias-dropout-fusion $bias_dropout_fusion\
-        --adlr-autoresume true \ 
+        --adlr-autoresume \ 
         --eval-iters 10 "
-      
 
 if $USE_FP16; then
     CMD+=" \
-      --fp16 "
+    --fp16 "
 fi
+
+
+if [[ $bias_dropout_fusion = "false" ]]; then
+    CMD+=" \
+        --no-bias-dropout-fusion "
+fi
+
 
 if $ACTIVATION_CHECKPOINT; then
     CMD+=" \
-      --activations-checkpoint-method uniform "
+        --activations-checkpoint-method uniform "
     if [ ${MP} -gt 1 ];then
         CMD+=" \
-          --distribute-checkpointed-activations "
+        --distribute-checkpointed-activations "
     fi
 fi
 
@@ -127,7 +132,6 @@ fi
 
 if [[ $SAVE_MODEL = "true" ]]; then
     #sed -i 's/hooks.PeriodicCheckpointer/#&/' ./libai/engine/default.py
-    
     LOG_FOLDER=/${LOG_FILENAME}/${ONEFLOW_COMMIT}
     CMD+=" \
     --save $LOG_FOLDER "
