@@ -20,9 +20,9 @@ NUM_LAYER=${11:-24}
 TRAIN_ITERS=${12:-220}
 LOG_INTERVAL=${13:-100}
 RUN_COMMIT=${14:-"e156d2f"}
-DATA_PATH=${15:-"/path/to/loss_compara_content_sentence"}
-VOCAB_FILE=${16:-"/path/to/gpt2-vocab.json"}
-MERGE_FILE=${17:-"/path/to/gpt2-merges.txt"}
+DATA_PATH=${15:-"./data_test/gpt_data/loss_compara_content_sentence"}
+VOCAB_FILE=${16:-"./data_test/gpt_data/gpt2-vocab.json"}
+MERGE_FILE=${17:-"./data_test/gpt_data/gpt2-merges.txt"}
 
 
 SRC_DIR=$(realpath $(dirname $0)/..)
