@@ -39,7 +39,7 @@ SRC_DIR=$(realpath $(dirname $0)/..)
 TRAN_MODEL="Megatron_gpt2"
 RUN_TIME=$(date "+%Y%m%d_%H%M%S%N")
 
-
+RUN_COMMIT=${26:-"e156d2f"}
 
 # const 
 TRAIN_EPOCH=0
@@ -103,7 +103,7 @@ if $USE_FP16; then
 fi
 
 
-if [[ $bias_dropout_fusion = "false" ]]; then
+if [[ $bias_dropout_fusion = "true" ]]; then
     CMD+=" \
         --no-bias-dropout-fusion "
 fi
@@ -132,7 +132,7 @@ fi
 
 if [[ $SAVE_MODEL = "true" ]]; then
     #sed -i 's/hooks.PeriodicCheckpointer/#&/' ./libai/engine/default.py
-    LOG_FOLDER=/${LOG_FILENAME}/${ONEFLOW_COMMIT}
+    LOG_FOLDER=/${LOG_FILENAME}/${RUN_COMMIT}
     CMD+=" \
     --save $LOG_FOLDER "
 fi
