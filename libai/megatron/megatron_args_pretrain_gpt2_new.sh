@@ -71,7 +71,7 @@ CMD="python -m torch.distributed.launch $DISTRIBUTED_ARGS \
         --num-layers $NUM_LAYER \
         --hidden-size $HIDDEN_SIZE \
         --num-attention-heads $NUM_ATT_HEADS \
-        --ffn_hidden_size $INTERMEDIATE_SIZE \
+        --ffn-hidden-size $INTERMEDIATE_SIZE \
         --micro-batch-size $MICRO_BATCH_SIZE \
         --global-batch-size $GLOBAL_BATCH_SIZE \
         --seq-length 1024 \
@@ -90,7 +90,7 @@ CMD="python -m torch.distributed.launch $DISTRIBUTED_ARGS \
         --weight-decay 1e-2 \
         --clip-grad 1.0 \
         --lr-warmup-fraction .01 \
-        --hidden_dropout $hidden_dropout_prob \
+        --hidden-dropout $hidden_dropout_prob \
         --log-interval $LOG_PERIOD \
         --save-interval $save_checkpoint_period \
         --eval-interval 1000 \
