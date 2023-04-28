@@ -113,12 +113,6 @@ if $USE_FP16; then
 fi
 
 
-if [[ $bias_dropout_fusion = "false" ]]; then
-    CMD+=" \
-        --no-bias-dropout-fusion "
-fi
-
-
 if $ACTIVATION_CHECKPOINT; then
     CMD+=" \
         --activations-checkpoint-method uniform "
@@ -136,8 +130,9 @@ if [[ $UNSET_DROPOUT = "true" ]]; then
     bias_dropout_fusion=false
     LOAD_WEIGHT=${LOG_FOLDER}/$LOG_FILENAME/model_final/
 
-    CMD+=" \
-        --load $LOAD_WEIGHT "
+    CMD+="\
+    --load $LOAD_WEIGHT \
+    --no-bias-dropout-fusion"
 fi
 
 if [[ $SAVE_MODEL = "true" ]]; then
