@@ -53,7 +53,7 @@ fi
 # const 
 TRAIN_EPOCH=0
 LOAD_WEIGHT=""
-EVALUATION_ENABLED=true
+
 hidden_dropout_prob=0.1
 attention_probs_dropout_prob=0.1
 bias_dropout_fusion=false
@@ -103,16 +103,16 @@ CMD="python -m torch.distributed.launch $DISTRIBUTED_ARGS \
         --log-interval $LOG_PERIOD \
         --save-interval $save_checkpoint_period \
         --eval-interval 1000 \
-        --adlr-autoresume \ 
-        --eval-iters 10 "
+        --adlr-autoresume \
+        --eval-iters 10"
 
 if $USE_FP16; then
     CMD+=" \
-    --fp16 "
+        --fp16 "
 fi
 
 
-if [[ $bias_dropout_fusion = "true" ]]; then
+if [[ $bias_dropout_fusion = "false" ]]; then
     CMD+=" \
         --no-bias-dropout-fusion "
 fi
@@ -136,15 +136,15 @@ if [[ $UNSET_DROPOUT = "true" ]]; then
     LOAD_WEIGHT=${LOG_FOLDER}/$LOG_FILENAME/model_final/
 
     CMD+=" \
-    --load $LOAD_WEIGHT "
+        --load $LOAD_WEIGHT "
 fi
 
 if [[ $SAVE_MODEL = "true" ]]; then
-    #sed -i 's/hooks.PeriodicCheckpointer/#&/' ./libai/engine/default.py
+
     SAVE_WEIGHT=${LOG_FOLDER}/$LOG_FILENAME/model_final/
 
     CMD+=" \
-    --save $SAVE_WEIGHT "
+        --save $SAVE_WEIGHT "
 fi
 
 LOG_FILENAME=$LOG_FOLDER/$LOG_FILENAME
