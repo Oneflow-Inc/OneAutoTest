@@ -15,7 +15,7 @@ wget -nc https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/
 wget -nc https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/dataset/loss_compara_content_sentence.idx  -P ./Megatron-LM/data_test/gpt_data
 
 
-wget https://github.com/Tendo33/OneAutoTest/raw/megatron_script/onebench/libai/megatron_args_pretrain_gpt.sh -P ./examples
+wget https://github.com/Tendo33/OneAutoTest/raw/megatron_script/onebench/libai/megatron_args_pretrain_gpt2.sh -P ./examples
 
 cd Megatron-LM
 #1n1g
