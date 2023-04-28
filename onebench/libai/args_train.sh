@@ -57,11 +57,11 @@ fi
 TRAIN_EPOCH=0
 LOAD_WEIGHT=""
 EVALUATION_ENABLED=true
-EVAL_ITER=20
+EVAL_ITER=20  
 hidden_dropout_prob=0.1
 attention_probs_dropout_prob=0.1
-bias_dropout_fusion=true
-save_checkpoint_period=1000
+bias_dropout_fusion=true # 每几轮保存一次
+save_checkpoint_period=1000 
 
 
 DP=`expr $NNODES \* $GPUS_PER_NODE \/ $MP \/ $PP`

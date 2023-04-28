@@ -27,7 +27,7 @@ wget -nc https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/
 wget -nc https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/dataset/loss_compara_content_sentence.bin  -P ./libai/data_test/gpt_data
 wget -nc https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/dataset/loss_compara_content_sentence.idx  -P ./libai/data_test/gpt_data
 
-wget -nc https://raw.githubusercontent.com/Oneflow-Inc/OneAutoTest/main/onebench/libai/args_train.sh -P ./libai/tools/
+wget -nc https://raw.githubusercontent.com/Oneflow-Inc/OneAutoTest/megatron_script/onebench/libai/args_train.sh -P ./libai/tools/
 
 cd libai
 if [ $LIBAI_BRANCH_NAME != 'main' ]; then

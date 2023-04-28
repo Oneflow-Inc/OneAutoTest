@@ -10,14 +10,14 @@ MASTER_ADDR=${4:-"127.0.0.1"}
 MASTER_PORT=6000
 MP=${5:-1}
 PP=${6:-1}
-GRAPH_ENABLED=${7:-true}   #需要
+GRAPH_ENABLED=${7:-true}  
 USE_FP16=${8:-false}  
 ACTIVATION_CHECKPOINT=${9:-true}
 MICRO_BATCH_SIZE=${10:-2}
 GLOBAL_BATCH_SIZE=${11:-16}
 
-ZERO_ENABLE=${12:-false} #需要
-ZERO_STAGE=${13:-2} #需要
+ZERO_ENABLE=${12:-false} 
+ZERO_STAGE=${13:-0} 
 TRAIN_ITERS=${14:-220}
 LOG_PERIOD=${15:-100}
 NUM_LAYER=${16:-24}
@@ -25,7 +25,7 @@ NUM_LAYER=${16:-24}
 NUM_ATT_HEADS=${17:-12}
 HIDDEN_SIZE=${18:-768}
 INTERMEDIATE_SIZE=${19:-3072}
-HEAD_SIZE=${20:-64} #需要
+HEAD_SIZE=${20:-64} 
 SAVE_MODEL=${21:-false} 
 UNSET_DROPOUT=${22:-false} 
 
@@ -103,7 +103,7 @@ CMD="python -m torch.distributed.launch $DISTRIBUTED_ARGS \
         --log-interval $LOG_PERIOD \
         --save-interval $save_checkpoint_period \
         --eval-interval 1000 \
-        --adlr-autoresume \
+
         --eval-iters 10"
 
 if $USE_FP16; then
