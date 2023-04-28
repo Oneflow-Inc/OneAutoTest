@@ -100,6 +100,7 @@ CMD="python -m torch.distributed.launch $DISTRIBUTED_ARGS \
         --clip-grad 1.0 \
         --lr-warmup-fraction .01 \
         --hidden-dropout $hidden_dropout_prob \
+        --attention-dropout $attention_probs_dropout_prob \
         --log-interval $LOG_PERIOD \
         --save-interval $save_checkpoint_period \
         --eval-interval 1000 \
@@ -132,7 +133,7 @@ if [[ $UNSET_DROPOUT = "true" ]]; then
 
     hidden_dropout_prob=0.0
     attention_probs_dropout_prob=0.0
-    bias_dropout_fusion=true
+    bias_dropout_fusion=false
     LOAD_WEIGHT=${LOG_FOLDER}/$LOG_FILENAME/model_final/
 
     CMD+=" \
