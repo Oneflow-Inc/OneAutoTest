@@ -35,11 +35,20 @@ VOCAB_FILE=${24:-"./data_test/gpt_data/gpt2-vocab.json"}
 MERGE_FILE=${25:-"./data_test/gpt_data/gpt2-merges.txt"}
 
 
+GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
+GPU_NAME="${GPU_NAME// /_}"
+
 SRC_DIR=$(realpath $(dirname $0)/..)
 TRAN_MODEL="Megatron_gpt2"
 RUN_TIME=$(date "+%Y%m%d_%H%M%S%N")
 
 RUN_COMMIT=${26:-"e156d2f"}
+
+
+RUN_TYPE="eager"
+if $GRAPH_ENABLED; then
+    RUN_TYPE="graph"
+fi
 
 # const 
 TRAIN_EPOCH=0
@@ -51,7 +60,7 @@ bias_dropout_fusion=false
 save_checkpoint_period=1000
 
 
-LOG_FOLDER=test_logs/$HOSTNAME/${GPU_NAME}
+LOG_FOLDER=${SRC_DIR}/test_logs/$RUN_COMMIT/${NNODES}n${GPUS_PER_NODE}g
 
 LOG_FILENAME=${TRAN_MODEL}_${RUN_TYPE}_nl${NUM_LAYER}_nah${NUM_ATT_HEADS}_hs${HIDDEN_SIZE}_${AMP_OR}_ac${ACTIVATION_CHECKPOINT}_DP${DP}_MP${MP}_PP${PP}_zero${ZERO_ENABLE}_stage${ZERO_STAGE}_mbs${MICRO_BATCH_SIZE}_gbs${GLOBAL_BATCH_SIZE}_acc${ACC}_${NNODES}n${GPUS_PER_NODE}g
 
@@ -132,9 +141,10 @@ fi
 
 if [[ $SAVE_MODEL = "true" ]]; then
     #sed -i 's/hooks.PeriodicCheckpointer/#&/' ./libai/engine/default.py
-    LOG_FOLDER=/${LOG_FILENAME}/${RUN_COMMIT}
+    SAVE_WEIGHT=${LOG_FOLDER}/$LOG_FILENAME/model_final/
+
     CMD+=" \
-    --save $LOG_FOLDER "
+    --save $SAVE_WEIGHT "
 fi
 
 LOG_FILENAME=$LOG_FOLDER/$LOG_FILENAME
