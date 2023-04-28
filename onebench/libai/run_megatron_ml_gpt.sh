@@ -15,11 +15,11 @@ wget -nc https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/
 wget -nc https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/dataset/loss_compara_content_sentence.idx  -P ./Megatron-LM/data_test/gpt_data
 
 
-wget https://github.com/Tendo33/OneAutoTest/raw/megatron_script/onebench/libai/megatron_args_pretrain_gpt2.sh -P ./examples
+wget https://github.com/Tendo33/OneAutoTest/raw/megatron_script/onebench/libai/megatron_args_pretrain_gpt2.sh -P ./Megatron-LM/examples
 
 cd Megatron-LM
 #1n1g
-bash examples/megatron_args_pretrain_gpt2.sh 1 1 0 127.0.0.1 1 1 true true true 5 5 false 2 220 1 24 12 768 3072 64 true false
+bash examples/megatron_args_pretrain_gpt2.sh 1 1 0 127.0.0.1 1 1 true true true 5 5 false 2 220 1 24 16 768 3072 64 true false
 
 #1n8g
 bash examples/megatron_args_pretrain_gpt2.sh 1 8 0 127.0.0.1 8 1 true true true 32 256 false 2 220 1 24 16 768 3072 64 true false
