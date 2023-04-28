@@ -26,6 +26,8 @@ SAVE_MODEL=${22:-false}
 UNSET_DROPOUT=${23:-false}
 
 
+
+
 ONEFLOW_COMMIT=$(python3 -c 'import oneflow; print(oneflow.__git_commit__)')
 
 sed -i '/import time/a\import os' ./libai/engine/trainer.py
@@ -38,6 +40,7 @@ GPU_NAME="${GPU_NAME// /_}"
 TRAN_MODEL=${CONFIG##*/}
 TRAN_MODEL="LibAI_${TRAN_MODEL%*.py}"
 #RUN_TIME=$(date "+%Y%m%d_%H%M%S%N")
+
 
 
 AMP_OR="FP32"
@@ -53,10 +56,13 @@ fi
 # const 
 TRAIN_EPOCH=0
 LOAD_WEIGHT=""
-EVALUATION_ENABLED=false
+EVALUATION_ENABLED=true
+EVAL_ITER=20  
 hidden_dropout_prob=0.1
 attention_probs_dropout_prob=0.1
-bias_dropout_fusion=true
+bias_dropout_fusion=true # 每几轮保存一次
+save_checkpoint_period=1000 
+
 
 DP=`expr $NNODES \* $GPUS_PER_NODE \/ $MP \/ $PP`
 ACC=`expr $GLOBAL_BATCH_SIZE \/ $DP \/ $MICRO_BATCH_SIZE`
@@ -77,8 +83,8 @@ fi
 
 if [[ $SAVE_MODEL = "false" ]]; then
     #sed -i 's/hooks.PeriodicCheckpointer/#&/' ./libai/engine/default.py
-    sed -i '/if self.cfg.train.evaluation.enabled:/i\        ret.pop()' ./libai/engine/default.py
-    LOG_FOLDER=$LOG_FOLDER/${ONEFLOW_COMMIT}
+    sed -i '/if self.cfg.train.evaluation.enabled:/i\        ret = [ hooks.IterationTimer(), hooks.LRScheduler(),]' ./libai/engine/default.py
+    LOG_FOLDER=/${LOG_FILENAME}/${ONEFLOW_COMMIT}
 fi
 
 LOG_FILENAME=$LOG_FOLDER/$LOG_FILENAME
@@ -86,42 +92,41 @@ LOG_FILENAME=$LOG_FOLDER/$LOG_FILENAME
 mkdir -p $LOG_FILENAME
 echo LOG_FILENAME=$LOG_FILENAME
 
-# nsys -delay=500
-# export ONEFLOW_DEBUG_MODE=1
-# export GLOG_v=3
-# export ONEFLOW_PROFILER_KERNEL_PROFILE_KERNEL_FORWARD_RANGE=True
 
-# nsys profile --stats true --output ${LOG_FILENAME} --sample none --cpuctxsw none \
 python3 -m oneflow.distributed.launch \
 --nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT \
 tools/train_net.py \
---config-file $CONFIG \
-model.cfg.hidden_dropout_prob=$hidden_dropout_prob \
-model.cfg.attention_probs_dropout_prob=$attention_probs_dropout_prob \
-model.cfg.bias_dropout_fusion=$bias_dropout_fusion \
-model.cfg.hidden_layers=$NUM_LAYER \
-model.cfg.hidden_size=$HIDDEN_SIZE \
-model.cfg.num_attention_heads=$NUM_ATT_HEADS \
-model.cfg.intermediate_size=$INTERMEDIATE_SIZE \
-model.cfg.ffn_hidden_size=$INTERMEDIATE_SIZE \
+--resume \
+--config-file $CONFIG \ 
+model.cfg.hidden_dropout_prob=$hidden_dropout_prob \ 
+model.cfg.attention_probs_dropout_prob=$attention_probs_dropout_prob \ 
+model.cfg.bias_dropout_fusion=$bias_dropout_fusion \ 
+model.cfg.hidden_layers=$NUM_LAYER \ 
+model.cfg.hidden_size=$HIDDEN_SIZE \ 
+model.cfg.num_attention_heads=$NUM_ATT_HEADS \ 
+model.cfg.intermediate_size=$INTERMEDIATE_SIZE \ 
+model.cfg.ffn_hidden_size=$INTERMEDIATE_SIZE \ 
 model.cfg.head_size=$HEAD_SIZE \
-graph.enabled=$GRAPH_ENABLED \
-train.dist.pipeline_num_layers=$NUM_LAYER \
-train.train_micro_batch_size=$MICRO_BATCH_SIZE \
-train.global_batch_size=$GLOBAL_BATCH_SIZE \
-train.dist.tensor_parallel_size=$MP \
-train.dist.pipeline_parallel_size=$PP \
-train.amp.enabled=$USE_FP16 \
-train.activation_checkpoint.enabled=$ACTIVATION_CHECKPOINT \
-train.num_accumulation_steps=$ACC \
-train.evaluation.enabled=$EVALUATION_ENABLED \
-train.train_iter=$TRAIN_ITERS \
-train.train_epoch=$TRAIN_EPOCH \
-train.log_period=$LOG_PERIOD \
-train.zero_optimization.enabled=$ZERO_ENABLE \
-train.zero_optimization.stage=$ZERO_STAGE \
-train.load_weight=$LOAD_WEIGHT \
+graph.enabled=$GRAPH_ENABLED \ 
+train.dist.pipeline_num_layers=$NUM_LAYER \ 
+train.train_micro_batch_size=$MICRO_BATCH_SIZE \ 
+train.global_batch_size=$GLOBAL_BATCH_SIZE \ 
+train.dist.tensor_parallel_size=$MP \ 
+train.dist.pipeline_parallel_size=$PP \ 
+train.amp.enabled=$USE_FP16 \ 
+train.activation_checkpoint.enabled=$ACTIVATION_CHECKPOINT \ 
+train.num_accumulation_steps=$ACC \ 
+train.evaluation.enabled=$EVALUATION_ENABLED \ 
+train.evaluation.eval_iter=$EVAL_ITER \ 
+train.train_iter=$TRAIN_ITERS \ 
+train.train_epoch=$TRAIN_EPOCH \ 
+train.log_period=$LOG_PERIOD \ 
+train.zero_optimization.enabled=$ZERO_ENABLE \ 
+train.zero_optimization.stage=$ZERO_STAGE \ 
+train.load_weight=$LOAD_WEIGHT \   
+train.checkpoint.period=$save_checkpoint_period \ 
 train.output_dir=$LOG_FILENAME 2>&1 | tee ${LOG_FILENAME}/output.log
+
 
 ONEFLOW_VERSION=$(python3 -c 'import oneflow; print(oneflow.__version__)')
 ONEFLOW_LIBAI_COMMIT=$(git log --pretty=format:"%H" -n 1)
