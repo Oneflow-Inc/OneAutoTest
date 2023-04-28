@@ -84,7 +84,7 @@ fi
 if [[ $SAVE_MODEL = "false" ]]; then
     #sed -i 's/hooks.PeriodicCheckpointer/#&/' ./libai/engine/default.py
     sed -i '/if self.cfg.train.evaluation.enabled:/i\        ret = [ hooks.IterationTimer(), hooks.LRScheduler(),]' ./libai/engine/default.py
-    LOG_FOLDER=/${LOG_FILENAME}/${ONEFLOW_COMMIT}_${ENV}
+    LOG_FOLDER=/${LOG_FILENAME}/${ONEFLOW_COMMIT}
 fi
 
 LOG_FILENAME=$LOG_FOLDER/$LOG_FILENAME
