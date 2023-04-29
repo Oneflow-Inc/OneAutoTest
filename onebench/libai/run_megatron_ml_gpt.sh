@@ -6,8 +6,8 @@ cd Megatron-LM
 git checkout e156d2fea7fc5c98e645f7742eb86b643956d840
 
 
-if [ ! -d "./Megatron-LM/data_test/gpt_data" ]; then
-    mkdir -p ./Megatron-LM/data_test/gpt_data
+if [ ! -d "./data_test/gpt_data" ]; then
+    mkdir -p ./data_test/gpt_data
 fi
 
 wget -nc https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/dataset/gpt2-vocab.json  -P ./data_test/gpt_data
