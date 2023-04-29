@@ -42,7 +42,7 @@ python3 -m pip install -e . --user
 
 
 ## GPT-2
-# 3080 ti
+# 3090 
 
 #  1n1g         gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb8_gb8_1n1g
 bash tools/args_train.sh configs/gpt2_pretrain.py 1 1 0 127.0.0.1 1 1 true true true 8 8 false 0 220 100 24 16 1024 4096
