@@ -60,8 +60,8 @@ EVALUATION_ENABLED=true
 EVAL_ITER=20  
 hidden_dropout_prob=0.1
 attention_probs_dropout_prob=0.1
-bias_dropout_fusion=true # 每几轮保存一次
-save_checkpoint_period=1000 
+bias_dropout_fusion=true 
+save_checkpoint_period=1000 # 每几轮保存一次
 
 
 DP=`expr $NNODES \* $GPUS_PER_NODE \/ $MP \/ $PP`
@@ -84,7 +84,7 @@ fi
 if [[ $SAVE_MODEL = "false" ]]; then
     #sed -i 's/hooks.PeriodicCheckpointer/#&/' ./libai/engine/default.py
     sed -i '/if self.cfg.train.evaluation.enabled:/i\        ret = [ hooks.IterationTimer(), hooks.LRScheduler(),]' ./libai/engine/default.py
-    LOG_FOLDER=/${LOG_FILENAME}/${ONEFLOW_COMMIT}
+    LOG_FOLDER=/${LOG_FOLDER}/${ONEFLOW_COMMIT}
 fi
 
 LOG_FILENAME=$LOG_FOLDER/$LOG_FILENAME
