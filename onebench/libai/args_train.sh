@@ -96,7 +96,6 @@ echo LOG_FILENAME=$LOG_FILENAME
 python3 -m oneflow.distributed.launch \
 --nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT \
 tools/train_net.py \
---resume \
 --config-file $CONFIG \
 model.cfg.hidden_dropout_prob=$hidden_dropout_prob \
 model.cfg.attention_probs_dropout_prob=$attention_probs_dropout_prob \
