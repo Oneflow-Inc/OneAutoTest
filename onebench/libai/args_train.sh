@@ -96,7 +96,7 @@ echo LOG_FILENAME=$LOG_FILENAME
 python3 -m oneflow.distributed.launch \
 --nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT \
 tools/train_net.py \
---resume \
+
 --config-file $CONFIG \
 model.cfg.hidden_dropout_prob=$hidden_dropout_prob \
 model.cfg.attention_probs_dropout_prob=$attention_probs_dropout_prob \
@@ -115,7 +115,7 @@ train.dist.tensor_parallel_size=$MP \
 train.dist.pipeline_parallel_size=$PP \
 train.amp.enabled=$USE_FP16 \
 train.activation_checkpoint.enabled=$ACTIVATION_CHECKPOINT \
-train.num_accumulation_steps=$ACC \ 
+train.num_accumulation_steps=$ACC \
 train.evaluation.enabled=$EVALUATION_ENABLED \
 train.evaluation.eval_iter=$EVAL_ITER \
 train.train_iter=$TRAIN_ITERS \
