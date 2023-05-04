@@ -30,10 +30,10 @@ UNSET_DROPOUT=${23:-false}
 
 ONEFLOW_COMMIT=$(python3 -c 'import oneflow; print(oneflow.__git_commit__)')
 
-sed -i '/import time/a\import os' ./libai/engine/trainer.py
-sed -i '/for self.iter in range(start_iter, max_iter):/a\                    if self.iter == 99: \
-                        cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
-                        os.system(cmd)' ./libai/engine/trainer.py
+#sed -i '/import time/a\import os' ./libai/engine/trainer.py
+#sed -i '/for self.iter in range(start_iter, max_iter):/a\                    if self.iter == 99: \
+#                        cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
+#                        os.system(cmd)' ./libai/engine/trainer.py
 
 GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
 GPU_NAME="${GPU_NAME// /_}"
@@ -74,7 +74,7 @@ LOG_FILENAME=${TRAN_MODEL}_${RUN_TYPE}_nl${NUM_LAYER}_nah${NUM_ATT_HEADS}_hs${HI
 
 if [[ $UNSET_DROPOUT = "true" ]]; then
     #sed -i 's/persistent_workers=True/#persistent_workers=True/g' ./libai/data/build.py
-    sed -i 's/shuffle=True/shuffle=False/g' ./libai/data/build.py
+    #sed -i 's/shuffle=True/shuffle=False/g' ./libai/data/build.py
     hidden_dropout_prob=0.0
     attention_probs_dropout_prob=0.0
     bias_dropout_fusion=false
@@ -83,7 +83,7 @@ fi
 
 if [[ $SAVE_MODEL = "false" ]]; then
     #sed -i 's/hooks.PeriodicCheckpointer/#&/' ./libai/engine/default.py
-    sed -i '/if self.cfg.train.evaluation.enabled:/i\        ret.pop()' ./libai/engine/default.py
+    #sed -i '/if self.cfg.train.evaluation.enabled:/i\        ret.pop()' ./libai/engine/default.py
     LOG_FOLDER=$LOG_FOLDER/${ONEFLOW_COMMIT}
 fi
 
