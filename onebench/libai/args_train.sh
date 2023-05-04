@@ -89,33 +89,33 @@ python3 -m oneflow.distributed.launch \
 --nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT \
 tools/train_net.py \
 --resume \
---config-file $CONFIG \ 
-model.cfg.hidden_dropout_prob=$hidden_dropout_prob \ 
+--config-file $CONFIG \
+model.cfg.hidden_dropout_prob=$hidden_dropout_prob \
 model.cfg.attention_probs_dropout_prob=$attention_probs_dropout_prob \
-model.cfg.bias_dropout_fusion=$bias_dropout_fusion \ 
-model.cfg.hidden_layers=$NUM_LAYER \ 
-model.cfg.hidden_size=$HIDDEN_SIZE \ 
-model.cfg.num_attention_heads=$NUM_ATT_HEADS \ 
-model.cfg.intermediate_size=$INTERMEDIATE_SIZE \ 
-model.cfg.ffn_hidden_size=$INTERMEDIATE_SIZE \ 
-model.cfg.head_size=$HEAD_SIZE \ 
-graph.enabled=$GRAPH_ENABLED \ 
-train.dist.pipeline_num_layers=$NUM_LAYER \ 
-train.train_micro_batch_size=$MICRO_BATCH_SIZE \ 
-train.global_batch_size=$GLOBAL_BATCH_SIZE \ 
-train.dist.tensor_parallel_size=$MP \ 
-train.dist.pipeline_parallel_size=$PP \ 
-train.amp.enabled=$USE_FP16 \ 
-train.activation_checkpoint.enabled=$ACTIVATION_CHECKPOINT \ 
-train.num_accumulation_steps=$ACC \ 
-train.evaluation.enabled=$EVALUATION_ENABLED \ 
+model.cfg.bias_dropout_fusion=$bias_dropout_fusion \
+model.cfg.hidden_layers=$NUM_LAYER \
+model.cfg.hidden_size=$HIDDEN_SIZE \
+model.cfg.num_attention_heads=$NUM_ATT_HEADS \
+model.cfg.intermediate_size=$INTERMEDIATE_SIZE \
+model.cfg.ffn_hidden_size=$INTERMEDIATE_SIZE \
+model.cfg.head_size=$HEAD_SIZE \
+graph.enabled=$GRAPH_ENABLED \
+train.dist.pipeline_num_layers=$NUM_LAYER \
+train.train_micro_batch_size=$MICRO_BATCH_SIZE \
+train.global_batch_size=$GLOBAL_BATCH_SIZE \
+train.dist.tensor_parallel_size=$MP \
+train.dist.pipeline_parallel_size=$PP \
+train.amp.enabled=$USE_FP16 \
+train.activation_checkpoint.enabled=$ACTIVATION_CHECKPOINT \
+train.num_accumulation_steps=$ACC \
+train.evaluation.enabled=$EVALUATION_ENABLED \
 train.evaluation.eval_iter=$EVAL_ITER \
-train.train_iter=$TRAIN_ITERS \ 
-train.train_epoch=$TRAIN_EPOCH \ 
-train.log_period=$LOG_PERIOD \ 
-train.zero_optimization.enabled=$ZERO_ENABLE \ 
-train.zero_optimization.stage=$ZERO_STAGE \ 
-train.checkpoint.period=$save_checkpoint_period \ 
+train.train_iter=$TRAIN_ITERS \
+train.train_epoch=$TRAIN_EPOCH \
+train.log_period=$LOG_PERIOD \
+train.zero_optimization.enabled=$ZERO_ENABLE \
+train.zero_optimization.stage=$ZERO_STAGE \
+train.checkpoint.period=$save_checkpoint_period \
 train.load_weight=$LOAD_WEIGHT \
 
 train.output_dir=$LOG_FILENAME 2>&1 | tee ${LOG_FILENAME}/output.log
