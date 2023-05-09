@@ -98,7 +98,6 @@ CMD="python -m torch.distributed.launch $DISTRIBUTED_ARGS \
         --log-interval $LOG_PERIOD \
         --save-interval $save_checkpoint_period \
         --eval-interval 1000 \
-        --adlr-autoresume \ 
         --eval-iters 10 "
 
 if $USE_FP16; then
