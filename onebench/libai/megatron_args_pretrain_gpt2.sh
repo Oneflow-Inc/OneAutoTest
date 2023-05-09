@@ -1,9 +1,5 @@
 set -ex
 
-export ONEFLOW_COMM_NET_IB_GID_INDEX=$NCCL_IB_GID_INDEX
-export ONEFLOW_COMM_NET_IB_HCA=mlx5_2:1
-
-
 # volcengine DDP env 
 NNODES=$WORLD_SIZE
 GPUS_PER_NODE=8 
@@ -56,6 +52,8 @@ attention_probs_dropout_prob=0.1
 bias_dropout_fusion=false
 save_checkpoint_period=1000
 
+DP=`expr $NNODES \* $GPUS_PER_NODE \/ $MP \/ $PP`
+GLOBAL_BATCH_SIZE=$((ACC * DP * MICRO_BATCH_SIZE))
 
 LOG_FOLDER=test_logs/$HOSTNAME/${GPU_NAME}
 
@@ -99,7 +97,6 @@ CMD="python -m torch.distributed.launch $DISTRIBUTED_ARGS \
         --log-interval $LOG_PERIOD \
         --save-interval $save_checkpoint_period \
         --eval-interval 1000 \
-        --adlr-autoresume \ 
         --eval-iters 10 "
 
 if $USE_FP16; then

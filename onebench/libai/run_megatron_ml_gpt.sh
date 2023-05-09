@@ -1,6 +1,6 @@
-
-git clone https://github.com/NVIDIA/Megatron-LM.git
-
+if [ ! -d "./Megatron-LM" ]; then
+    git clone https://github.com/NVIDIA/Megatron-LM.git
+fi
 cd Megatron-LM
 
 git checkout e156d2fea7fc5c98e645f7742eb86b643956d840
