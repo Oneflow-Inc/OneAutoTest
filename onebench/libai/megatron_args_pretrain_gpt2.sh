@@ -34,7 +34,6 @@ MERGE_FILE=${19:-"./data_test/gpt_data/gpt2-merges.txt"}
 SRC_DIR=$(realpath $(dirname $0)/..)
 TRAN_MODEL="Megatron_gpt2"
 RUN_TIME=$(date "+%Y%m%d_%H%M%S%N")
-
 RUN_COMMIT=${26:-"e156d2f"}
 
 
@@ -44,6 +43,8 @@ if $GRAPH_ENABLED; then
 fi
 
 # const 
+GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
+GPU_NAME="${GPU_NAME// /_}"
 TRAIN_EPOCH=0
 LOAD_WEIGHT=""
 EVALUATION_ENABLED=true
@@ -62,6 +63,7 @@ LOG_FILENAME=${TRAN_MODEL}_${RUN_TYPE}_nl${NUM_LAYER}_nah${NUM_ATT_HEADS}_hs${HI
 LOG_FILENAME=$LOG_FOLDER/$LOG_FILENAME
 
 mkdir -p $LOG_FILENAME
+
 echo LOG_FILENAME=$LOG_FILENAME
 
 
