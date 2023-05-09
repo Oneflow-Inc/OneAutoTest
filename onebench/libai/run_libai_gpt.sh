@@ -1,6 +1,6 @@
 set -ex
 
-fast_proxy=100.68.166.234:3128
+
 git config --global http.proxy http://${fast_proxy}
 git config --global https.proxy https://${fast_proxy}
 export http_proxy=${fast_proxy}

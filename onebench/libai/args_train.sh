@@ -33,10 +33,12 @@ HEAD_SIZE=${17:-64}
 
 ONEFLOW_COMMIT=$(python3 -c 'import oneflow; print(oneflow.__git_commit__)')
 
+if [ $NODE_INDEX -eq 0 ]; then
 sed -i '/import time/a\import os' ./libai/engine/trainer.py
 sed -i '/for self.iter in range(start_iter, max_iter):/a\                    if self.iter == 99: \
                         cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
                         os.system(cmd)' ./libai/engine/trainer.py
+fi
 
 GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
 GPU_NAME="${GPU_NAME// /_}"
