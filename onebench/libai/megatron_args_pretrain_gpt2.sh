@@ -43,6 +43,8 @@ if $GRAPH_ENABLED; then
     RUN_TYPE="graph"
 fi
 
+GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
+GPU_NAME="${GPU_NAME// /_}"
 # const 
 TRAIN_EPOCH=0
 LOAD_WEIGHT=""
@@ -139,7 +141,6 @@ if [[ $SAVE_MODEL = "true" ]]; then
     --save $LOG_FOLDER "
 fi
 
-LOG_FILENAME=$LOG_FOLDER/$LOG_FILENAME
 
 
 echo "Rum cmd ${CMD}"
