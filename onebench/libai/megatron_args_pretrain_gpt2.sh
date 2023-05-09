@@ -45,6 +45,7 @@ fi
 # const 
 GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
 GPU_NAME="${GPU_NAME// /_}"
+
 TRAIN_EPOCH=0
 LOAD_WEIGHT=""
 EVALUATION_ENABLED=true
@@ -142,4 +143,4 @@ fi
 
 echo "Rum cmd ${CMD}"
 
-$CMD 2>&1 | tee ${LOG_FILENAME}.log
+$CMD 2>&1 | tee ${LOG_FILENAME}/output_megatron.log
