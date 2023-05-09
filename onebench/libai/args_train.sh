@@ -33,7 +33,7 @@ HEAD_SIZE=${17:-64}
 
 ONEFLOW_COMMIT=$(python3 -c 'import oneflow; print(oneflow.__git_commit__)')
 
-if [ $NODE_INDEX -eq 0 ]; then
+if [ $NODE_RANK -eq 0 ]; then
 sed -i '/import time/a\import os' ./libai/engine/trainer.py
 sed -i '/for self.iter in range(start_iter, max_iter):/a\                    if self.iter == 99: \
                         cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
@@ -130,6 +130,6 @@ echo "oneflow-libai(git_commit)=$ONEFLOW_LIBAI_COMMIT" >> ${LOG_FILENAME}/output
 
 
 
-if [ $NODE_INDEX -eq 0 ]; then
+if [ $NODE_RANK -eq 0 ]; then
   git checkout ./libai/engine/*.py
 fi
