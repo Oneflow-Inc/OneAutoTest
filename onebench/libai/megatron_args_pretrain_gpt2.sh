@@ -52,6 +52,8 @@ attention_probs_dropout_prob=0.1
 bias_dropout_fusion=false
 save_checkpoint_period=1000
 
+DP=`expr $NNODES \* $GPUS_PER_NODE \/ $MP \/ $PP`
+GLOBAL_BATCH_SIZE=$((ACC * DP * MICRO_BATCH_SIZE))
 
 LOG_FOLDER=test_logs/$HOSTNAME/${GPU_NAME}
 
@@ -135,7 +137,6 @@ if [[ $SAVE_MODEL = "true" ]]; then
     --save $LOG_FOLDER "
 fi
 
-LOG_FILENAME=$LOG_FOLDER/$LOG_FILENAME
 
 
 echo "Rum cmd ${CMD}"
