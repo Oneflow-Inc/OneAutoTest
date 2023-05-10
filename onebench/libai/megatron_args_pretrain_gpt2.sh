@@ -32,7 +32,7 @@ MERGE_FILE=${19:-"./data_test/gpt_data/gpt2-merges.txt"}
 
 if [ $NODE_RANK -eq 0 ]; then
 sed -i '/import time/a\import os' ./megatron/training.py
-sed -i '/while iteration < args.train_iters:/a\        if self.iter == 99: \
+sed -i '/while iteration < args.train_iters:/a\        if iteration == 101: \
             cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
             os.system(cmd)' ./megatron/training.py
 sed -i "/elapsed_time_per_iteration \* 1000.0)/a\        log_string += ' tpt: {:.1f} samples/s |'.format(batch_size / elapsed_time_per_iteration)" ./megatron/training.py
