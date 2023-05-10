@@ -20,5 +20,5 @@ wget -nc https://github.com/Oneflow-Inc/OneAutoTest/raw/megatron_script_shangtan
 
 
 
-#1n8g
+
 bash examples/megatron_args_pretrain_gpt2.sh  8 1 true true true 32 256 false 2 220 1 24 16 768 3072 64 
