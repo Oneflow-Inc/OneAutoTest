@@ -30,10 +30,13 @@ UNSET_DROPOUT=${23:-false}
 
 ONEFLOW_COMMIT=$(python3 -c 'import oneflow; print(oneflow.__git_commit__)')
 
+if [ $NODE_RANK -eq 0 ]; then
 sed -i '/import time/a\import os' ./libai/engine/trainer.py
 sed -i '/for self.iter in range(start_iter, max_iter):/a\                    if self.iter == 99: \
                         cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
                         os.system(cmd)' ./libai/engine/trainer.py
+fi
+
 
 GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
 GPU_NAME="${GPU_NAME// /_}"
@@ -133,5 +136,9 @@ echo "oneflow-version(git_commit)=$ONEFLOW_VERSION" >> ${LOG_FILENAME}/output.lo
 echo "oneflow-commit(git_commit)=$ONEFLOW_COMMIT" >> ${LOG_FILENAME}/output.log
 echo "oneflow-libai(git_commit)=$ONEFLOW_LIBAI_COMMIT" >> ${LOG_FILENAME}/output.log
 
-git checkout ./libai/engine/*.py
-git checkout ./libai/data/build.py
+
+
+if [ $NODE_RANK -eq 0 ]; then
+    git checkout ./libai/engine/*.py
+    git checkout ./libai/data/build.py
+fi
