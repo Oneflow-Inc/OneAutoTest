@@ -30,6 +30,13 @@ DATA_PATH=${17:-"./data_test/gpt_data/loss_compara_content_sentence"}
 VOCAB_FILE=${18:-"./data_test/gpt_data/gpt2-vocab.json"}
 MERGE_FILE=${19:-"./data_test/gpt_data/gpt2-merges.txt"}
 
+if [ $NODE_RANK -eq 0 ]; then
+sed -i '/import time/a\import os' ./megatron/training.py
+sed -i '/while iteration < args.train_iters:/a\        if self.iter == 99: \
+            cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
+            os.system(cmd)' ./megatron/training.py
+sed -i "/elapsed_time_per_iteration \* 1000.0)/a\        log_string += ' tpt: {:.1f} samples/s |'.format(batch_size / elapsed_time_per_iteration)" ./megatron/training.py
+fi
 
 SRC_DIR=$(realpath $(dirname $0)/..)
 TRAN_MODEL="Megatron_gpt2"
@@ -146,3 +153,7 @@ fi
 echo "Rum cmd ${CMD}"
 
 $CMD 2>&1 | tee ${LOG_FILENAME}.log
+
+if [ $NODE_RANK -eq 0 ]; then
+    git checkout ./megatron/training.py
+fi
