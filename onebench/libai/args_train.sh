@@ -126,7 +126,7 @@ train.log_period=$LOG_PERIOD \
 train.zero_optimization.enabled=$ZERO_ENABLE \
 train.zero_optimization.stage=$ZERO_STAGE \
 train.load_weight=$LOAD_WEIGHT \
-train.checkpoint.period=$save_checkpoint_period \
+train.checkpointer.period=$save_checkpoint_period \
 train.output_dir=$LOG_FILENAME 2>&1 | tee ${LOG_FILENAME}/output.log
 
 
