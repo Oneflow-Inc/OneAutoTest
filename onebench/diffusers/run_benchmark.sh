@@ -1,13 +1,4 @@
 set -ex
-#env install
-#    wget -nc https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Linux-x86_64.sh -P ./
-#    bash Miniconda3-py39_4.12.0-Linux-x86_64.sh
-#    conda create -n py38 python=3.8
-#    conda activate py38
-
-# Model download
-# user_header="Authorization: Bearer xxxxxx"
-# wget --header="${user_header}" https://huggingface.co/CompVis/stable-diffusion-v-1-4-original/resolve/main/sd-v1-4.ckpt -O models/sd-v1-4.ckpt
 
 STABLE_VERSION=${1:-"sdv1_5"} # sdv1_5 sdv2_0 sdv2_1 taiyi
 INSTALL_ONEFLOW=${2:-"master"}
@@ -32,8 +23,9 @@ if [ "$INSTALL_ONEFLOW" != "false" ]; then
   fi
 fi
 
-# install torch
-python3 -m pip install "torch<2" "transformers>=4.26" "diffusers[torch]==0.14.0"
+# install torch, diffusers
+python3 -m pip uninstall -y diffusers
+python3 -m pip install "torch<2" "transformers>=4.26" "diffusers[torch]==0.15.0"
 
 declare -A STABLE_DIFFUSION_SCRIPTS=(
   [sdv2_1]=stable_diffusion_2_1.py
@@ -49,8 +41,6 @@ if [ "$BENCHMARK_SCRIPT" == "" ]; then
   exit
 fi
 
-python3 -m pip uninstall -y diffusers
-
 if [ ! -d "./diffusion-benchmark" ]; then
   git clone --depth 1 https://github.com/Oneflow-Inc/diffusion-benchmark.git
 fi
@@ -58,14 +48,13 @@ cd diffusion-benchmark
 DIFFUSION_BENCHMARK_COMMIT=$(git log --pretty=format:"%H" -n 1)
 echo "diffusion-benchmark(git_commit)=$DIFFUSION_BENCHMARK_COMMIT"
 
-
 if [ ! -d "./diffusers" ]; then
   git clone --depth 1 https://github.com/Oneflow-Inc/diffusers.git
 fi
 cd diffusers
 ONEFLOW_DIFFUSERS_COMMIT=$(git log --pretty=format:"%H" -n 1)
 echo "oneflow-diffusers(git_commit)=$ONEFLOW_DIFFUSERS_COMMIT"
-python3 -m pip install -e .[oneflow]
+python3 -m pip install -e .
 cd ..
 
 if [ "$STABLE_VERSION" == "sdv2_0" ]; then
@@ -77,11 +66,6 @@ fi
 
 if [ "$STABLE_VERSION" == "sdv1_5" ]; then
     sed -i '/import oneflow as torch/a\torch.mock_torch.enable()' ./scripts/$BENCHMARK_SCRIPT
-    sed -i 's/from diffusers/from onediff/g' ./scripts/$BENCHMARK_SCRIPT
-fi
-
-if [ "$STABLE_VERSION" == "taiyi" ]; then
-    sed -i 's/from diffusers/from onediff/g' ./scripts/$BENCHMARK_SCRIPT
 fi
 
 sed -i '/for r in range(repeat):/a\
@@ -89,27 +73,21 @@ sed -i '/for r in range(repeat):/a\
         os.system(cmd)' ./scripts/$BENCHMARK_SCRIPT
 
 if [ "$STABLE_VERSION" == "sdv1_5" ] || [ "$STABLE_VERSION" == "taiyi" ]; then
-    sed -i '/@click.option("--output", default="output")/a\@click.option("--height", default=512)\
-@click.option("--width", default=512)' ./scripts/$BENCHMARK_SCRIPT
-    sed -i 's/images = pipe(prompt).images/images = pipe(prompt, height=height, width=width).images/g' ./scripts/$BENCHMARK_SCRIPT
-    sed -i 's/def benchmark(token, prompt, repeat, output):/def benchmark(token, prompt, repeat, output, height, width):/g' ./scripts/$BENCHMARK_SCRIPT
+    sed -i 's/from diffusers/from onediff/g' ./scripts/$BENCHMARK_SCRIPT
 fi
-
 
 GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
 GPU_NAME="${GPU_NAME// /_}"
 
 
 NUM_REAT=32
-IMG_HEIGHT=512
-IMG_WIDTH=512
+CMD=""
+CMD+="python3 scripts/$BENCHMARK_SCRIPT --repeat $NUM_REAT"
 if [ "$STABLE_VERSION" == "sdv2_0" ] || [ "$STABLE_VERSION" == "sdv2_1" ]; then
   IMG_HEIGHT=768
   IMG_WIDTH=768
+  CMD+=" --height $IMG_HEIGHT --width $IMG_WIDTH"
 fi
-
-CMD=""
-CMD+="python3 scripts/$BENCHMARK_SCRIPT --repeat 10 --height $IMG_HEIGHT --width $IMG_WIDTH"
 
 # run oneflow
 DL_FRAME="oneflow"
@@ -139,12 +117,9 @@ echo "oneflow-diffusers(git_commit)=$ONEFLOW_DIFFUSERS_COMMIT" >> ${LOG_FILENAME
 DL_FRAME="pytorch"
 LOG_FOLDER=stable_logs/$GPU_NAME/$DL_FRAME
 
-git checkout ./scripts/$BENCHMARK_SCRIPT
 sed -i 's/oneflow as //g' ./scripts/$BENCHMARK_SCRIPT
-sed -i 's/OneFlow//g' ./scripts/$BENCHMARK_SCRIPT
-sed -i '/for r in range(repeat):/a\
-        cmd = "nvidia-smi --query-gpu=timestamp,name,driver_version,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv" \
-        os.system(cmd)' ./scripts/$BENCHMARK_SCRIPT
+sed -i 's/torch.mock_torch.enable()//g' ./scripts/$BENCHMARK_SCRIPT
+sed -i 's/from onediff import OneFlowStableDiffusionPipeline/from diffusers import StableDiffusionPipeline/g' ./scripts/$BENCHMARK_SCRIPT
 
 TORCH_VERSION=$(python3 -c 'import torch; print(torch.__version__)')
 python3 -m pip uninstall -y diffusers
@@ -164,14 +139,12 @@ LOG_FILENAME=$LOG_FOLDER/$TORCH_VERSION/${GPU_NAME}_${DL_FRAME}_${BENCHMARK_SCRI
 DL_FRAME="${CMD} --output $LOG_FILENAME "
 echo "Rum ${DL_FRAME} cmd ${DL_FRAME}"
 
-
 $DL_FRAME 2>&1 | tee ${LOG_FILENAME}.log
 # echo 
 echo "pytorch-version(git_commit)=$TORCH_VERSION" >> ${LOG_FILENAME}.log
 echo "diffusion-benchmark(git_commit)=$DIFFUSION_BENCHMARK_COMMIT" >> ${LOG_FILENAME}.log
 echo "huggingface-diffusers(git_commit)=$HUGGINGFACE_DIFFUSERS_COMMIT" >> ${LOG_FILENAME}.log
 
-
 git checkout ./scripts/$BENCHMARK_SCRIPT
 
-python3 -m pip uninstall -y diffusers transformers
+
