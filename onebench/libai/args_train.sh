@@ -94,7 +94,9 @@ fi
 
 if [[ $SAVE_MODEL = "false" ]]; then
     #sed -i 's/hooks.PeriodicCheckpointer/#&/' ./libai/engine/default.py
+    if [ $NODE_RANK -eq 0 ]; then
     sed -i '/if self.cfg.train.evaluation.enabled:/i\        ret.pop()' ./libai/engine/default.py
+    fi
     LOG_FOLDER=$LOG_FOLDER/${ONEFLOW_COMMIT}
 fi
 
