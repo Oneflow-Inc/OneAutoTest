@@ -120,9 +120,8 @@ CMD="python -m torch.distributed.launch $DISTRIBUTED_ARGS \
         --attention-dropout $attention_probs_dropout_prob \
         --log-interval $LOG_PERIOD \
         --save-interval $save_checkpoint_period \
-        --eval-interval 1000 \
-
-        --eval-iters 10"
+        --eval-interval 2000 \
+        --eval-iters 20"
 
 if $USE_FP16; then
     CMD+=" \
