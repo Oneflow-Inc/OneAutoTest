@@ -49,7 +49,6 @@ if [ "$BENCHMARK_SCRIPT" == "" ]; then
   exit
 fi
 
-python3 -m pip uninstall -y diffusers
 
 if [ ! -d "./diffusion-benchmark" ]; then
   git clone --depth 1 https://github.com/Oneflow-Inc/diffusion-benchmark.git
