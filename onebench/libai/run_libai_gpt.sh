@@ -1,10 +1,9 @@
 set -ex
 
-
-#git config --global http.proxy http://${fast_proxy}
-#git config --global https.proxy https://${fast_proxy}
-#export http_proxy=${fast_proxy}
-#export https_proxy=${fast_proxy}
+git config --global http.proxy http://${fast_proxy}
+git config --global https.proxy https://${fast_proxy}
+export http_proxy=${fast_proxy}
+export https_proxy=${fast_proxy}
 
 
 
