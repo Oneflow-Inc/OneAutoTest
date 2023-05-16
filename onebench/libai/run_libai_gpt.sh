@@ -1,10 +1,10 @@
 set -ex
 
 
-git config --global http.proxy http://${fast_proxy}
-git config --global https.proxy https://${fast_proxy}
-export http_proxy=${fast_proxy}
-export https_proxy=${fast_proxy}
+#git config --global http.proxy http://${fast_proxy}
+#git config --global https.proxy https://${fast_proxy}
+#export http_proxy=${fast_proxy}
+#export https_proxy=${fast_proxy}
 
 
 
@@ -44,4 +44,6 @@ python3 -m pip install -r requirements.txt
 python3 -m pip install -e . --user
 
 # mp pp GRAPH_ENABLED USE_FP16 ACTIVATION_CHECKPOINT MICRO_BATCH_SIZE ACC
-bash tools/args_train.sh configs/gpt2_pretrain.py 1 1 true true true 2 1 false 2 220 10 96 32 2304 9216
+bash tools/args_train.sh configs/gpt2_pretrain.py 1 1 true true true 2 1 false 2 220 100 48 144 2304 9216
+
+bash tools/args_train.sh configs/gpt2_pretrain.py 1 1 true true true 2 4 false 2 220 100 48 144 2304 9216
