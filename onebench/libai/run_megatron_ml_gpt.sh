@@ -20,7 +20,3 @@ wget -nc https://github.com/Oneflow-Inc/OneAutoTest/raw/megatron_script_tecent/o
 
 
 
-bash examples/megatron_args_pretrain_gpt2.sh 1 1 0 127.0.0.1 1 1 true true true 6 6 false 2 220 1 24 16 768 3072 64 true false
-
-
-bash examples/megatron_args_pretrain_gpt2.sh 1 8 0 127.0.0.1 8 1 true true false 32 256 false 2 220 1 24 16 768 3072 64 true false

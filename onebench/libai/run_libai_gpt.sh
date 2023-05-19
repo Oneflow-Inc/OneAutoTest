@@ -40,18 +40,3 @@ python3 -m pip uninstall -y libai
 python3 -m pip install -r requirements.txt
 python3 -m pip install -e . --user
 
-
-## GPT-2
-# 3090 
-
-#  1n1g         gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb8_gb8_1n1g
-bash tools/args_train.sh configs/gpt2_pretrain.py 1 1 0 127.0.0.1 1 1 true true true 8 8 false 0 220 100 24 16 1024 4096
-
-
-export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
-#  1n8g 模型并行        gpt2_nl24_nah16_hs1024_fp16_acfalse_mp8_pp1_mb2_gb2_1n8g
-bash tools/args_train.sh configs/gpt2_pretrain.py 1 8 0 127.0.0.1 8 1 true true false 2 2 false 0 220 100 24 16 1024 4096
-
-
-
-python3 -m pip uninstall -y libai
