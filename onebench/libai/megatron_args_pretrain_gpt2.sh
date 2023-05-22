@@ -5,7 +5,7 @@ export NCCL_DEBUG=INFO
 export NCCL_IB_GID_INDEX=3
 export NCCL_GDR_LEVEL=2
 # 安装 TCCL 之后不需要 NCCL TOPO 文件 comment 这行
-export NCCL_TOPO_FILE=/data_32T/home/workspace/nccl-tests/nccl_topo_a800_1.6t.xml
+# export NCCL_TOPO_FILE=/data_32T/home/workspace/nccl-tests/nccl_topo_a800_1.6t.xml
 export NCCL_IB_QPS_PER_CONNECTION=4
 
 # volcengine.com
@@ -41,7 +41,7 @@ UNSET_DROPOUT=${22:-false}
 DATA_PATH=${23:-"./data_test/gpt_data/loss_compara_content_sentence"}
 VOCAB_FILE=${24:-"./data_test/gpt_data/gpt2-vocab.json"}
 MERGE_FILE=${25:-"./data_test/gpt_data/gpt2-merges.txt"}
-
+RUN_COMMIT=${26:-"e156d2f"}
 
 if [ $NODE_RANK -eq 0 ]; then
 sed -i '/import time/a\import os' ./megatron/training.py
@@ -59,8 +59,10 @@ SRC_DIR=$(realpath $(dirname $0)/..)
 TRAN_MODEL="Megatron_gpt2"
 RUN_TIME=$(date "+%Y%m%d_%H%M%S%N")
 
-RUN_COMMIT=${26:-"e156d2f"}
-
+AMP_OR="FP32"
+if $USE_FP16; then
+    AMP_OR="FP16"
+fi
 
 RUN_TYPE="eager"
 if $GRAPH_ENABLED; then
