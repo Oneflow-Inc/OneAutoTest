@@ -22,22 +22,18 @@ GRAPH_ENABLED=${7:-true}
 USE_FP16=${8:-false}  
 ACTIVATION_CHECKPOINT=${9:-true}
 MICRO_BATCH_SIZE=${10:-2}
-GLOBAL_BATCH_SIZE=${11:-16}
-
+ACC=${11:-1}
 ZERO_ENABLE=${12:-false} 
 ZERO_STAGE=${13:-0} 
 TRAIN_ITERS=${14:-220}
 LOG_PERIOD=${15:-100}
 NUM_LAYER=${16:-24}
-
 NUM_ATT_HEADS=${17:-16}
 HIDDEN_SIZE=${18:-768}
 INTERMEDIATE_SIZE=${19:-3072}
 HEAD_SIZE=${20:-64} 
 SAVE_MODEL=${21:-false} 
 UNSET_DROPOUT=${22:-false} 
-
-
 DATA_PATH=${23:-"./data_test/gpt_data/loss_compara_content_sentence"}
 VOCAB_FILE=${24:-"./data_test/gpt_data/gpt2-vocab.json"}
 MERGE_FILE=${25:-"./data_test/gpt_data/gpt2-merges.txt"}
@@ -68,6 +64,9 @@ RUN_TYPE="eager"
 if $GRAPH_ENABLED; then
     RUN_TYPE="graph"
 fi
+
+DP=`expr $NNODES \* $GPUS_PER_NODE \/ $MP \/ $PP`
+GLOBAL_BATCH_SIZE=$((ACC * DP * MICRO_BATCH_SIZE))
 
 # const 
 TRAIN_EPOCH=0
