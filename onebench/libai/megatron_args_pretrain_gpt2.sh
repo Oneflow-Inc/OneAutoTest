@@ -51,6 +51,10 @@ sed -i '/while iteration < args.train_iters:/a\        if iteration == 101: \
 sed -i "/elapsed_time_per_iteration \* 1000.0)/a\        log_string += ' tpt: {:.1f} samples/s |'.format(batch_size / elapsed_time_per_iteration)" ./megatron/training.py
 fi
 
+AMP_OR="FP32"
+if $USE_FP16; then
+    AMP_OR="FP16"
+fi
 
 GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
 GPU_NAME="${GPU_NAME// /_}"
