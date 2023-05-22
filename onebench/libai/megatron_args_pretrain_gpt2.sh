@@ -41,7 +41,7 @@ UNSET_DROPOUT=${22:-false}
 DATA_PATH=${23:-"./data_test/gpt_data/loss_compara_content_sentence"}
 VOCAB_FILE=${24:-"./data_test/gpt_data/gpt2-vocab.json"}
 MERGE_FILE=${25:-"./data_test/gpt_data/gpt2-merges.txt"}
-
+RUN_COMMIT=${26:-"e156d2f"}
 
 if [ $NODE_RANK -eq 0 ]; then
 sed -i '/import time/a\import os' ./megatron/training.py
@@ -51,10 +51,6 @@ sed -i '/while iteration < args.train_iters:/a\        if iteration == 101: \
 sed -i "/elapsed_time_per_iteration \* 1000.0)/a\        log_string += ' tpt: {:.1f} samples/s |'.format(batch_size / elapsed_time_per_iteration)" ./megatron/training.py
 fi
 
-AMP_OR="FP32"
-if $USE_FP16; then
-    AMP_OR="FP16"
-fi
 
 GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
 GPU_NAME="${GPU_NAME// /_}"
@@ -63,8 +59,10 @@ SRC_DIR=$(realpath $(dirname $0)/..)
 TRAN_MODEL="Megatron_gpt2"
 RUN_TIME=$(date "+%Y%m%d_%H%M%S%N")
 
-RUN_COMMIT=${26:-"e156d2f"}
-
+AMP_OR="FP32"
+if $USE_FP16; then
+    AMP_OR="FP16"
+fi
 
 RUN_TYPE="eager"
 if $GRAPH_ENABLED; then
