@@ -20,7 +20,7 @@ GRAPH_ENABLED=${8:-true}
 USE_FP16=${9:-true}
 ACTIVATION_CHECKPOINT=${10:-false}
 MICRO_BATCH_SIZE=${11:-4}
-GLOBAL_BATCH_SIZE=${12:-4}
+ACC=${12:-1}
 ZERO_ENABLE=${13:-false}
 ZERO_STAGE=${14:-2}
 TRAIN_ITERS=${15:-220}
@@ -76,7 +76,7 @@ save_checkpoint_period=1000 # 每几轮保存一次
 
 
 DP=`expr $NNODES \* $GPUS_PER_NODE \/ $MP \/ $PP`
-ACC=`expr $GLOBAL_BATCH_SIZE \/ $DP \/ $MICRO_BATCH_SIZE`
+GLOBAL_BATCH_SIZE=$((ACC * DP * MICRO_BATCH_SIZE))
 
 LOG_FOLDER=test_logs/$HOSTNAME/${GPU_NAME}
 
