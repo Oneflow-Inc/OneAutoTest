@@ -16,7 +16,7 @@ on:
 jobs:
   test_result:
     name: Get Test Result
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout OneFlow Test
         uses: actions/checkout@v2
