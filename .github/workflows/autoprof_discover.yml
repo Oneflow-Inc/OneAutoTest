@@ -29,7 +29,7 @@ jobs:
           OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
         run: |
           set -x
-          upload_day_ago=${upload_day_ago:-0}
+          upload_day_ago=${upload_day_ago:-1}
           branch_name=${branch_name:-"master"}
           upload_issue_date=$(date -d "${upload_day_ago} day ago" +%Y%m%d)
           curl http://gosspublic.alicdn.com/ossutil/1.6.19/ossutil64 -o $HOME/ossutil64
