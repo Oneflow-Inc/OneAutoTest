@@ -146,7 +146,7 @@ def extract_result(args, extract_func):
     nvidia_name = ""
     for commit in commit_list:
         
-        logs_list = glob.glob(os.path.join(args.test_logs, "{}/*/*/output.log".format(commit)))
+        logs_list = glob.glob(os.path.join(args.test_logs, "{}/*/output.log".format(commit)))
         logs_list = sorted(logs_list)
 
         for log in logs_list:
