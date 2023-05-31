@@ -131,5 +131,5 @@ echo "oneflow-libai(git_commit)=$ONEFLOW_LIBAI_COMMIT" >> ${LOG_FILENAME}/output
 
 
 if [ $NODE_RANK -eq 0 ]; then
-  git checkout ./libai/engine/*.py
+    git checkout ./libai/engine/*.py
 fi
