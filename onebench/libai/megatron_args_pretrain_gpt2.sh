@@ -8,11 +8,9 @@ export NCCL_GDR_LEVEL=2
 # export NCCL_TOPO_FILE=/data_32T/home/workspace/nccl-tests/nccl_topo_a800_1.6t.xml
 export NCCL_IB_QPS_PER_CONNECTION=4
 
-# volcengine.com
-#export NCCL_IB_PCI_RELAXED_ORDERING=1
+
 NNODES=${1:-1}
 GPUS_PER_NODE=${2:-8}
-# Change for multinode config
 NODE_RANK=${3:-0}
 MASTER_ADDR=${4:-"127.0.0.1"}
 MASTER_PORT=6000
@@ -71,7 +69,6 @@ GLOBAL_BATCH_SIZE=$((ACC * DP * MICRO_BATCH_SIZE))
 # const 
 TRAIN_EPOCH=0
 LOAD_WEIGHT=""
-
 hidden_dropout_prob=0.1
 attention_probs_dropout_prob=0.1
 bias_dropout_fusion=false
