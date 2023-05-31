@@ -85,7 +85,6 @@ echo LOG_FILENAME=$LOG_FILENAME
 # export ONEFLOW_DEBUG_MODE=1
 # export GLOG_v=3
 # export ONEFLOW_PROFILER_KERNEL_PROFILE_KERNEL_FORWARD_RANGE=True
-
 # nsys profile --stats true --output ${LOG_FILENAME} --sample none --cpuctxsw none \
 python3 -m oneflow.distributed.launch \
 --nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT \
@@ -127,8 +126,6 @@ ONEFLOW_LIBAI_COMMIT=$(git log --pretty=format:"%H" -n 1)
 echo "oneflow-version(git_commit)=$ONEFLOW_VERSION" >> ${LOG_FILENAME}/output.log
 echo "oneflow-commit(git_commit)=$ONEFLOW_COMMIT" >> ${LOG_FILENAME}/output.log
 echo "oneflow-libai(git_commit)=$ONEFLOW_LIBAI_COMMIT" >> ${LOG_FILENAME}/output.log
-
-
 
 if [ $NODE_RANK -eq 0 ]; then
     git checkout ./libai/engine/*.py
