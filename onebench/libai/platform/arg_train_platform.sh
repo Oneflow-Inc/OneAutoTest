@@ -1,67 +1,32 @@
 set -ex
 
 CONFIG=$1
-NNODES=${2:-1}
-GPUS_PER_NODE=${3:-8}
-NODE_RANK=${4:-0}
-MASTER_ADDRS=${5:-"127.0.0.1"}
+PLATFORM=${2:-"tencent"}
+NNODES=${3:-1}
+GPUS_PER_NODE=${4:-8}
+NODE_RANK=${5:-0}
+MASTER_ADDRS=${6:-"127.0.0.1"}
 MASTER_PORTS=12345
-MP=${6:-1}
-PP=${7:-1}
-GRAPH_ENABLED=${8:-true}
-USE_FP16=${9:-true}
-ACTIVATION_CHECKPOINT=${10:-false}
-MICRO_BATCH_SIZE=${11:-4}
-ACC=${12:-1}
-ZERO_ENABLE=${13:-false}
-ZERO_STAGE=${14:-2}
-TRAIN_ITERS=${15:-220}
-LOG_PERIOD=${16:-100}
-NUM_LAYER=${17:-12}
-NUM_ATT_HEADS=${18:-12}
-HIDDEN_SIZE=${19:-768}
-INTERMEDIATE_SIZE=${20:-3072}
-HEAD_SIZE=${21:-64}
-SAVE_MODEL=${22:-false}
-UNSET_DROPOUT=${23:-false}
-PLATFORM=${24:-0}
+MP=${7:-1}
+PP=${8:-1}
+GRAPH_ENABLED=${9:-true}
+USE_FP16=${10:-true}
+ACTIVATION_CHECKPOINT=${11:-false}
+MICRO_BATCH_SIZE=${12:-4}
+ACC=${13:-1}
+ZERO_ENABLE=${14:-false}
+ZERO_STAGE=${15:-2}
+TRAIN_ITERS=${16:-220}
+LOG_PERIOD=${17:-100}
+NUM_LAYER=${18:-12}
+NUM_ATT_HEADS=${19:-12}
+HIDDEN_SIZE=${20:-768}
+INTERMEDIATE_SIZE=${21:-3072}
+HEAD_SIZE=${22:-64}
+SAVE_MODEL=${23:-false}
+UNSET_DROPOUT=${24:-false}
 
-if [ $PLATFORM -eq 0 ]; then
-    export NCCL_IB_DISABLE=0
-    export NCCL_DEBUG=INFO
-    export NCCL_IB_GID_INDEX=3
-    export NCCL_GDR_LEVEL=2
-    # 安装 TCCL 之后不需要 NCCL TOPO 文件
-    # export NCCL_TOPO_FILE=/data_turbo/home/workspace/nccl-tests/nccl_topo_a800_1.6t.xml
-    export NCCL_IB_QPS_PER_CONNECTION=4
-    export ONEFLOW_COMM_NET_IB_GID_INDEX=3
-    #export ONEFLOW_COMM_NET_IB_HCA=$NCCL_IB_HCA
-    export ONEFLOW_COMM_NET_IB_HCA=mlx5_bond_1:1
-
-fi
-
-if [ $PLATFORM -eq 1 ]; then
-    export ONEFLOW_COMM_NET_IB_GID_INDEX=$NCCL_IB_GID_INDEX
-    export ONEFLOW_COMM_NET_IB_HCA=mlx5_2:1
-
-    NNODES=$MLP_WORKER_NUM
-    GPUS_PER_NODE=$MLP_WORKER_GPU
-    NODE_RANK=$MLP_ROLE_INDEX
-    MASTER_ADDRS=$MLP_WORKER_0_HOST
-    MASTER_PORTS=$MLP_WORKER_0_PORT
-fi
-
-if [ $PLATFORM -eq 2 ]; then
-    export ONEFLOW_COMM_NET_IB_GID_INDEX=$NCCL_IB_GID_INDEX
-    export ONEFLOW_COMM_NET_IB_HCA=mlx5_2:1
-
-    NNODES=$WORLD_SIZE
-    # GPUS_PER_NODE=8
-    NODE_RANK=$RANK
-
-    MASTER_ADDRS=${MASTER_ADDR}
-    MASTER_PORTS=${MASTER_PORT}
-fi
+source env_${PLATFORM}.sh
 
 if [ $NODE_RANK -eq 0 ]; then
     sed -i '/import time/a\import os' ./libai/engine/trainer.py

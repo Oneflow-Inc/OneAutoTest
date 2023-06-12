@@ -1,71 +1,36 @@
 set -ex
 
-NNODES=${1:-1}
-GPUS_PER_NODE=${2:-8}
-NODE_RANK=${3:-0}
-MASTER_ADDRS=${4:-"127.0.0.1"}
+PLATFORM=${1:-"tencent"}
+NNODES=${2:-1}
+GPUS_PER_NODE=${3:-8}
+NODE_RANK=${4:-0}
+MASTER_ADDRS=${5:-"127.0.0.1"}
 MASTER_PORTS=6000
-MP=${5:-1}
-PP=${6:-1}
-GRAPH_ENABLED=${7:-true}
-USE_FP16=${8:-false}
-ACTIVATION_CHECKPOINT=${9:-true}
-MICRO_BATCH_SIZE=${10:-2}
-ACC=${11:-1}
-ZERO_ENABLE=${12:-false}
-ZERO_STAGE=${13:-0}
-TRAIN_ITERS=${14:-220}
-LOG_PERIOD=${15:-100}
-NUM_LAYER=${16:-24}
-NUM_ATT_HEADS=${17:-16}
-HIDDEN_SIZE=${18:-768}
-INTERMEDIATE_SIZE=${19:-3072}
-HEAD_SIZE=${20:-64}
-SAVE_MODEL=${21:-false}
-UNSET_DROPOUT=${22:-false}
-PLATFORM=${23:-0}
+MP=${6:-1}
+PP=${7:-1}
+GRAPH_ENABLED=${8:-true}
+USE_FP16=${9:-false}
+ACTIVATION_CHECKPOINT=${10:-true}
+MICRO_BATCH_SIZE=${11:-2}
+ACC=${12:-1}
+ZERO_ENABLE=${13:-false}
+ZERO_STAGE=${14:-0}
+TRAIN_ITERS=${15:-220}
+LOG_PERIOD=${16:-100}
+NUM_LAYER=${17:-24}
+NUM_ATT_HEADS=${18:-16}
+HIDDEN_SIZE=${19:-768}
+INTERMEDIATE_SIZE=${20:-3072}
+HEAD_SIZE=${21:-64}
+SAVE_MODEL=${22:-false}
+UNSET_DROPOUT=${23:-false}
 
 DATA_PATH=${24:-"./data_test/gpt_data/loss_compara_content_sentence"}
 VOCAB_FILE=${25:-"./data_test/gpt_data/gpt2-vocab.json"}
 MERGE_FILE=${26:-"./data_test/gpt_data/gpt2-merges.txt"}
 RUN_COMMIT=${27:-"e156d2f"}
 
-if [ $PLATFORM -eq 0 ]; then
-    export NCCL_IB_DISABLE=0
-    export NCCL_DEBUG=INFO
-    export NCCL_IB_GID_INDEX=3
-    export NCCL_GDR_LEVEL=2
-    # 安装 TCCL 之后不需要 NCCL TOPO 文件
-    # export NCCL_TOPO_FILE=/data_turbo/home/workspace/nccl-tests/nccl_topo_a800_1.6t.xml
-    export NCCL_IB_QPS_PER_CONNECTION=4
-    export ONEFLOW_COMM_NET_IB_GID_INDEX=3
-    #export ONEFLOW_COMM_NET_IB_HCA=$NCCL_IB_HCA
-    export ONEFLOW_COMM_NET_IB_HCA=mlx5_bond_1:1
-
-fi
-
-if [ $PLATFORM -eq 1 ]; then
-    export ONEFLOW_COMM_NET_IB_GID_INDEX=$NCCL_IB_GID_INDEX
-    export ONEFLOW_COMM_NET_IB_HCA=mlx5_2:1
-
-    NNODES=$MLP_WORKER_NUM
-    GPUS_PER_NODE=$MLP_WORKER_GPU
-    NODE_RANK=$MLP_ROLE_INDEX
-    MASTER_ADDRS=$MLP_WORKER_0_HOST
-    MASTER_PORTS=$MLP_WORKER_0_PORT
-fi
-
-if [ $PLATFORM -eq 2 ]; then
-    export ONEFLOW_COMM_NET_IB_GID_INDEX=$NCCL_IB_GID_INDEX
-    export ONEFLOW_COMM_NET_IB_HCA=mlx5_2:1
-
-    NNODES=$WORLD_SIZE
-    GPUS_PER_NODE=8
-    NODE_RANK=$RANK
-
-    MASTER_ADDRS=${MASTER_ADDR}
-    MASTER_PORTS=${MASTER_PORT}
-fi
+source env_${PLATFORM}.sh
 
 if [ $NODE_RANK -eq 0 ]; then
     sed -i '/import time/a\import os' ./megatron/training.py
