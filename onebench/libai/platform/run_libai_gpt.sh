@@ -40,7 +40,7 @@ python3 -m pip uninstall -y libai
 python3 -m pip install -r requirements.txt
 python3 -m pip install -e . --user
 
-# config platform NNODES GPUS_PER_NODE NODE_RANK MASTER_ADDR mp pp GRAPH_ENABLED USE_FP16 ACTIVATION_CHECKPOINT MICRO_BATCH_SIZE ACC
+# config platform NNODES GPUS_PER_NODE NODE_RANK MASTER_ADDR mp pp GRAPH_ENABLED USE_FP16 ACTIVATION_CHECKPOINT MICRO_BATCH_SIZE ACC ZERO_ENABLE ZERO_STAGE TRAIN_ITERS LOG_PERIOD NUM_LAYER NUM_ATT_HEADS HIDDEN_SIZE INTERMEDIATE_SIZE HEAD_SIZE SAVE_MODEL UNSET_DROPOUT
 
 # Data Parallel
 bash tools/args_train_platform.sh configs/gpt2_pretrain.py ${PLATFORM} 1 8 0 127.0.0.1 1 1 true true true 2 1 false 2 220 100 48 144 2304 9216
