@@ -146,7 +146,7 @@ def extract_result(args, extract_func):
     nvidia_name = ""
     for commit in commit_list:
         
-        logs_list = glob.glob(os.path.join(args.test_logs, "{}/*/*/output.log".format(commit)))
+        logs_list = glob.glob(os.path.join(args.test_logs, "{}/*/output.log".format(commit)))
         logs_list = sorted(logs_list)
 
         for log in logs_list:
@@ -219,7 +219,8 @@ def extract_result(args, extract_func):
             tmp_markdown_table_body = " [{} MiB]({}) / [{} samples/s]({}) ".format(
                 case_value[commit]["memory"],
                 case_value[commit]["config_url"],
-                case_value[commit]["samples"] * num_devices_per_node * num_nodes,
+                case_value[commit]["samples"],
+                #* num_devices_per_node * num_nodes,
                 case_value[commit]["log_url"],
             )
             tmp_markdown_table_body += " | "
