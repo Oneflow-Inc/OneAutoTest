@@ -17,7 +17,7 @@ wget -nc https://oneflow-test.oss-cn-beijing.aliyuncs.com/OneFlowAutoTest/libai/
 wget -nc https://raw.githubusercontent.com/Oneflow-Inc/OneAutoTest/main/onebench/libai/args_train.sh -P ./
 wget -nc https://raw.githubusercontent.com/Oneflow-Inc/OneAutoTest/Subject_5/onebench/libai/extract_result.py -P ./
 
-#每次重新 clone
+# 每次重新 clone
 rm -rf libai
 
 git clone -b main --depth 1 https://github.com/Oneflow-Inc/libai.git
@@ -27,12 +27,13 @@ cp ./args_train.sh ./libai/tools
 cp ./extract_result.py ./libai/
 
 cd libai
-
+# 安装 libai
 python3 -m pip uninstall -y libai
 python3 -m pip install -r requirements.txt
 python3 -m pip install -e . --user
 python3 -m pip install -e . --user
 
+# 检查安装是否成功
 python3 -m oneflow --doctor
 python3 -m pip list | grep libai
 
@@ -93,5 +94,3 @@ mv ./test_logs/$HOSTNAME/ ./master
 python3 extract_result.py --test_commits $ONEFLOW_COMMIT --test_logs master/$GPU_NAME --models_commit $ONEFLOW_MODELS_COMMIT
 
 /home/ouyangyu/ossutil64 -c /home/ouyangyu/.ossutilconfig cp -f -r master oss://oneflow-test/OneAutoTest/onebench/libai/master
-RUN_TIME=$(date "+%Y%m%d")
-/home/ouyangyu/ossutil64 -c /home/ouyangyu/.ossutilconfig cp -f -r extract_result.md oss://oneflow-test/OneAutoTest/onebench/libai/master/${RUN_TIME}_result.md
