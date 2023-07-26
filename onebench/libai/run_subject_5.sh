@@ -46,7 +46,7 @@ bash tools/args_train.sh configs/bert_large_pretrain.py 1 1 0 127.0.0.1 1 1 true
 #  1n4g 数据并行        bert_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb4_gb64_acc4_1n4g
 bash tools/args_train.sh configs/bert_large_pretrain.py 1 4 0 127.0.0.1 1 1 true true true 4 64 false 0 220 100 24 16 1024 4096
 
-#  1n8g 数据并行        bert_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb32_gb128_acc4_1n8g
+#  1n8g 数据并行        bert_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb4_gb128_acc4_1n8g
 bash tools/args_train.sh configs/bert_large_pretrain.py 1 8 0 127.0.0.1 1 1 true true true 4 128 false 0 220 100 24 16 1024 4096
 
 ## Bert + Eager
@@ -58,31 +58,31 @@ bash tools/args_train.sh configs/bert_large_pretrain.py 1 1 0 127.0.0.1 1 1 fals
 #  1n4g 数据并行        bert_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb4_gb64_acc4_1n4g
 bash tools/args_train.sh configs/bert_large_pretrain.py 1 4 0 127.0.0.1 1 1 false true true 4 64 false 0 220 100 24 16 1024 4096
 
-#  1n8g 数据并行        bert_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb32_gb128_acc4_1n8g
+#  1n8g 数据并行        bert_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb4_gb128_acc4_1n8g
 bash tools/args_train.sh configs/bert_large_pretrain.py 1 8 0 127.0.0.1 1 1 false true true 4 128 false 0 220 100 24 16 1024 4096
 
 ## GPT-2 + Graphe
 # 3090
 
-#  1n1g         gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb8_gb64_acc4_1n1g
+#  1n1g         gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb2_gb8_acc4_1n1g
 bash tools/args_train.sh configs/gpt2_pretrain.py 1 1 0 127.0.0.1 1 1 true true true 2 8 false 0 220 100 24 16 1024 4096
 
-#  1n4g 数据并行        gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb8_gb128_acc4_1n4g
+#  1n4g 数据并行        gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb2_gb32_acc4_1n4g
 bash tools/args_train.sh configs/gpt2_pretrain.py 1 4 0 127.0.0.1 1 1 true true true 2 32 true 2 220 100 24 16 1024 4096
 
-#  1n8g 数据并行        gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb8_gb256_acc4_1n8g
+#  1n8g 数据并行        gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb2_gb64_acc4_1n8g
 bash tools/args_train.sh configs/gpt2_pretrain.py 1 8 0 127.0.0.1 1 1 true true true 2 64 true 2 220 100 24 16 1024 4096
 
 ## GPT-2 + Eager
 # 3090
 
-#  1n1g         gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb8_gb64_acc4_1n1g
+#  1n1g         gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb2_gb8_acc4_1n1g
 bash tools/args_train.sh configs/gpt2_pretrain.py 1 1 0 127.0.0.1 1 1 false true true 2 8 false 0 220 100 24 16 1024 4096
 
-#  1n4g 数据并行        gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb8_gb128_acc4_1n4g
+#  1n4g 数据并行        gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb2_gb32_acc4_1n4g
 bash tools/args_train.sh configs/gpt2_pretrain.py 1 4 0 127.0.0.1 1 1 false true true 2 32 false 0 220 100 24 16 1024 4096
 
-#  1n8g 数据并行        gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb8_gb256_acc4_1n8g
+#  1n8g 数据并行        gpt2_nl24_nah16_hs1024_fp16_actrue_mp1_pp1_mb2_gb64_acc4_1n8g
 bash tools/args_train.sh configs/gpt2_pretrain.py 1 8 0 127.0.0.1 1 1 false true true 2 64 false 0 220 100 24 16 1024 4096
 
 GPU_NAME="$(nvidia-smi -i 0 --query-gpu=gpu_name --format=csv,noheader)"
