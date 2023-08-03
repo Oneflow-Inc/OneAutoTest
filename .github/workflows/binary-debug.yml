@@ -1,0 +1,122 @@
+name: Binary Debug DLPerf
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug_branch_name:
+        description: "debug branch name"
+        default: "master"
+        required: false
+      model_type:
+        description: 'models type,eg:ResNet50,BERT,WDL'
+        default: "ResNet50"
+        required: false
+      model_run_type:
+        description: 'models run type,eg:lazy,ddp,graph'
+        default: "lazy"
+        required: false
+      git_log_before_date_or_commit:
+        description: "git log before date or commit"
+        default: "HEAD"
+        required: false
+      git_log_after_date_or_commit:
+        description: "git log after date or commit"
+        default: ""
+        required: true
+      task_type:
+        description: "task type,eg:1n1g,1n8g,2n8g"
+        default: "1n1g"
+        required: false
+      memory_interval:
+        description: "memory_interval"
+        default: "10"
+        required: false
+      throughput_interval:
+        description: "throughput_interval"
+        default: "20"
+        required: false
+
+jobs:
+  binary_debug:
+    name: Binary debug
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout OneFlow Test
+        uses: actions/checkout@v2
+      - name: Checkout Oneflow-Inc/oneflow
+        uses: actions/checkout@v2
+        with:
+          repository: Oneflow-Inc/oneflow
+          path: debug_workspace/oneflow
+          ref: master
+          fetch-depth: 200
+      - name: Get Test result
+        id: get-test-result
+        env:
+          debug_branch_name: ${{ github.event.inputs.debug_branch_name }}
+          model_type: ${{ github.event.inputs.model_type }}
+          model_run_type: ${{ github.event.inputs.model_run_type }}
+          git_log_before_date_or_commit: ${{ github.event.inputs.git_log_before_date_or_commit }}
+          git_log_after_date_or_commit: ${{ github.event.inputs.git_log_after_date_or_commit }}
+          task_type: ${{ github.event.inputs.task_type }}
+          memory_interval: ${{ github.event.inputs.memory_interval }}
+          throughput_interval: ${{ github.event.inputs.throughput_interval }}
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+          ONEBRAIN_CLIENT_ID: ${{ secrets.ONEBRAIN_CLIENT_ID }}
+          ONEBRAIN_CLIENT_SECRET: ${{ secrets.ONEBRAIN_CLIENT_SECRET }}
+          ONEBRAIN_GRANT_TYPE: ${{ secrets.ONEBRAIN_GRANT_TYPE }}
+          ONEBRAIN_PASSWORD: ${{ secrets.ONEBRAIN_PASSWORD }}
+          ONEBRAIN_BINARY_PROJECT_ID: ${{ secrets.ONEBRAIN_BINARY_PROJECT_ID }}
+          ONEBRAIN_PUBLIC_KEY: ${{ secrets.ONEBRAIN_PUBLIC_KEY }}
+          ONEBRAIN_SERVER: ${{ secrets.ONEBRAIN_SERVER }}
+          ONEBRAIN_USERNAME: ${{ secrets.ONEBRAIN_USERNAME }}
+        run: |
+          set -x
+          debug_branch_name=${debug_branch_name:-"master"}
+          model_type=${model_type:-"ResNet50"}
+          model_run_type=${debug_branch_name:-"lazy"}
+          git_log_before_date_or_commit=${git_log_before_date_or_commit:-"HEAD"}
+          git_log_after_date_or_commit=${git_log_after_date_or_commit:-""}
+          task_type=${task_type:-"1n1g"}
+          memory_interval=${memory_interval:-"10"}
+          throughput_interval=${throughput_interval:-"20"}
+          
+          python3 -m pip install -U pip setuptools wheel --user
+          python3 -m pip install oss2  --user
+          python3 -m pip install requests pycryptodome pybase64 datetime
+          
+          
+          cd debug_workspace/oneflow
+          git log --pretty=format:"%H" --after="${git_log_after_date_or_commit}" --before="${git_log_before_date_or_commit}" > $HOME/git_log_commit_hash_long.txt
+          
+          mapfile git_commit_array < $HOME/git_log_commit_hash_long.txt
+
+          start=0
+          end=`expr ${#git_commit_array[*]} - 1`
+          
+          cd -
+          
+          python3 tools/put_dlperf_test_task.py --commit ${git_commit_array[end]} --task_name "ResNet50_lazy_DCgpu_FP16_b512_1n1g"
+          python3 task/binary.py --onebrain-server ${ONEBRAIN_SERVER} --grant-type ${ONEBRAIN_GRANT_TYPE} --client-id ${ONEBRAIN_CLIENT_ID} --client-secret ${ONEBRAIN_CLIENT_SECRET} --public-key ${ONEBRAIN_PUBLIC_KEY} --onebrain-username ${ONEBRAIN_USERNAME} --onebrain-password ${ONEBRAIN_PASSWORD} --onebrain-project-id ${ONEBRAIN_BINARY_PROJECT_ID}
+          throughput=$(python3 tools/get_dlperf_test_result.py --commit ${git_commit_array[end]} --task_name "ResNet50_lazy_DCgpu_FP16_b512_1n1g")
+
+          if [ $throughput -le 0 ]; then
+            exit 1
+          fi
+
+          while [ ${start} -le ${end} ]
+          do
+            declare -i mid=$(((start+end)/2))
+
+            python3 tools/put_dlperf_test_task.py --commit ${git_commit_array[mid]} --task_name "ResNet50_lazy_DCgpu_FP16_b512_1n1g"
+            python3 task/binary.py --onebrain-server ${ONEBRAIN_SERVER} --grant-type ${ONEBRAIN_GRANT_TYPE} --client-id ${ONEBRAIN_CLIENT_ID} --client-secret ${ONEBRAIN_CLIENT_SECRET} --public-key ${ONEBRAIN_PUBLIC_KEY} --onebrain-username ${ONEBRAIN_USERNAME} --onebrain-password ${ONEBRAIN_PASSWORD} --onebrain-project-id ${ONEBRAIN_BINARY_PROJECT_ID}
+            declare -i compare_throughput=$(python3 tools/get_dlperf_test_result.py --commit ${git_commit_array[mid]} --task_name "ResNet50_lazy_DCgpu_FP16_b512_1n1g")
+            
+            if [ $((throughput-compare_throughput)) -gt 30 ];then
+              start=$((mid+1))
+            else
+              end=$((mid-1))
+            fi
+          done
+
