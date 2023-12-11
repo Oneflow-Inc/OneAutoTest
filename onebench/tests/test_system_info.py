@@ -82,6 +82,6 @@ if __name__ == "__main__":
 
     markdown_text = extract_info(sum_dict)
 
-    with open("{}".format(args.md_path), "w",) as f:
+    with open("{}".format(args.md_path), "w", encoding="utf-8") as f:
         f.write(markdown_text)
 
