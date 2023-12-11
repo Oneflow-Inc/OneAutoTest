@@ -75,6 +75,11 @@ if __name__ == "__main__":
 
     systemInfo = SystemInfo()
     sum_dict = systemInfo.get_all()
+
+    with open('./sys_info.json', 'w') as f:
+        json.dump(sum_dict, f, indent=2)
+
+
     markdown_text = extract_info(sum_dict)
 
     with open("{}".format(args.md_path), "w",) as f:
