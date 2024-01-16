@@ -6,6 +6,7 @@
 import json
 import os
 import subprocess
+import chardet
 from pathlib import Path
 
 import xmltodict
@@ -19,24 +20,42 @@ from onebench.common.utils import logger
 
 
 class SystemInfo():    # pragma: no cover
-    """Systsem info class."""
-    def _run_cmd(self, command):
-        """Run the command and return the stdout string.
-        Args:
-            command (string): the command to run in terminal.
-        Returns:
-            string: the stdout string of the command.
-        """
-        output = subprocess.run(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            shell=True,
-            check=False,
-            universal_newlines=True,
-            timeout=300
-        )
-        return output.stdout
+    # """Systsem info class."""
+    # def _run_cmd(self, command):
+    #     """Run the command and return the stdout string.
+    #     Args:
+    #         command (string): the command to run in terminal.
+    #     Returns:
+    #         string: the stdout string of the command.
+    #     """
+    #     output = subprocess.run(
+    #         command,
+    #         stdout=subprocess.PIPE,
+    #         stderr=subprocess.STDOUT,
+    #         shell=True,
+    #         check=False,
+    #         universal_newlines=True,
+    #         timeout=300
+    #     )
+    #     return output.stdout
+
+    def _run_cmd(self, cmd):
+        try:
+            process = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            # 使用 chardet 检测编码
+            result = chardet.detect(process.stdout)
+            encoding = result['encoding'] if result['confidence'] > 0.5 else 'utf-8'
+
+            # 获取二进制输出
+            output = process.stdout
+            # 将二进制输出解码为字符串
+            decoded_output = output.decode(encoding)
+            return decoded_output
+        except Exception as e:
+            print(f"Error running command {cmd}: {e}")
+            return ""
+
 
     def __count_prefix_indent(self, content, symbol='\t'):
         r"""Count the number of a specific symbol in the content.
