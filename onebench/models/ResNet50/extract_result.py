@@ -82,7 +82,7 @@ def extract_info_from_file(log_file):
     with open(log_file, "r") as f:
         for line in f.readlines():
             ss = line.lstrip().split(" ")
-            if "MiB," in line and "utilization" not in line and len(ss) == 18:
+            if "MiB," in line and "utilization" not in line and len(ss) == 17:
 
                 memory_userd = int(ss[-2])
                 if (
